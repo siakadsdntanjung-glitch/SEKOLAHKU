@@ -43,6 +43,32 @@
   .navLink:hover { background:var(--soft); color:var(--primary); }
   .navLink.nav-on, .navLink.nav-on:hover { background:var(--primary); color:#fff; }
   .expHint { font-size:.75rem; color:var(--primary); text-decoration:underline; cursor:pointer; margin-top:.25rem; display:inline-block; }
+
+  /* ===== Penyempurnaan tampilan ===== */
+  body { -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; line-height:1.65; }
+  h1, h2, h3 { letter-spacing:-.01em; }
+  header.sticky { background:rgba(255,255,255,.88); backdrop-filter:saturate(1.4) blur(10px); -webkit-backdrop-filter:saturate(1.4) blur(10px); box-shadow:none; border-bottom:1px solid rgba(226,232,240,.9); }
+  .navLink { position:relative; padding:.5rem .7rem; border-radius:.4rem; color:#475569; font-weight:500; }
+  .navLink:hover { background:transparent; color:var(--primary); }
+  .navLink.nav-on, .navLink.nav-on:hover { background:transparent; color:var(--primary); font-weight:600; border-radius:0; box-shadow:inset 0 -2px 0 var(--accent); }
+  .rounded-xl.shadow { border:1px solid rgba(226,232,240,.85); border-radius:1rem; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 10px 28px -12px rgba(15,23,42,.14); }
+  article.rounded-xl { transition:transform .2s, box-shadow .2s; }
+  article.rounded-xl:hover { transform:translateY(-3px); box-shadow:0 14px 32px -12px rgba(15,23,42,.22); }
+  section.rounded-xl > h2::after { content:''; display:block; width:2rem; height:3px; border-radius:2px; background:var(--accent); margin-top:.4rem; }
+  .pageHead { background:radial-gradient(circle at 90% 0%, rgba(255,255,255,.16), transparent 45%), linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 72%, #000)); }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .pnl:not(.hidden) { animation:fadeUp .35s ease both; }
+  @media (prefers-reduced-motion:reduce) { .pnl:not(.hidden) { animation:none; } article.rounded-xl, .gCard { transition:none; } }
+  /* ===== Slideshow foto latar ===== */
+  .hs { position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; transform:scale(1.05); transition:opacity 1.1s ease, transform 8s ease-out; }
+  .hs.on { opacity:1; transform:scale(1); }
+  .heroArrow { position:absolute; top:50%; transform:translateY(-50%); z-index:20; width:2.5rem; height:2.5rem; border-radius:9999px; background:rgba(0,0,0,.3); color:#fff; font-size:1.6rem; line-height:1; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); transition:background .2s; }
+  .heroArrow:hover { background:rgba(0,0,0,.55); }
+  .heroDot { position:relative; width:.5rem; height:.5rem; border-radius:9999px; background:rgba(255,255,255,.5); transition:width .25s, background .25s; }
+  .heroDot::after { content:''; position:absolute; inset:-8px; }
+  .heroDot.on { width:1.6rem; background:var(--accent); }
+  .capIn { animation:fadeUp .6s ease both; }
+  @media (prefers-reduced-motion:reduce) { .hs { transition:opacity .01s; transform:none; } .hs.on { transform:none; } .capIn { animation:none; } }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -54,7 +80,7 @@
 <!-- NAVBAR -->
 <header class="sticky top-0 z-40 bg-white shadow">
   <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
-    <a href="#beranda" id="navNama" class="font-bold text-primary text-lg leading-tight" style="font-family:var(--font-h)">[Nama Sekolah]</a>
+    <div class="flex items-center gap-2.5 min-w-0"><span id="brandMark" class="shrink-0 w-10 h-10 rounded-xl bg-primary text-white text-sm font-bold flex items-center justify-center" style="font-family:var(--font-h)">S</span><a href="#beranda" id="navNama" class="font-bold text-primary text-lg leading-tight truncate" style="font-family:var(--font-h)">[Nama Sekolah]</a></div>
     <nav class="hidden lg:flex gap-0.5 text-sm font-medium">
       <a href="#beranda" data-p="beranda" class="navLink">Beranda</a>
       <a href="#profil" data-p="profil" class="navLink">Profil</a>
@@ -87,23 +113,55 @@
 <div id="p-beranda" class="pnl">
 
   <!-- HERO (diperkecil) -->
-  <section id="hero" class="relative min-h-[36vh] flex items-center justify-center text-center text-white"
-    style="background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80');background-size:cover;background-position:center;">
+  <section id="hero" class="relative min-h-[46vh] flex items-center text-white" style="background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80');background-size:cover;background-position:center;">
+    <div id="heroSlides" class="absolute inset-0 overflow-hidden"></div>
     <div class="absolute inset-0" style="background:rgba(15,23,42,var(--overlay))"></div>
-    <div class="relative z-10 max-w-3xl px-6 py-8">
-      <p class="text-accent text-sm font-semibold mb-1">Selamat Datang di</p>
-      <h1 id="heroNama" class="text-3xl sm:text-4xl font-bold leading-tight mb-3">[Nama Sekolah]</h1>
-      <p id="heroTagline" class="text-sm sm:text-base text-slate-200 mb-5">Mencetak generasi cerdas, berkarakter, dan siap menghadapi masa depan.</p>
-      <div class="flex flex-wrap gap-3 justify-center">
-        <a href="#ppdb" class="px-6 py-2 rounded-lg bg-accent hover:opacity-90 text-slate-900 font-semibold shadow-lg transition">Daftar PPDB</a>
-        <a href="#sambutan" class="px-6 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-slate-900 font-semibold transition">Jelajahi Profil</a>
-        <a id="btnYt" target="_blank" rel="noopener" class="hidden px-6 py-2 rounded-lg bg-red-600 hover:opacity-90 text-white font-semibold transition">YouTube Sekolah</a>
+    <div class="absolute inset-0" style="background:linear-gradient(90deg,color-mix(in srgb,var(--primary) 65%,transparent),transparent 72%)"></div>
+    <div id="heroNav" hidden>
+      <button id="heroPrev" type="button" aria-label="Foto sebelumnya" class="heroArrow" style="left:.75rem">&#8249;</button>
+      <button id="heroNext" type="button" aria-label="Foto berikutnya" class="heroArrow" style="right:.75rem">&#8250;</button>
+      <div id="heroDots" class="absolute z-20 left-0 right-0 bottom-12 flex justify-center gap-2"></div>
+    </div>
+    <div class="hidden md:block absolute z-10 right-8 bottom-16 max-w-xs text-right pointer-events-none">
+      <div id="heroCap" hidden class="capIn" style="text-shadow:0 2px 12px rgba(0,0,0,.55)">
+        <p id="heroCapJudul" class="text-xs font-semibold tracking-widest uppercase text-accent"></p>
+        <p id="heroCapTeks" class="mt-1 text-lg leading-snug text-white"></p>
+      </div>
+    </div>
+    <div class="relative z-10 max-w-6xl mx-auto w-full px-4 pt-14 pb-16">
+      <p class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur px-3.5 py-1 text-xs font-semibold tracking-wider uppercase text-white/90 mb-4"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span>Selamat datang</p>
+      <h1 id="heroNama" class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight max-w-3xl">[Nama Sekolah]</h1>
+      <p id="heroTagline" class="mt-4 max-w-xl text-base sm:text-lg text-white/85 leading-relaxed">Mencetak generasi cerdas, berkarakter, dan siap menghadapi masa depan.</p>
+      <div class="mt-7 flex flex-wrap gap-3">
+        <a href="#ppdb" class="px-6 py-2.5 rounded-full bg-accent text-slate-900 font-semibold shadow-lg hover:brightness-95 transition">Daftar PPDB</a>
+        <a href="#sambutan" class="px-6 py-2.5 rounded-full border border-white/60 font-semibold hover:bg-white hover:text-slate-900 transition">Jelajahi Profil</a>
+        <a id="btnYt" target="_blank" rel="noopener" class="hidden px-6 py-2.5 rounded-full bg-red-600 hover:opacity-90 text-white font-semibold transition">YouTube Sekolah</a>
       </div>
     </div>
   </section>
 
+  <!-- Info cepat (alamat, telepon, jam, email) -->
+  <div id="quickBar" hidden class="max-w-6xl mx-auto px-4 -mt-8 relative z-10">
+    <div class="overflow-hidden rounded-2xl bg-white border border-slate-200/80 shadow-lg">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] -mt-px -ml-px [&>*]:border-l [&>*]:border-t [&>*]:border-slate-100">
+        <div id="qAlamatBox" hidden class="min-w-0"><div class="flex items-start gap-3 p-4 h-full">
+          <span class="shrink-0 w-9 h-9 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+          <div class="min-w-0"><p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Alamat</p><p id="qAlamat" class="text-sm font-medium text-slate-800 leading-snug break-words"></p></div></div></div>
+        <div id="qTelpBox" hidden class="min-w-0"><div class="flex items-start gap-3 p-4 h-full">
+          <span class="shrink-0 w-9 h-9 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span>
+          <div class="min-w-0"><p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Telepon</p><p id="qTelp" class="text-sm font-medium text-slate-800 leading-snug break-words"></p></div></div></div>
+        <div id="qJamBox" hidden class="min-w-0"><div class="flex items-start gap-3 p-4 h-full">
+          <span class="shrink-0 w-9 h-9 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div class="min-w-0"><p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Jam Layanan</p><p id="qJam" class="text-sm font-medium text-slate-800 leading-snug break-words"></p></div></div></div>
+        <div id="qEmailBox" hidden class="min-w-0"><div class="flex items-start gap-3 p-4 h-full">
+          <span class="shrink-0 w-9 h-9 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+          <div class="min-w-0"><p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Email</p><p id="qEmail" class="text-sm font-medium text-slate-800 leading-snug break-words"></p></div></div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Sambutan (lebar penuh, semua teks terlihat tanpa gulir) -->
-  <div class="max-w-6xl mx-auto px-4 py-6 space-y-5">
+  <div class="max-w-6xl mx-auto px-4 pt-8 pb-8 space-y-5">
 
     <section id="sambutan" class="scroll-mt-28 bg-white rounded-xl shadow p-5 sm:p-6">
       <h2 class="text-xl font-bold text-primary mb-4">Sambutan Kepala Sekolah</h2>
@@ -263,10 +321,28 @@
 
 </main>
 
-<footer class="bg-slate-900 text-slate-300 text-center text-sm py-6">
-  &copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi.
-  <a id="footYt" target="_blank" rel="noopener" class="hidden ml-3 underline hover:text-white">Kunjungi YouTube sekolah</a>
-  <p id="footKontak" class="hidden mt-1 text-xs text-slate-400"></p>
+<footer class="mt-8 bg-slate-900 text-slate-300">
+  <div class="max-w-6xl mx-auto px-4 py-10 grid gap-8 md:grid-cols-3 text-sm">
+    <div>
+      <p id="footBrand" class="text-white font-bold text-lg" style="font-family:var(--font-h)">[Nama Sekolah]</p>
+      <span class="block w-10 h-[3px] rounded bg-accent mt-2 mb-3"></span>
+      <p id="footTagline" class="text-slate-400 leading-relaxed"></p>
+      <div class="mt-3"><a id="footYt" target="_blank" rel="noopener" class="hidden underline hover:text-white">Kunjungi YouTube sekolah</a></div>
+    </div>
+    <div>
+      <p class="text-white font-semibold mb-3">Tautan</p>
+      <ul class="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
+        <li><a href="#profil" class="hover:text-white transition">Profil</a></li><li><a href="#guru" class="hover:text-white transition">Guru</a></li><li><a href="#karya" class="hover:text-white transition">Karya</a></li><li><a href="#dokumentasi" class="hover:text-white transition">Dokumentasi</a></li><li><a href="#statistik" class="hover:text-white transition">Statistik</a></li><li><a href="#berita" class="hover:text-white transition">Berita</a></li><li><a href="#ppdb" class="hover:text-white transition">PPDB</a></li><li><a href="#kontak" class="hover:text-white transition">Kontak</a></li>
+      </ul>
+    </div>
+    <div id="footKolKontak" hidden>
+      <p class="text-white font-semibold mb-3">Kontak</p>
+      <p id="footKontak" class="text-slate-400 leading-relaxed whitespace-pre-line"></p>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 text-center">&copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi.</div>
+  </div>
 </footer>
 
 <a id="waFloat" target="_blank" rel="noopener" aria-label="Hubungi lewat WhatsApp" class="hidden fixed bottom-5 right-5 z-30 w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg flex items-center justify-center transition">
@@ -394,6 +470,7 @@
       <button data-tab="tProfil" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Profil, Kontak & PPDB</button>
       <button data-tab="tGuru" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Guru</button>
       <button data-tab="tKarya" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Hasil Karya</button>
+      <button data-tab="tLatar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Foto Latar</button>
       <button data-tab="tDok" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Dokumentasi</button>
       <button data-tab="tStat" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Statistik</button>
       <button data-tab="tTema" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Tema Tampilan</button>
@@ -507,6 +584,32 @@
         <button id="kaTambah" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">+ Tambah Karya</button>
       </div>
       <div id="karyaAdminList" class="space-y-2"></div>
+    </div>
+
+    <!-- tab foto latar -->
+    <div id="tLatar" class="tabBox hidden space-y-4">
+      <div class="bg-white rounded-xl shadow p-5 space-y-3">
+        <div><h3 class="font-bold text-primary">Tambah Foto Latar</h3>
+          <p class="text-xs text-slate-500">Foto tampil bergantian (slideshow) di bagian paling atas beranda. Gunakan foto mendatar (landscape) beresolusi baik. Maksimal 5 foto.</p></div>
+        <div><label class="block text-sm font-medium mb-1">Pilih foto dari perangkat</label><input id="lFile" type="file" accept="image/*" class="inp"></div>
+        <div><label class="block text-sm font-medium mb-1">atau tempel link gambar (https)</label><input id="lUrl" type="url" class="inp" placeholder="https://...">
+          <p class="text-xs text-slate-500 mt-1">Link lebih hemat penyimpanan dan kualitasnya tetap tajam. Boleh link Google Drive (dibagikan ke &quot;Siapa saja yang memiliki link&quot;).</p></div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div><label class="block text-sm font-medium mb-1">Judul keterangan (opsional)</label><input id="lJudul" maxlength="80" class="inp" placeholder="Contoh: VISI SEKOLAH"></div>
+          <div><label class="block text-sm font-medium mb-1">Teks keterangan (opsional)</label><input id="lTeks" maxlength="200" class="inp" placeholder="Kalimat singkat di sudut foto"></div>
+        </div>
+        <div class="flex items-center gap-3"><button id="lTambah" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Tambah Foto</button><span id="lMsg" class="text-sm text-slate-600"></span></div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5">
+        <div class="flex items-center justify-between mb-3"><h3 class="font-bold text-primary">Foto Latar Saat Ini</h3><span id="lCount" class="text-xs text-slate-500"></span></div>
+        <div id="lList" class="space-y-3"></div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 space-y-2">
+        <h3 class="font-bold text-primary">Pengaturan Slideshow</h3>
+        <label class="block text-sm font-medium">Pergantian foto setiap (detik, 3-15)</label>
+        <div class="flex items-center gap-3"><input id="lDetik" type="number" min="3" max="15" class="inp" style="width:7rem"><button id="lSimpanCfg" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button><span id="lCfgMsg" class="text-sm text-green-700"></span></div>
+        <p class="text-xs text-slate-500">Jika belum ada foto latar, beranda memakai gambar tunggal dari pengaturan tema.</p>
+      </div>
     </div>
 
     <!-- tab dokumentasi -->
@@ -625,13 +728,14 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const errInfo = (e) => 'Kode: ' + (e.code || e.message) + '. Email login: ' + ((auth && auth.currentUser && auth.currentUser.email) || '-') + '. Email ini harus sama persis dengan email di aturan Firestore (webAdmin).';
 const safeUrl = (u) => /^https?:\/\//i.test(u || '') ? esc(u) : '';
-function imgUrl(u) {
+function imgRaw(u, w) {
   u = String(u || '').trim();
-  if (!/^https?:\/\//i.test(u)) return '';
+  if (!/^https?:\/\/[^\s"'<>\\]+$/i.test(u)) return '';
   const m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([\w-]{10,})/);
-  if (m) return esc('https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200');
-  return esc(u);
+  if (m) return 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w' + (w || 1200);
+  return u;
 }
+function imgUrl(u) { return esc(imgRaw(u)); }
 $('thn').textContent = new Date().getFullYear();
 
 const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "ISI_API_KEY";
@@ -724,6 +828,7 @@ async function loadSettings() {
   applyStat(s);
   applyProfil(s);
   applyKarya(s);
+  applyLatarCfg(s);
   if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; }
   if (s.tagline) $('heroTagline').innerHTML = fmt(s.tagline);
   if (s.sambutan) $('sambutanTeks').innerHTML = fmt(s.sambutan);
@@ -841,8 +946,9 @@ async function openPanel() {
   fillThemeForm();
   fillStat(s);
   karyaAdmin = Array.isArray(s.karya) ? s.karya : []; renderKaryaAdmin();
+  $('lDetik').value = s.latarDetik || 6;
   [['pTentang','tentang'],['pVisi','visi'],['pMisi','misi'],['pAlamat','alamat'],['pTelp','telp'],['pEmail','email'],['pWa','wa'],['pJam','jam'],['pIg','ig'],['pFb','fb'],['pMaps','maps'],['pPpdb','ppdbInfo']].forEach(([i,k]) => $(i).value = s[k] || '');
-  adminBerita(); adminPendaftar(); adminGuru(); adminDok();
+  adminBerita(); adminPendaftar(); adminGuru(); adminDok(); adminLatar();
 }
 
 $('sSimpan').onclick = async () => {
@@ -1457,8 +1563,10 @@ function applyProfil(s) {
 
   const wl = waLink(s.wa);
   $('waFloat').classList.toggle('hidden', !wl); if (wl) $('waFloat').href = wl;
-  const fk = [s.alamat, s.telp].filter(Boolean).join(' | ');
-  $('footKontak').textContent = fk; $('footKontak').classList.toggle('hidden', !fk);
+  const fk = [s.alamat, s.telp, s.email, s.jam].filter(Boolean).join('\n');
+  $('footKontak').textContent = fk; $('footKolKontak').hidden = !fk;
+  [['qAlamat', s.alamat], ['qTelp', s.telp], ['qJam', s.jam], ['qEmail', s.email]].forEach(([id, v]) => { $(id).textContent = v || ''; $(id + 'Box').hidden = !v; });
+  $('quickBar').hidden = ![s.alamat, s.telp, s.jam, s.email].some(Boolean);
 
   const pp = !!s.ppdbInfo; $('ppdbInfoTeks').innerHTML = fmt(s.ppdbInfo); $('ppdbInfoBox').classList.toggle('hidden', !pp);
 }
@@ -1818,9 +1926,164 @@ $('dForm').onsubmit = async (e) => {
 };
 addBoldBar('dKet');
 
+/* sinkronkan nama & tagline ke logo header dan footer */
+(function () {
+  const sync = () => {
+    const nm = ($('navNama').textContent || '').trim();
+    const w = nm.replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/).filter(Boolean);
+    $('brandMark').textContent = ((w[0] || 'S')[0] + (w[1] ? w[1][0] : '')).toUpperCase();
+    $('footBrand').textContent = nm;
+    $('footTagline').textContent = ($('heroTagline').textContent || '').trim();
+  };
+  const o = new MutationObserver(sync);
+  [$('navNama'), $('heroTagline')].forEach(el => o.observe(el, { childList: true, characterData: true, subtree: true }));
+  sync();
+})();
+
+/* ---------- Foto latar: slideshow hero ---------- */
+let latarSlides = [], latarIdx = 0, latarTimer = null, latarDetik = 6, latarAdmin = [];
+const LATAR_MAX = 5;
+const RULE_HINT_L = 'Aturan Firestore belum mengizinkan koleksi "latar". Pasang file firestore.rules terbaru di Firebase Console (Firestore > Rules > Publish), lalu coba lagi.';
+const reduceMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const latarSrc = (d) => d.foto ? (GURU_FOTO.test(d.foto) ? d.foto : '') : imgRaw(d.url, 1600);
+
+function applyLatarCfg(s) { latarDetik = Math.min(15, Math.max(3, Number(s.latarDetik) || 6)); restartLatar(); }
+async function loadLatar() {
+  if (!configured) return;
+  try {
+    const snap = await db.collection('latar').orderBy('urutan').limit(8).get();
+    latarSlides = snap.docs.map(x => ({ id: x.id, ...x.data() })).filter(d => latarSrc(d));
+  } catch (e) { latarSlides = []; }
+  renderLatar();
+}
+function renderLatar() {
+  const box = $('heroSlides'); box.innerHTML = ''; clearInterval(latarTimer);
+  const n = latarSlides.length;
+  $('heroNav').hidden = n < 2;
+  const dots = $('heroDots'); dots.innerHTML = '';
+  if (!n) { $('heroCap').hidden = true; return; }
+  latarSlides.forEach((d, i) => {
+    const el = document.createElement('div'); el.className = 'hs'; el.style.backgroundImage = 'url("' + latarSrc(d) + '")'; box.append(el);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'heroDot'; b.setAttribute('aria-label', 'Foto ' + (i + 1));
+    b.onclick = () => { showLatar(i); restartLatar(); }; dots.append(b);
+  });
+  showLatar(0); restartLatar();
+}
+function showLatar(i) {
+  const n = latarSlides.length; if (!n) return;
+  latarIdx = (i + n) % n;
+  [...$('heroSlides').children].forEach((el, k) => el.classList.toggle('on', k === latarIdx));
+  [...$('heroDots').children].forEach((el, k) => el.classList.toggle('on', k === latarIdx));
+  const d = latarSlides[latarIdx], cap = $('heroCap');
+  $('heroCapJudul').textContent = d.judul || ''; $('heroCapTeks').textContent = d.teks || '';
+  cap.hidden = !(d.judul || d.teks);
+  cap.classList.remove('capIn'); void cap.offsetWidth; cap.classList.add('capIn');
+}
+function restartLatar() {
+  clearInterval(latarTimer);
+  if (latarSlides.length > 1 && !reduceMotion) latarTimer = setInterval(() => { if (!document.hidden) showLatar(latarIdx + 1); }, latarDetik * 1000);
+}
+$('heroPrev').onclick = () => { showLatar(latarIdx - 1); restartLatar(); };
+$('heroNext').onclick = () => { showLatar(latarIdx + 1); restartLatar(); };
+let heroX = null;
+$('hero').addEventListener('touchstart', (e) => { heroX = e.touches[0].clientX; }, { passive: true });
+$('hero').addEventListener('touchend', (e) => {
+  if (heroX === null || latarSlides.length < 2) return;
+  const dx = e.changedTouches[0].clientX - heroX; heroX = null;
+  if (Math.abs(dx) > 50) { showLatar(latarIdx + (dx < 0 ? 1 : -1)); restartLatar(); }
+});
+$('aTutup').addEventListener('click', loadLatar);
+
+/* panel admin: kelola foto latar */
+function compressLatar(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let sc = Math.min(1, 1600 / img.width), q = 0.82, out = '';
+      for (let n = 0; n < 8; n++) {
+        const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL('image/jpeg', q);
+        if (out.length <= 200000) break;
+        if (q > 0.55) q -= 0.08; else sc *= 0.85;
+      }
+      out.length > 300000 ? reject(new Error('Foto terlalu besar. Perkecil dulu atau gunakan link gambar.')) : resolve(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gambar tidak dapat dibaca. Gunakan format JPG atau PNG.')); };
+    img.src = url;
+  });
+}
+async function adminLatar() {
+  const box = $('lList'); box.innerHTML = '<p class="text-sm text-slate-500">Memuat...</p>';
+  try {
+    const snap = await db.collection('latar').orderBy('urutan').get();
+    latarAdmin = snap.docs.map(x => ({ id: x.id, ref: x.ref, ...x.data() }));
+    renderLatarAdmin();
+  } catch (e) {
+    box.innerHTML = ''; const p = document.createElement('p'); p.className = 'text-sm text-red-600';
+    p.textContent = e.code === 'permission-denied' ? RULE_HINT_L : 'Gagal memuat. ' + errInfo(e); box.append(p);
+  }
+}
+function renderLatarAdmin() {
+  const box = $('lList'); box.innerHTML = '';
+  $('lCount').textContent = latarAdmin.length + ' dari ' + LATAR_MAX + ' foto';
+  if (!latarAdmin.length) { box.innerHTML = '<p class="text-sm text-slate-500">Belum ada foto latar. Beranda memakai gambar dari pengaturan tema.</p>'; return; }
+  latarAdmin.forEach((d, i) => {
+    const row = document.createElement('div'); row.className = 'flex flex-col sm:flex-row gap-3 border border-slate-200 rounded-lg p-3';
+    const th = document.createElement('div'); th.className = 'sm:w-40 shrink-0 aspect-video rounded bg-slate-100 overflow-hidden';
+    const src = latarSrc(d); if (src) { const im = document.createElement('img'); im.src = src; im.alt = ''; im.className = 'w-full h-full object-cover'; th.append(im); }
+    const f = document.createElement('div'); f.className = 'flex-1 min-w-0 space-y-2';
+    const j = document.createElement('input'); j.className = 'inp'; j.maxLength = 80; j.placeholder = 'Judul keterangan (opsional)'; j.value = d.judul || '';
+    const t = document.createElement('input'); t.className = 'inp'; t.maxLength = 200; t.placeholder = 'Teks keterangan (opsional)'; t.value = d.teks || '';
+    const bar = document.createElement('div'); bar.className = 'flex flex-wrap items-center gap-2';
+    const mk = (txt, title, fn, dis, cls) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.title = title; b.disabled = !!dis;
+      b.className = cls || 'px-2.5 py-1 rounded border border-slate-300 text-sm hover:bg-slate-100 disabled:opacity-30'; b.onclick = fn; return b; };
+    const msg = document.createElement('span'); msg.className = 'text-xs text-green-700';
+    bar.append(
+      mk('▲', 'Naikkan', () => moveLatar(i, -1), i === 0),
+      mk('▼', 'Turunkan', () => moveLatar(i, 1), i === latarAdmin.length - 1),
+      mk('Simpan teks', 'Simpan keterangan', async () => {
+        try { await d.ref.update({ judul: j.value.trim(), teks: t.value.trim() }); msg.textContent = 'Tersimpan.'; setTimeout(() => msg.textContent = '', 2500); }
+        catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); } }, false, 'px-3 py-1 rounded bg-primary text-white text-sm'),
+      mk('Hapus', 'Hapus foto', async () => { if (!confirm('Hapus foto latar ini?')) return;
+        try { await d.ref.delete(); adminLatar(); } catch (e) { alert('Gagal menghapus. ' + errInfo(e)); } }, false, 'px-3 py-1 rounded text-sm text-red-600 underline'),
+      msg);
+    f.append(j, t, bar); row.append(th, f); box.append(row);
+  });
+}
+async function moveLatar(i, dir) {
+  const j = i + dir; if (j < 0 || j >= latarAdmin.length) return;
+  const a = latarAdmin[i], b = latarAdmin[j];
+  try { const bt = db.batch(); bt.update(a.ref, { urutan: b.urutan }); bt.update(b.ref, { urutan: a.urutan }); await bt.commit(); adminLatar(); }
+  catch (e) { alert('Gagal mengubah urutan. ' + errInfo(e)); }
+}
+$('lTambah').onclick = async () => {
+  if (latarAdmin.length >= LATAR_MAX) return alert('Maksimal ' + LATAR_MAX + ' foto latar. Hapus salah satu terlebih dahulu.');
+  const f = $('lFile').files[0], url = $('lUrl').value.trim();
+  if (!f && !url) return alert('Pilih foto dari perangkat atau tempel link gambar.');
+  if (!f && !httpsOk(url)) return alert('Link gambar harus diawali https://');
+  if (!f && /photos\.app\.goo\.gl|photos\.google\.com|drive\.google\.com\/drive\/folders/i.test(url)) return alert('Link ini tidak bisa dipakai sebagai gambar. Gunakan link langsung ke gambar atau link file Google Drive.');
+  const btn = $('lTambah'), msg = $('lMsg'); btn.disabled = true; msg.textContent = 'Menyimpan...';
+  try {
+    const data = { judul: $('lJudul').value.trim(), teks: $('lTeks').value.trim(), urutan: Date.now(), tanggal: firebase.firestore.FieldValue.serverTimestamp() };
+    if (f) data.foto = await compressLatar(f); else data.url = url;
+    await db.collection('latar').add(data);
+    $('lFile').value = ''; $('lUrl').value = ''; $('lJudul').value = ''; $('lTeks').value = '';
+    msg.textContent = 'Foto ditambahkan.'; adminLatar();
+  } catch (e) { msg.textContent = ''; alert(e.code === 'permission-denied' ? RULE_HINT_L : (e.code ? 'Gagal menyimpan. ' + errInfo(e) : e.message)); }
+  finally { btn.disabled = false; setTimeout(() => { msg.textContent = ''; }, 4000); }
+};
+$('lSimpanCfg').onclick = async () => {
+  const v = Math.min(15, Math.max(3, parseInt($('lDetik').value, 10) || 6));
+  try { await db.collection('settings').doc('site').set({ latarDetik: v }, { merge: true }); $('lDetik').value = v;
+    $('lCfgMsg').textContent = 'Tersimpan.'; setTimeout(() => $('lCfgMsg').textContent = '', 2500); }
+  catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+
 showPanel(location.hash.slice(1));
 
-loadSettings(); loadBerita(); loadGuru();
+loadSettings(); loadBerita(); loadGuru(); loadLatar();
 </script>
 </body>
 </html>
