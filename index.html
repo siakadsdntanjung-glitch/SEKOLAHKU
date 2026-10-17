@@ -139,7 +139,7 @@
       <h1 id="heroNama" class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight max-w-3xl">[Nama Sekolah]</h1>
       <p id="heroTagline" class="mt-4 max-w-xl text-base sm:text-lg text-white/85 leading-relaxed">Mencetak generasi cerdas, berkarakter, dan siap menghadapi masa depan.</p>
       <div class="mt-7 flex flex-wrap gap-3">
-        <a href="#ppdb" class="px-6 py-2.5 rounded-full bg-accent text-slate-900 font-semibold shadow-lg hover:brightness-95 transition">Daftar PPDB</a>
+        <a id="btnDaftar" href="#ppdb" class="px-6 py-2.5 rounded-full bg-accent text-slate-900 font-semibold shadow-lg hover:brightness-95 transition">Daftar PPDB</a>
         <a href="#sambutan" class="px-6 py-2.5 rounded-full border border-white/60 font-semibold hover:bg-white hover:text-slate-900 transition">Jelajahi Profil</a>
         <a href="#kelas" class="px-6 py-2.5 rounded-full border border-white/60 font-semibold hover:bg-white hover:text-slate-900 transition">Kelas Online</a>
         <a id="btnYt" target="_blank" rel="noopener" class="hidden px-6 py-2.5 rounded-full bg-red-600 hover:opacity-90 text-white font-semibold transition">YouTube Sekolah</a>
@@ -309,8 +309,15 @@
 
 <!-- ============ PANEL PPDB ============ -->
 <div id="p-ppdb" class="pnl hidden">
-  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Pendaftaran PPDB Online</h2><p>Lengkapi data berikut dengan benar.</p><i></i></div></div>
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Pendaftaran PPDB Online</h2><p id="ppdbSub">Lengkapi data berikut dengan benar.</p><i></i></div></div>
   <section id="ppdb" class="max-w-3xl mx-auto px-4 py-8">
+    <p id="ppdbPill" class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold mb-4"></p>
+    <div id="ppdbTutupBox" class="hidden bg-white rounded-xl shadow p-6 mb-4 text-center border-t-4 border-red-500">
+      <div class="mx-auto mb-3 w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 118 0v3"/></svg></div>
+      <h3 class="font-bold text-lg text-slate-800">Pendaftaran Ditutup</h3>
+      <p id="ppdbTutupTeks" class="mt-2 text-sm text-slate-600 whitespace-pre-line leading-relaxed"></p>
+      <a href="#kontak" class="inline-block mt-4 px-5 py-2 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition">Hubungi Sekolah</a>
+    </div>
     <div id="ppdbInfoBox" class="hidden bg-white rounded-xl shadow p-5 mb-4 border-l-4 border-accent"><h3 class="font-bold text-primary mb-2 text-sm">Informasi, Syarat &amp; Jadwal</h3><p id="ppdbInfoTeks" class="text-sm text-slate-700 whitespace-pre-line leading-relaxed"></p></div>
     <form id="ppdbForm" class="bg-white rounded-xl shadow p-5 grid sm:grid-cols-2 gap-x-4 gap-y-3">
       <div class="sm:col-span-2"><label class="block text-sm font-medium mb-1">Nama Lengkap Siswa</label><input name="nama" required class="inp"></div>
@@ -766,6 +773,17 @@
 
     <!-- tab pendaftar -->
     <div id="tPendaftar" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-4">
+      <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+          <div><p class="font-bold text-primary">Status Pendaftaran PPDB Online</p><p id="ppdbStatusTxt" class="text-sm text-slate-600"></p></div>
+          <button id="ppdbSwitch" type="button" role="switch" aria-checked="true" aria-label="Buka atau tutup pendaftaran PPDB" class="relative inline-flex h-9 w-16 shrink-0 items-center rounded-full px-1 transition-colors bg-green-500 disabled:opacity-60">
+            <span id="ppdbKnob" class="inline-block h-7 w-7 rounded-full bg-white shadow transition-transform translate-x-7"></span>
+          </button>
+        </div>
+        <div><label class="block text-sm font-medium mb-1">Pesan saat pendaftaran ditutup (opsional)</label>
+          <textarea id="ppdbPesan" rows="2" maxlength="400" class="inp" placeholder="Contoh: Pendaftaran gelombang 1 sudah ditutup. Gelombang 2 dibuka 1 Juni."></textarea></div>
+        <div class="flex items-center gap-3"><button id="ppdbSimpanPesan" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Simpan pesan</button><span id="ppdbPesanMsg" class="text-sm text-green-700"></span></div>
+      </div>
       <div id="pChips" class="flex flex-wrap gap-2"></div>
       <div class="flex flex-col sm:flex-row gap-2">
         <input id="pSearch" type="search" placeholder="Cari nama, NISN, orang tua, atau WhatsApp" class="inp">
@@ -902,6 +920,7 @@ async function loadSettings() {
   applyKarya(s);
   applyLatarCfg(s);
   applyKelas(s);
+  applyPpdb(s);
   if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; }
   if (s.tagline) $('heroTagline').innerHTML = fmt(s.tagline);
   if (s.sambutan) $('sambutanTeks').innerHTML = fmt(s.sambutan);
@@ -952,11 +971,26 @@ async function loadBerita() {
   applyDeep();
 }
 
+/* ---------- Buka / tutup pendaftaran PPDB ---------- */
+let ppdbBuka = true;
+function applyPpdb(s) {
+  ppdbBuka = s.ppdbBuka !== false;
+  $('ppdbForm').classList.toggle('hidden', !ppdbBuka);
+  $('ppdbTutupBox').classList.toggle('hidden', ppdbBuka);
+  $('ppdbTutupTeks').innerHTML = s.ppdbPesanTutup ? fmt(s.ppdbPesanTutup) : 'Pendaftaran PPDB Online saat ini sudah ditutup. Silakan pantau informasi terbaru di website ini atau hubungi sekolah.';
+  $('ppdbSub').textContent = ppdbBuka ? 'Lengkapi data berikut dengan benar.' : 'Pendaftaran saat ini ditutup.';
+  $('btnDaftar').textContent = ppdbBuka ? 'Daftar PPDB' : 'Info PPDB';
+  const pill = $('ppdbPill');
+  pill.className = 'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold mb-4 ' + (ppdbBuka ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600');
+  pill.innerHTML = '<span class="w-2 h-2 rounded-full ' + (ppdbBuka ? 'bg-green-500' : 'bg-red-500') + '"></span>' + (ppdbBuka ? 'Pendaftaran DIBUKA' : 'Pendaftaran DITUTUP');
+}
+
 /* ---------- Form PPDB publik ---------- */
 $('ppdbForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const msg = $('ppdbMsg');
   msg.classList.remove('hidden');
+  if (!ppdbBuka) { msg.textContent = 'Pendaftaran sedang ditutup.'; msg.className = 'text-center font-medium text-red-600'; return; }
   if (!configured) { msg.textContent = 'Firebase belum dikonfigurasi.'; msg.className = 'text-center font-medium text-red-600'; return; }
   const data = Object.fromEntries(new FormData(e.target).entries());
   data.tanggalDaftar = firebase.firestore.FieldValue.serverTimestamp();
@@ -1022,6 +1056,7 @@ async function openPanel() {
   karyaAdmin = Array.isArray(s.karya) ? s.karya : []; renderKaryaAdmin();
   $('lDetik').value = s.latarDetik || 6;
   kelasAdmin = Array.isArray(s.kelasOnline) ? s.kelasOnline : []; $('klPetunjuk').value = s.kelasPetunjuk || ''; renderKelasAdmin();
+  ppdbBukaAdmin = s.ppdbBuka !== false; $('ppdbPesan').value = s.ppdbPesanTutup || ''; renderPpdbSwitch();
   [['pTentang','tentang'],['pVisi','visi'],['pMisi','misi'],['pAlamat','alamat'],['pTelp','telp'],['pEmail','email'],['pWa','wa'],['pJam','jam'],['pIg','ig'],['pFb','fb'],['pMaps','maps'],['pPpdb','ppdbInfo']].forEach(([i,k]) => $(i).value = s[k] || '');
   adminBerita(); adminPendaftar(); adminGuru(); adminDok(); adminLatar();
 }
@@ -2355,6 +2390,37 @@ $('klSimpanPet').onclick = async () => {
   catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
 };
 ['klKet', 'klPetunjuk'].forEach(addBoldBar);
+
+/* ---------- Admin: saklar buka/tutup PPDB ---------- */
+let ppdbBukaAdmin = true;
+function renderPpdbSwitch() {
+  const sw = $('ppdbSwitch'); sw.setAttribute('aria-checked', String(ppdbBukaAdmin));
+  sw.classList.toggle('bg-green-500', ppdbBukaAdmin); sw.classList.toggle('bg-slate-400', !ppdbBukaAdmin);
+  $('ppdbKnob').classList.toggle('translate-x-7', ppdbBukaAdmin);
+  $('ppdbStatusTxt').innerHTML = ppdbBukaAdmin
+    ? '<span class="font-semibold text-green-700">DIBUKA</span> - form pendaftaran tampil di website.'
+    : '<span class="font-semibold text-red-600">DITUTUP</span> - form pendaftaran disembunyikan dari website.';
+}
+$('ppdbSwitch').onclick = async () => {
+  const next = !ppdbBukaAdmin;
+  if (!confirm(next ? 'Buka pendaftaran PPDB? Form akan tampil di website.' : 'Tutup pendaftaran PPDB? Form akan disembunyikan dari website.')) return;
+  const sw = $('ppdbSwitch'); sw.disabled = true;
+  try {
+    await db.collection('settings').doc('site').set({ ppdbBuka: next }, { merge: true });
+    ppdbBukaAdmin = next; renderPpdbSwitch();
+    applyPpdb({ ppdbBuka: next, ppdbPesanTutup: $('ppdbPesan').value.trim() });
+  } catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+  finally { sw.disabled = false; }
+};
+$('ppdbSimpanPesan').onclick = async () => {
+  const v = $('ppdbPesan').value.trim();
+  try {
+    await db.collection('settings').doc('site').set({ ppdbPesanTutup: v }, { merge: true });
+    applyPpdb({ ppdbBuka: ppdbBukaAdmin, ppdbPesanTutup: v });
+    $('ppdbPesanMsg').textContent = 'Tersimpan.'; setTimeout(() => $('ppdbPesanMsg').textContent = '', 2500);
+  } catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+addBoldBar('ppdbPesan');
 
 showPanel(location.hash.slice(1));
 
