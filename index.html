@@ -491,6 +491,11 @@
       <div><label class="block text-sm font-medium mb-1">Link materi / tugas (opsional)</label><input id="klMateri" type="url" class="inp" placeholder="https://drive.google.com/..."></div>
       <div><label class="block text-sm font-medium mb-1">Keterangan (opsional)</label><textarea id="klKet" rows="2" maxlength="400" class="inp"></textarea></div>
       <label class="flex items-center gap-2 text-sm"><input id="klAktif" type="checkbox" checked> Tampilkan di website</label>
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-1">
+        <label class="flex items-center gap-2 text-sm font-semibold"><input id="klBuka" type="checkbox" checked> Kelas dibuka (siswa bisa masuk)</label>
+        <p class="text-xs text-slate-500">Jika dimatikan, kartu kelas tetap tampil dengan label Ditutup, tetapi tombol masuk, kode kelas, dan link materi tidak ditampilkan.</p>
+        <input id="klPesanTutup" maxlength="200" class="inp" placeholder="Pesan saat ditutup (opsional), mis. Dibuka lagi Senin depan">
+      </div>
     </div>
     <div class="flex items-center gap-4 mt-5">
       <button id="klSimpan" type="button" class="px-6 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button>
@@ -695,7 +700,7 @@
     <div id="tDok" class="tabBox hidden space-y-4">
       <form id="dForm" class="bg-white rounded-xl shadow p-5 space-y-3">
         <div><label class="block text-sm font-medium mb-1">Jenis</label>
-          <select id="dJenis" class="inp"><option value="foto">Foto kegiatan</option><option value="video">Video (YouTube)</option></select></div>
+          <select id="dJenis" class="inp"><option value="foto">Foto kegiatan (unggah dari perangkat)</option><option value="fotolink">Foto kegiatan (dari link)</option><option value="video">Video (YouTube)</option></select></div>
         <div class="grid sm:grid-cols-2 gap-3">
           <div><label class="block text-sm font-medium mb-1">Nama kegiatan</label><input id="dJudul" maxlength="100" class="inp" placeholder="Contoh: Upacara Hari Kemerdekaan"></div>
           <div><label class="block text-sm font-medium mb-1">Tanggal kegiatan</label><input id="dTgl" type="date" class="inp"></div>
@@ -705,6 +710,10 @@
           <input id="dFile" type="file" accept="image/*" multiple class="inp">
           <div id="dPrev" class="flex flex-wrap gap-2 mt-2"></div>
           <p class="text-xs text-slate-500 mt-1">Foto otomatis dikecilkan agar hemat penyimpanan.</p></div>
+        <div id="dLinkBox" class="hidden"><label class="block text-sm font-medium mb-1">Link foto (satu link per baris, maksimal 10)</label>
+          <textarea id="dUrls" rows="4" maxlength="5000" class="inp" placeholder="https://drive.google.com/file/d/.../view&#10;https://contoh.com/foto-kegiatan.jpg"></textarea>
+          <div id="dUrlPrev" class="flex flex-wrap gap-2 mt-2"></div>
+          <p class="text-xs text-slate-500 mt-1">Boleh link langsung ke gambar (berakhiran .jpg / .png) atau link file Google Drive yang dibagikan ke &quot;Siapa saja yang memiliki link&quot;. Link folder Drive dan link Google Photos tidak bisa dipakai. Hemat penyimpanan karena foto tidak disimpan di database.</p></div>
         <div id="dVideoBox" class="hidden"><label class="block text-sm font-medium mb-1">Link video YouTube</label><input id="dYt" type="url" class="inp" placeholder="https://www.youtube.com/watch?v=..."></div>
         <div class="flex items-center gap-3"><button id="dSimpan" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Unggah</button><span id="dMsg" class="text-sm text-slate-600"></span></div>
       </form>
@@ -1929,15 +1938,17 @@ $('kaHapus').onclick = async () => {
 /* ---------- Dokumentasi (foto & video kegiatan) ---------- */
 let galDocs = [], galLast = null, galDone = false, galLoaded = false, galBusy = false, galFilter = '', galView = [], galIdx = 0;
 const GAL_PAGE = 12;
-const RULE_HINT = 'Aturan Firestore belum mengizinkan koleksi "dokumentasi". Tambahkan aturan untuk koleksi ini (samakan dengan koleksi guru: dibaca publik, ditulis admin), lalu coba lagi.';
+const RULE_HINT = 'Aturan Firestore belum mengizinkan koleksi "dokumentasi" (atau belum mendukung foto dari link). Pasang file firestore.rules terbaru di Firebase Console (Firestore > Rules > Publish), lalu coba lagi.';
 function tglKeg(d) {
   if (/^\d{4}-\d{2}-\d{2}$/.test(d.tglKegiatan || '')) return new Date(d.tglKegiatan + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   return fmtTgl(d.tanggal);
 }
 function galThumb(d) {
   if (d.jenis === 'video') { const id = (d.youtube && ytUrlOk(d.youtube)) ? ytId(d.youtube) : ''; return id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : ''; }
+  if (d.url) return imgRaw(d.url, 640);
   return GURU_FOTO.test(d.foto || '') ? d.foto : '';
 }
+function galFull(d) { return d.url ? imgRaw(d.url, 1600) : (GURU_FOTO.test(d.foto || '') ? d.foto : ''); }
 function bukaYt(id) { $('ytFrame').src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1'; $('ytModal').classList.remove('hidden'); }
 
 /* tampilan publik */
@@ -1972,6 +1983,7 @@ function renderGaleri() {
     b.className = 'group relative block w-full aspect-[4/3] overflow-hidden rounded-xl shadow bg-slate-200 text-left';
     const im = document.createElement('img'); im.src = t; im.alt = d.judul || 'Dokumentasi'; im.loading = 'lazy';
     im.className = 'w-full h-full object-cover group-hover:scale-105 transition duration-300';
+    if (d.url) im.onerror = () => b.remove();   // link foto rusak / tidak publik: sembunyikan kartu
     const cap = document.createElement('div'); cap.className = 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2.5 pt-8 text-white text-xs font-medium'; cap.textContent = d.judul || '';
     b.append(im, cap);
     if (d.jenis === 'video') {
@@ -1988,15 +2000,15 @@ function renderGaleri() {
 function openGaleri(i) {
   const d = galView[i]; if (!d) return; galIdx = i;
   if (d.jenis === 'video') { const id = ytId(d.youtube || ''); if (id) bukaYt(id); return; }
-  if (!GURU_FOTO.test(d.foto || '')) return;
-  $('fotoImg').src = d.foto; $('fotoJudul').textContent = d.judul || ''; $('fotoTgl').textContent = tglKeg(d);
+  const full = galFull(d); if (!full) return;
+  $('fotoImg').src = full; $('fotoJudul').textContent = d.judul || ''; $('fotoTgl').textContent = tglKeg(d);
   $('fotoKet').innerHTML = fmt(d.keterangan); $('fotoModal').classList.remove('hidden');
 }
 function stepGaleri(dir) {
   let j = galIdx;
   for (let n = 0; n < galView.length; n++) {
     j = (j + dir + galView.length) % galView.length;
-    if (galView[j].jenis !== 'video' && GURU_FOTO.test(galView[j].foto || '')) { openGaleri(j); return; }
+    if (galView[j].jenis !== 'video' && galFull(galView[j])) { openGaleri(j); return; }
   }
 }
 const fotoTutup = () => { $('fotoModal').classList.add('hidden'); $('fotoImg').removeAttribute('src'); };
@@ -2054,7 +2066,21 @@ async function adminDok() {
     p.textContent = e.code === 'permission-denied' ? RULE_HINT : 'Gagal memuat. ' + errInfo(e); box.append(p);
   }
 }
-$('dJenis').onchange = () => { const v = $('dJenis').value === 'video'; $('dVideoBox').classList.toggle('hidden', !v); $('dFotoBox').classList.toggle('hidden', v); };
+$('dJenis').onchange = () => {
+  const j = $('dJenis').value;
+  $('dVideoBox').classList.toggle('hidden', j !== 'video'); $('dFotoBox').classList.toggle('hidden', j !== 'foto'); $('dLinkBox').classList.toggle('hidden', j !== 'fotolink');
+};
+const BAD_IMG_LINK = /photos\.app\.goo\.gl|photos\.google\.com|drive\.google\.com\/drive\/folders/i;
+function readUrls() {
+  return [...new Set($('dUrls').value.split('\n').map(x => x.trim()).filter(Boolean))];
+}
+$('dUrls').addEventListener('input', () => {
+  const pv = $('dUrlPrev'); pv.innerHTML = '';
+  readUrls().slice(0, 10).forEach(u => {
+    const src = BAD_IMG_LINK.test(u) ? '' : imgRaw(u, 200); if (!src) return;
+    const im = document.createElement('img'); im.src = src; im.alt = ''; im.className = 'w-16 h-16 object-cover rounded border'; im.onerror = () => { im.style.opacity = '.25'; im.title = 'Gambar tidak dapat dimuat dari link ini'; }; pv.append(im);
+  });
+});
 $('dFile').onchange = () => {
   const pv = $('dPrev'); pv.innerHTML = '';
   const files = Array.from($('dFile').files);
@@ -2069,11 +2095,22 @@ $('dForm').onsubmit = async (e) => {
   e.preventDefault();
   const judul = $('dJudul').value.trim(); if (!judul) return alert('Nama kegiatan wajib diisi.');
   const base = { judul, keterangan: $('dKet').value.trim(), tglKegiatan: $('dTgl').value || '' };
-  const msg = $('dMsg'), btn = $('dSimpan'), video = $('dJenis').value === 'video', col = db.collection('dokumentasi');
+  const msg = $('dMsg'), btn = $('dSimpan'), mode = $('dJenis').value, video = mode === 'video', col = db.collection('dokumentasi');
   const ts = () => firebase.firestore.FieldValue.serverTimestamp();
   btn.disabled = true;
   try {
-    if (video) {
+    if (mode === 'fotolink') {
+      const urls = readUrls();
+      if (!urls.length) { alert('Tempel minimal satu link foto.'); return; }
+      if (urls.length > 10) { alert('Maksimal 10 link sekali simpan.'); return; }
+      const bad = urls.find(u => !httpsOk(u) || u.length > 500 || BAD_IMG_LINK.test(u) || !imgRaw(u));
+      if (bad) { alert('Link tidak dapat dipakai: ' + bad.slice(0, 80) + '\nGunakan link https langsung ke gambar atau link file (bukan folder) Google Drive. Link Google Photos tidak bisa dipakai.'); return; }
+      for (let i = urls.length - 1; i >= 0; i--) {   // dari belakang agar urutan tampil sesuai urutan link
+        msg.textContent = 'Menyimpan ' + (urls.length - i) + ' dari ' + urls.length + '...';
+        await col.add({ ...base, jenis: 'foto', url: urls[i], tanggal: ts() });
+      }
+      msg.textContent = urls.length + ' foto dari link tersimpan.';
+    } else if (video) {
       const yt = $('dYt').value.trim();
       if (!(ytUrlOk(yt) && ytId(yt))) { alert('Link YouTube tidak valid. Gunakan alamat https dari youtube.com atau youtu.be yang mengarah ke satu video.'); return; }
       await col.add({ ...base, jenis: 'video', youtube: yt, tanggal: ts() });
@@ -2089,7 +2126,7 @@ $('dForm').onsubmit = async (e) => {
       }
       msg.textContent = ok + ' foto tersimpan' + (gagal ? ', ' + gagal + ' gagal (format tidak didukung).' : '.');
     }
-    $('dForm').reset(); $('dJenis').onchange(); $('dPrev').innerHTML = '';
+    $('dForm').reset(); $('dJenis').onchange(); $('dPrev').innerHTML = ''; $('dUrlPrev').innerHTML = '';
     adminDok();
   } catch (er) {
     msg.textContent = ''; alert(er.code === 'permission-denied' ? RULE_HINT : 'Gagal menyimpan. ' + errInfo(er));
@@ -2293,8 +2330,8 @@ function renderKelas() {
   let list = aktif;
   if (kelasFilter === 'Hari ini') list = aktif.filter(k => k.hari === hr || k.hari === 'Setiap hari');
   else if (kelasFilter !== 'Semua') list = aktif.filter(k => k.kelas === kelasFilter || k.kelas === 'Semua kelas');
-  const rank = { live: 0, nanti: 1, hariini: 1, lain: 2, fleksibel: 2, selesai: 3 };
-  list = list.map(k => ({ k, st: kelasStatus(k) })).sort((x, y) =>
+  const rank = { live: 0, nanti: 1, hariini: 1, lain: 2, fleksibel: 2, selesai: 3, tutup: 4 };
+  list = list.map(k => ({ k, st: k.buka === false ? 'tutup' : kelasStatus(k) })).sort((x, y) =>
     rank[x.st] - rank[y.st] || KELAS_ORDER.indexOf(x.k.kelas) - KELAS_ORDER.indexOf(y.k.kelas) || (x.k.mulai || '').localeCompare(y.k.mulai || ''));
   const box = $('listKelas'); box.innerHTML = '';
   $('kelasKosong').hidden = list.length > 0;
@@ -2304,10 +2341,12 @@ function renderKelas() {
     const badge = st === 'live' ? '<span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1"><span class="liveDot"></span>Sedang berlangsung</span>'
       : st === 'nanti' ? '<span class="rounded-full bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1">Hari ini, mulai ' + esc(k.mulai) + '</span>'
       : st === 'hariini' ? '<span class="rounded-full bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1">Hari ini</span>'
-      : st === 'selesai' ? '<span class="rounded-full bg-slate-100 text-slate-500 text-xs font-semibold px-2.5 py-1">Selesai hari ini</span>' : '';
+      : st === 'selesai' ? '<span class="rounded-full bg-slate-100 text-slate-500 text-xs font-semibold px-2.5 py-1">Selesai hari ini</span>'
+      : st === 'tutup' ? '<span class="rounded-full bg-red-50 text-red-600 text-xs font-semibold px-2.5 py-1">Ditutup</span>' : '';
+    const tutup = st === 'tutup';
     const card = document.createElement('article');
-    card.className = 'bg-white rounded-xl shadow overflow-hidden flex flex-col';
-    card.style.borderTop = '4px solid ' + pc;
+    card.className = 'bg-white rounded-xl shadow overflow-hidden flex flex-col' + (tutup ? ' opacity-80' : '');
+    card.style.borderTop = '4px solid ' + (tutup ? '#94a3b8' : pc);
     let h = '<div class="p-5 flex flex-col gap-2.5 flex-1">';
     h += '<div class="flex flex-wrap items-center gap-2"><span class="rounded-full text-xs font-semibold px-2.5 py-1 text-white" style="background:' + pc + '">' + esc(pn) + '</span>'
       + '<span class="rounded-full bg-soft text-primary text-xs font-semibold px-2.5 py-1">' + esc(k.kelas || '') + '</span>' + badge + '</div>';
@@ -2315,10 +2354,12 @@ function renderKelas() {
     if (k.guru) h += '<p class="text-sm text-slate-600">Guru: <span class="font-medium">' + esc(k.guru) + '</span></p>';
     h += '<p class="text-sm text-slate-600">' + esc(jadwalTxt(k)) + '</p>';
     if (k.ket) h += '<p class="text-sm text-slate-700 whitespace-pre-line">' + fmt(k.ket) + '</p>';
-    if (k.kode) h += '<div class="flex items-center gap-2 text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2"><span class="text-slate-500">Kode:</span><span class="font-mono font-semibold tracking-wide flex-1 break-all">' + esc(k.kode) + '</span><button type="button" data-copy="' + esc(k.kode) + '" class="text-xs font-medium text-primary underline shrink-0">Salin</button></div>';
-    h += '<div class="flex-1"></div><div class="flex flex-wrap gap-2 pt-1">'
-      + '<a href="' + esc(k.link) + '" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition" style="background:' + pc + '">Masuk Kelas</a>';
-    if (httpsOk(k.materi)) h += '<a href="' + esc(k.materi) + '" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition">Materi / Tugas</a>';
+    if (tutup) h += '<p class="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2 whitespace-pre-line">' + (k.pesanTutup ? fmt(k.pesanTutup) : 'Kelas ini sedang ditutup. Silakan tunggu informasi dari guru.') + '</p>';
+    if (k.kode && !tutup) h += '<div class="flex items-center gap-2 text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2"><span class="text-slate-500">Kode:</span><span class="font-mono font-semibold tracking-wide flex-1 break-all">' + esc(k.kode) + '</span><button type="button" data-copy="' + esc(k.kode) + '" class="text-xs font-medium text-primary underline shrink-0">Salin</button></div>';
+    h += '<div class="flex-1"></div><div class="flex flex-wrap gap-2 pt-1">';
+    if (tutup) h += '<button type="button" disabled aria-disabled="true" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-200 text-slate-500 cursor-not-allowed">Kelas Ditutup</button>';
+    else h += '<a href="' + esc(k.link) + '" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition" style="background:' + pc + '">Masuk Kelas</a>';
+    if (httpsOk(k.materi) && !tutup) h += '<a href="' + esc(k.materi) + '" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition">Materi / Tugas</a>';
     card.innerHTML = h + '</div></div>'; box.append(card);
   });
 }
@@ -2344,8 +2385,17 @@ function renderKelasAdmin() {
     const n = document.createElement('p'); n.className = 'font-semibold text-sm truncate'; n.textContent = (k.nama || '') + (k.aktif === false ? ' (disembunyikan)' : '');
     const c = document.createElement('p'); c.className = 'text-xs text-slate-500 truncate'; c.textContent = [k.kelas, jadwalTxt(k), pn, k.guru].filter(Boolean).join(' | ');
     info.append(n, c);
+    const buka = k.buka !== false;
+    const sw = document.createElement('button'); sw.type = 'button'; sw.setAttribute('role', 'switch'); sw.setAttribute('aria-checked', String(buka));
+    sw.title = buka ? 'Klik untuk menutup kelas' : 'Klik untuk membuka kelas'; sw.textContent = buka ? 'Dibuka' : 'Ditutup';
+    sw.className = 'px-3 py-1 rounded-full text-xs font-semibold shrink-0 border ' + (buka ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-600 border-red-200');
+    sw.onclick = async () => {
+      if (!confirm(buka ? 'Tutup kelas "' + (k.nama || '') + '"? Siswa tidak bisa masuk sampai dibuka lagi.' : 'Buka kelas "' + (k.nama || '') + '"?')) return;
+      sw.disabled = true;
+      await saveKelas(kelasAdmin.map(x => x.id === k.id ? { ...x, buka: !buka } : x));
+    };
     const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Edit'; b.className = 'px-3 py-1 rounded bg-primary text-white text-sm shrink-0'; b.onclick = () => openKelas(k.id);
-    row.append(dot, info, b); box.append(row);
+    row.append(dot, info, sw, b); box.append(row);
   });
 }
 async function saveKelas(list) {
@@ -2359,7 +2409,7 @@ function openKelas(id) {
   $('klHari').value = k.hari || 'Senin'; $('klMulai').value = k.mulai || ''; $('klSelesai').value = k.selesai || '';
   $('klPlatform').value = PLATFORM[k.platform] ? k.platform : 'classroom'; $('klKode').value = k.kode || '';
   $('klLink').value = k.link || ''; $('klMateri').value = k.materi || ''; $('klKet').value = k.ket || '';
-  $('klAktif').checked = k.aktif !== false; $('klHapus').classList.toggle('hidden', !k.id);
+  $('klAktif').checked = k.aktif !== false; $('klBuka').checked = k.buka !== false; $('klPesanTutup').value = k.pesanTutup || ''; $('klHapus').classList.toggle('hidden', !k.id);
   $('kelasModal').classList.remove('hidden');
 }
 const kelasTutup = () => $('kelasModal').classList.add('hidden');
@@ -2375,7 +2425,8 @@ $('klSimpan').onclick = async () => {
   if (a !== null && b !== null && b <= a) return alert('Jam selesai harus setelah jam mulai.');
   const item = { id: kelasEdit || ('kl' + Date.now().toString(36)), nama: g('klNama'), kelas: $('klKelas').value, guru: g('klGuru'),
     hari: $('klHari').value, mulai: g('klMulai'), selesai: g('klSelesai'), platform: $('klPlatform').value, kode: g('klKode'),
-    link: g('klLink'), materi: g('klMateri'), ket: g('klKet'), aktif: $('klAktif').checked };
+    link: g('klLink'), materi: g('klMateri'), ket: g('klKet'), aktif: $('klAktif').checked,
+    buka: $('klBuka').checked, pesanTutup: g('klPesanTutup') };
   const list = [...kelasAdmin]; const i = list.findIndex(x => x.id === item.id);
   if (i >= 0) list[i] = item; else list.push(item);
   if (await saveKelas(list)) kelasTutup();
