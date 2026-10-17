@@ -48,7 +48,7 @@
   body { -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; line-height:1.65; }
   h1, h2, h3 { letter-spacing:-.01em; }
   header.sticky { background:rgba(255,255,255,.88); backdrop-filter:saturate(1.4) blur(10px); -webkit-backdrop-filter:saturate(1.4) blur(10px); box-shadow:none; border-bottom:1px solid rgba(226,232,240,.9); }
-  .navLink { position:relative; padding:.5rem .7rem; border-radius:.4rem; color:#475569; font-weight:500; }
+  .navLink { position:relative; padding:.5rem .55rem; border-radius:.4rem; color:#475569; font-weight:500; }
   .navLink:hover { background:transparent; color:var(--primary); }
   .navLink.nav-on, .navLink.nav-on:hover { background:transparent; color:var(--primary); font-weight:600; border-radius:0; box-shadow:inset 0 -2px 0 var(--accent); }
   .rounded-xl.shadow { border:1px solid rgba(226,232,240,.85); border-radius:1rem; box-shadow:0 1px 2px rgba(15,23,42,.04), 0 10px 28px -12px rgba(15,23,42,.14); }
@@ -70,6 +70,9 @@
   .capIn { animation:fadeUp .6s ease both; }
   @media (prefers-reduced-motion:reduce) { .hs { transition:opacity .01s; transform:none; } .hs.on { transform:none; } .capIn { animation:none; } }
   .deepHi { outline:3px solid var(--accent); outline-offset:3px; border-radius:.75rem; transition:outline-color .4s; }
+  @keyframes liveDot { 0% { box-shadow:0 0 0 0 rgba(22,163,74,.55); } 70% { box-shadow:0 0 0 8px rgba(22,163,74,0); } 100% { box-shadow:0 0 0 0 rgba(22,163,74,0); } }
+  .liveDot { width:.5rem; height:.5rem; border-radius:9999px; background:#16a34a; animation:liveDot 1.6s infinite; }
+  @media (prefers-reduced-motion:reduce) { .liveDot { animation:none; } }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -82,10 +85,11 @@
 <header class="sticky top-0 z-40 bg-white shadow">
   <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
     <div class="flex items-center gap-2.5 min-w-0"><span id="brandMark" class="shrink-0 w-10 h-10 rounded-xl bg-primary text-white text-sm font-bold flex items-center justify-center" style="font-family:var(--font-h)">S</span><a href="#beranda" id="navNama" class="font-bold text-primary text-lg leading-tight truncate" style="font-family:var(--font-h)">[Nama Sekolah]</a></div>
-    <nav class="hidden lg:flex gap-0.5 text-sm font-medium">
+    <nav class="hidden xl:flex gap-0 text-sm font-medium">
       <a href="#beranda" data-p="beranda" class="navLink">Beranda</a>
       <a href="#profil" data-p="profil" class="navLink">Profil</a>
     <a href="#guru" data-p="guru" class="navLink">Guru</a>
+    <a href="#kelas" data-p="kelas" class="navLink">Kelas Online</a>
     <a href="#karya" data-p="karya" class="navLink">Karya</a>
     <a href="#dokumentasi" data-p="dokumentasi" class="navLink">Dokumentasi</a>
       <a href="#statistik" data-p="statistik" class="navLink">Statistik</a>
@@ -95,10 +99,11 @@
     </nav>
     <button id="btnAdmin" class="px-4 py-1.5 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition">Login Admin</button>
   </div>
-  <nav class="lg:hidden flex gap-1 overflow-x-auto px-3 pb-2 text-sm font-medium border-t border-slate-100 pt-2">
+  <nav class="xl:hidden flex gap-1 overflow-x-auto px-3 pb-2 text-sm font-medium border-t border-slate-100 pt-2">
     <a href="#beranda" data-p="beranda" class="navLink">Beranda</a>
     <a href="#profil" data-p="profil" class="navLink">Profil</a>
     <a href="#guru" data-p="guru" class="navLink">Guru</a>
+    <a href="#kelas" data-p="kelas" class="navLink">Kelas Online</a>
     <a href="#karya" data-p="karya" class="navLink">Karya</a>
     <a href="#dokumentasi" data-p="dokumentasi" class="navLink">Dokumentasi</a>
     <a href="#statistik" data-p="statistik" class="navLink">Statistik</a>
@@ -136,6 +141,7 @@
       <div class="mt-7 flex flex-wrap gap-3">
         <a href="#ppdb" class="px-6 py-2.5 rounded-full bg-accent text-slate-900 font-semibold shadow-lg hover:brightness-95 transition">Daftar PPDB</a>
         <a href="#sambutan" class="px-6 py-2.5 rounded-full border border-white/60 font-semibold hover:bg-white hover:text-slate-900 transition">Jelajahi Profil</a>
+        <a href="#kelas" class="px-6 py-2.5 rounded-full border border-white/60 font-semibold hover:bg-white hover:text-slate-900 transition">Kelas Online</a>
         <a id="btnYt" target="_blank" rel="noopener" class="hidden px-6 py-2.5 rounded-full bg-red-600 hover:opacity-90 text-white font-semibold transition">YouTube Sekolah</a>
       </div>
     </div>
@@ -243,6 +249,17 @@
   </section>
 </div>
 
+<!-- ============ PANEL KELAS ONLINE ============ -->
+<div id="p-kelas" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Kelas Online</h2><p>Pilih kelas, lalu klik Masuk Kelas untuk belajar dari mana saja.</p><i></i></div></div>
+  <section id="kelas" class="max-w-6xl mx-auto px-4 py-8">
+    <div id="kelasPetunjukBox" hidden class="mb-5 rounded-xl border border-slate-200 bg-soft p-4 text-sm text-slate-700 leading-relaxed whitespace-pre-line"></div>
+    <div id="kelasChips" class="flex flex-wrap gap-2 mb-5"></div>
+    <div id="listKelas" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    <p id="kelasKosong" hidden class="text-center text-slate-500">Belum ada kelas online.</p>
+  </section>
+</div>
+
 <!-- ============ PANEL KARYA ============ -->
 <div id="p-karya" class="pnl hidden">
   <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Hasil Karya</h2><p>Aplikasi dan karya yang dikembangkan di sekolah kami.</p><i></i></div></div>
@@ -333,7 +350,7 @@
     <div>
       <p class="text-white font-semibold mb-3">Tautan</p>
       <ul class="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
-        <li><a href="#profil" class="hover:text-white transition">Profil</a></li><li><a href="#guru" class="hover:text-white transition">Guru</a></li><li><a href="#karya" class="hover:text-white transition">Karya</a></li><li><a href="#dokumentasi" class="hover:text-white transition">Dokumentasi</a></li><li><a href="#statistik" class="hover:text-white transition">Statistik</a></li><li><a href="#berita" class="hover:text-white transition">Berita</a></li><li><a href="#ppdb" class="hover:text-white transition">PPDB</a></li><li><a href="#kontak" class="hover:text-white transition">Kontak</a></li>
+        <li><a href="#profil" class="hover:text-white transition">Profil</a></li><li><a href="#guru" class="hover:text-white transition">Guru</a></li><li><a href="#kelas" class="hover:text-white transition">Kelas Online</a></li><li><a href="#karya" class="hover:text-white transition">Karya</a></li><li><a href="#dokumentasi" class="hover:text-white transition">Dokumentasi</a></li><li><a href="#statistik" class="hover:text-white transition">Statistik</a></li><li><a href="#berita" class="hover:text-white transition">Berita</a></li><li><a href="#ppdb" class="hover:text-white transition">PPDB</a></li><li><a href="#kontak" class="hover:text-white transition">Kontak</a></li>
       </ul>
     </div>
     <div id="footKolKontak" hidden>
@@ -441,6 +458,41 @@
   <button id="fotoNext" type="button" class="absolute right-1 sm:right-5 text-white text-5xl px-2 leading-none" aria-label="Berikutnya">&#8250;</button>
 </div>
 
+<!-- MODAL FORM KELAS ONLINE (admin) -->
+<div id="kelasModal" class="hidden fixed inset-0 z-[70] bg-black/60 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[92vh] overflow-y-auto">
+    <div class="flex items-start justify-between mb-4">
+      <h3 id="klTitle" class="text-xl font-bold text-primary" style="font-family:var(--font-h)">Tambah Kelas</h3>
+      <button id="klX" type="button" class="text-2xl leading-none text-slate-500 hover:text-slate-800" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="space-y-3">
+      <div><label class="block text-sm font-medium mb-1">Nama kelas / mata pelajaran</label><input id="klNama" maxlength="80" class="inp" placeholder="Contoh: Matematika"></div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div><label class="block text-sm font-medium mb-1">Untuk kelas</label><select id="klKelas" class="inp"><option value="Kelas 1">Kelas 1</option><option value="Kelas 2">Kelas 2</option><option value="Kelas 3">Kelas 3</option><option value="Kelas 4">Kelas 4</option><option value="Kelas 5">Kelas 5</option><option value="Kelas 6">Kelas 6</option><option value="Semua kelas">Semua kelas</option></select></div>
+        <div><label class="block text-sm font-medium mb-1">Guru pengampu</label><input id="klGuru" maxlength="80" class="inp"></div>
+      </div>
+      <div class="grid grid-cols-3 gap-3">
+        <div><label class="block text-sm font-medium mb-1">Hari</label><select id="klHari" class="inp"><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option><option value="Sabtu">Sabtu</option><option value="Minggu">Minggu</option><option value="Setiap hari">Setiap hari</option><option value="Fleksibel">Fleksibel (tanpa jadwal)</option></select></div>
+        <div><label class="block text-sm font-medium mb-1">Mulai</label><input id="klMulai" type="time" class="inp"></div>
+        <div><label class="block text-sm font-medium mb-1">Selesai</label><input id="klSelesai" type="time" class="inp"></div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div><label class="block text-sm font-medium mb-1">Platform</label><select id="klPlatform" class="inp"><option value="classroom">Google Classroom</option><option value="meet">Google Meet</option><option value="zoom">Zoom</option><option value="teams">Microsoft Teams</option><option value="youtube">YouTube</option><option value="whatsapp">Grup WhatsApp</option><option value="lainnya">Platform lain</option></select></div>
+        <div><label class="block text-sm font-medium mb-1">Kode kelas / passcode (opsional)</label><input id="klKode" maxlength="60" class="inp"></div>
+      </div>
+      <div><label class="block text-sm font-medium mb-1">Link masuk kelas</label><input id="klLink" type="url" class="inp" placeholder="https://classroom.google.com/..."></div>
+      <div><label class="block text-sm font-medium mb-1">Link materi / tugas (opsional)</label><input id="klMateri" type="url" class="inp" placeholder="https://drive.google.com/..."></div>
+      <div><label class="block text-sm font-medium mb-1">Keterangan (opsional)</label><textarea id="klKet" rows="2" maxlength="400" class="inp"></textarea></div>
+      <label class="flex items-center gap-2 text-sm"><input id="klAktif" type="checkbox" checked> Tampilkan di website</label>
+    </div>
+    <div class="flex items-center gap-4 mt-5">
+      <button id="klSimpan" type="button" class="px-6 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button>
+      <button id="klBatal" type="button" class="text-sm underline text-slate-600">Batal</button>
+      <button id="klHapus" type="button" class="hidden text-sm underline text-red-600">Hapus</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL LOGIN -->
 <div id="loginModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
   <form id="loginForm" class="bg-white rounded-xl p-6 w-full max-w-sm space-y-4">
@@ -470,6 +522,7 @@
       <button data-tab="tBerita" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Berita / Pengumuman</button>
       <button data-tab="tProfil" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Profil, Kontak & PPDB</button>
       <button data-tab="tGuru" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Guru</button>
+      <button data-tab="tKelas" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Kelas Online</button>
       <button data-tab="tKarya" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Hasil Karya</button>
       <button data-tab="tLatar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Foto Latar</button>
       <button data-tab="tDok" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Dokumentasi</button>
@@ -577,6 +630,23 @@
         <p class="text-xs text-slate-500">Data di sini tampil untuk umum. Jangan isi NIP, nomor HP, atau alamat pribadi.</p>
       </form>
       <div id="gList" class="space-y-2"></div>
+    </div>
+
+    <!-- tab kelas online -->
+    <div id="tKelas" class="tabBox hidden space-y-4">
+      <div class="bg-white rounded-xl shadow p-5 space-y-3">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div><h3 class="font-bold text-primary">Kelas Online</h3><p class="text-xs text-slate-500">Daftar kelas yang tampil di menu Kelas Online. Siswa memilih kelasnya lalu masuk lewat link.</p></div>
+          <button id="klTambah" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">+ Tambah Kelas</button>
+        </div>
+        <div id="kelasAdminList" class="space-y-2"></div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 space-y-2">
+        <h3 class="font-bold text-primary">Petunjuk untuk Siswa (opsional)</h3>
+        <textarea id="klPetunjuk" rows="3" maxlength="800" class="inp" placeholder="Contoh: Masuk memakai akun belajar.id. Siapkan buku dan alat tulis 5 menit sebelum kelas dimulai."></textarea>
+        <div class="flex items-center gap-3"><button id="klSimpanPet" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan petunjuk</button><span id="klPetMsg" class="text-sm text-green-700"></span></div>
+      </div>
+      <p class="text-xs bg-amber-50 border border-amber-200 text-amber-900 rounded-lg p-3 leading-relaxed"><b>Perhatian keamanan:</b> semua yang diisi di sini bisa dilihat siapa saja yang membuka website. Aktifkan kode kelas atau persetujuan guru di Google Classroom, atau passcode di Zoom/Meet. Jangan menulis kata sandi akun pribadi.</p>
     </div>
 
     <!-- tab hasil karya -->
@@ -831,6 +901,7 @@ async function loadSettings() {
   applyProfil(s);
   applyKarya(s);
   applyLatarCfg(s);
+  applyKelas(s);
   if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; }
   if (s.tagline) $('heroTagline').innerHTML = fmt(s.tagline);
   if (s.sambutan) $('sambutanTeks').innerHTML = fmt(s.sambutan);
@@ -950,6 +1021,7 @@ async function openPanel() {
   fillStat(s);
   karyaAdmin = Array.isArray(s.karya) ? s.karya : []; renderKaryaAdmin();
   $('lDetik').value = s.latarDetik || 6;
+  kelasAdmin = Array.isArray(s.kelasOnline) ? s.kelasOnline : []; $('klPetunjuk').value = s.kelasPetunjuk || ''; renderKelasAdmin();
   [['pTentang','tentang'],['pVisi','visi'],['pMisi','misi'],['pAlamat','alamat'],['pTelp','telp'],['pEmail','email'],['pWa','wa'],['pJam','jam'],['pIg','ig'],['pFb','fb'],['pMaps','maps'],['pPpdb','ppdbInfo']].forEach(([i,k]) => $(i).value = s[k] || '');
   adminBerita(); adminPendaftar(); adminGuru(); adminDok(); adminLatar();
 }
@@ -1525,7 +1597,7 @@ window.chartsReady = true;
 
 
 /* ---------- Navigasi panel (halaman tidak memanjang ke bawah) ---------- */
-const PANEL_OF = { beranda:'beranda', dokumentasi:'dokumentasi', karya:'karya', profil:'profil', kontak:'kontak', sambutan:'beranda', video:'beranda', pengumuman:'beranda', guru:'guru', statistik:'statistik', berita:'berita', ppdb:'ppdb' };
+const PANEL_OF = { beranda:'beranda', kelas:'kelas', dokumentasi:'dokumentasi', karya:'karya', profil:'profil', kontak:'kontak', sambutan:'beranda', video:'beranda', pengumuman:'beranda', guru:'guru', statistik:'statistik', berita:'berita', ppdb:'ppdb' };
 let deepLink = null;
 function parseDeep(h) { const m = String(h || '').match(/^(berita|pengumuman)\/([\w-]{5,40})$/); return m ? { kind: m[1], id: m[2] } : null; }
 function applyDeep() {
@@ -2144,6 +2216,145 @@ $('lSimpanCfg').onclick = async () => {
     $('lCfgMsg').textContent = 'Tersimpan.'; setTimeout(() => $('lCfgMsg').textContent = '', 2500); }
   catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
 };
+
+/* ---------- Kelas Online ---------- */
+const KELAS_ORDER = ['Kelas 1', 'Kelas 2', 'Kelas 3', 'Kelas 4', 'Kelas 5', 'Kelas 6', 'Semua kelas'];
+const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+const HARI_URUT = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu', 'Setiap hari', 'Fleksibel'];
+const PLATFORM = { classroom: ['Google Classroom', '#188038'], meet: ['Google Meet', '#00897b'], zoom: ['Zoom', '#2563eb'], teams: ['Microsoft Teams', '#5059c9'],
+  youtube: ['YouTube', '#dc2626'], whatsapp: ['Grup WhatsApp', '#16a34a'], lainnya: ['Platform lain', '#475569'] };
+let kelasData = [], kelasPetunjuk = '', kelasFilter = 'Semua', kelasAdmin = [], kelasEdit = null;
+const toMin = (t) => /^\d{2}:\d{2}$/.test(t || '') ? (+t.slice(0, 2)) * 60 + (+t.slice(3)) : null;
+function kelasStatus(k) {
+  const now = new Date(), hr = HARI[now.getDay()];
+  if (k.hari !== hr && k.hari !== 'Setiap hari') return HARI.includes(k.hari) ? 'lain' : 'fleksibel';
+  const m = now.getHours() * 60 + now.getMinutes(), a = toMin(k.mulai), b = toMin(k.selesai);
+  if (a === null) return 'hariini';
+  if (b !== null && m > b) return 'selesai';
+  return m >= a ? 'live' : 'nanti';
+}
+function jadwalTxt(k) {
+  if (!k.hari || k.hari === 'Fleksibel') return 'Jadwal fleksibel';
+  const a = k.mulai ? ', ' + k.mulai + (k.selesai ? ' - ' + k.selesai : '') : '';
+  return k.hari + a;
+}
+function applyKelas(s) {
+  kelasData = Array.isArray(s.kelasOnline) ? s.kelasOnline : []; kelasPetunjuk = s.kelasPetunjuk || '';
+  renderKelas();
+}
+function renderKelas() {
+  const aktif = kelasData.filter(k => k.aktif !== false && httpsOk(k.link));
+  const pb = $('kelasPetunjukBox'); pb.innerHTML = fmt(kelasPetunjuk); pb.hidden = !kelasPetunjuk;
+  const ada = KELAS_ORDER.filter(x => aktif.some(k => k.kelas === x));
+  const opsi = ['Semua', 'Hari ini', ...ada.filter(x => x !== 'Semua kelas')];
+  if (!opsi.includes(kelasFilter)) kelasFilter = 'Semua';
+  const ch = $('kelasChips'); ch.innerHTML = '';
+  if (aktif.length) opsi.forEach(v => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = v;
+    b.className = 'px-3.5 py-1.5 rounded-full text-sm border transition ' + (v === kelasFilter ? 'bg-primary text-white border-primary' : 'border-slate-300 text-slate-700 bg-white hover:bg-slate-100');
+    b.onclick = () => { kelasFilter = v; renderKelas(); }; ch.append(b);
+  });
+  const hr = HARI[new Date().getDay()];
+  let list = aktif;
+  if (kelasFilter === 'Hari ini') list = aktif.filter(k => k.hari === hr || k.hari === 'Setiap hari');
+  else if (kelasFilter !== 'Semua') list = aktif.filter(k => k.kelas === kelasFilter || k.kelas === 'Semua kelas');
+  const rank = { live: 0, nanti: 1, hariini: 1, lain: 2, fleksibel: 2, selesai: 3 };
+  list = list.map(k => ({ k, st: kelasStatus(k) })).sort((x, y) =>
+    rank[x.st] - rank[y.st] || KELAS_ORDER.indexOf(x.k.kelas) - KELAS_ORDER.indexOf(y.k.kelas) || (x.k.mulai || '').localeCompare(y.k.mulai || ''));
+  const box = $('listKelas'); box.innerHTML = '';
+  $('kelasKosong').hidden = list.length > 0;
+  $('kelasKosong').textContent = aktif.length ? 'Tidak ada kelas untuk pilihan ini.' : 'Belum ada kelas online.';
+  list.forEach(({ k, st }) => {
+    const [pn, pc] = PLATFORM[k.platform] || PLATFORM.lainnya;
+    const badge = st === 'live' ? '<span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1"><span class="liveDot"></span>Sedang berlangsung</span>'
+      : st === 'nanti' ? '<span class="rounded-full bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1">Hari ini, mulai ' + esc(k.mulai) + '</span>'
+      : st === 'hariini' ? '<span class="rounded-full bg-amber-50 text-amber-700 text-xs font-semibold px-2.5 py-1">Hari ini</span>'
+      : st === 'selesai' ? '<span class="rounded-full bg-slate-100 text-slate-500 text-xs font-semibold px-2.5 py-1">Selesai hari ini</span>' : '';
+    const card = document.createElement('article');
+    card.className = 'bg-white rounded-xl shadow overflow-hidden flex flex-col';
+    card.style.borderTop = '4px solid ' + pc;
+    let h = '<div class="p-5 flex flex-col gap-2.5 flex-1">';
+    h += '<div class="flex flex-wrap items-center gap-2"><span class="rounded-full text-xs font-semibold px-2.5 py-1 text-white" style="background:' + pc + '">' + esc(pn) + '</span>'
+      + '<span class="rounded-full bg-soft text-primary text-xs font-semibold px-2.5 py-1">' + esc(k.kelas || '') + '</span>' + badge + '</div>';
+    h += '<h3 class="text-lg font-bold text-slate-800 leading-snug">' + esc(k.nama) + '</h3>';
+    if (k.guru) h += '<p class="text-sm text-slate-600">Guru: <span class="font-medium">' + esc(k.guru) + '</span></p>';
+    h += '<p class="text-sm text-slate-600">' + esc(jadwalTxt(k)) + '</p>';
+    if (k.ket) h += '<p class="text-sm text-slate-700 whitespace-pre-line">' + fmt(k.ket) + '</p>';
+    if (k.kode) h += '<div class="flex items-center gap-2 text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2"><span class="text-slate-500">Kode:</span><span class="font-mono font-semibold tracking-wide flex-1 break-all">' + esc(k.kode) + '</span><button type="button" data-copy="' + esc(k.kode) + '" class="text-xs font-medium text-primary underline shrink-0">Salin</button></div>';
+    h += '<div class="flex-1"></div><div class="flex flex-wrap gap-2 pt-1">'
+      + '<a href="' + esc(k.link) + '" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg text-sm font-semibold text-white hover:opacity-90 transition" style="background:' + pc + '">Masuk Kelas</a>';
+    if (httpsOk(k.materi)) h += '<a href="' + esc(k.materi) + '" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-700 hover:bg-slate-100 transition">Materi / Tugas</a>';
+    card.innerHTML = h + '</div></div>'; box.append(card);
+  });
+}
+$('listKelas').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-copy]'); if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Tersalin'; } catch (er) { prompt('Salin kode berikut:', b.dataset.copy); }
+  setTimeout(() => { b.textContent = 'Salin'; }, 1800);
+});
+setInterval(() => { if (!$('p-kelas').classList.contains('hidden')) renderKelas(); }, 60000);
+
+/* panel admin */
+function urutKelas(a, b) {
+  return KELAS_ORDER.indexOf(a.kelas) - KELAS_ORDER.indexOf(b.kelas) || HARI_URUT.indexOf(a.hari) - HARI_URUT.indexOf(b.hari) || (a.mulai || '').localeCompare(b.mulai || '');
+}
+function renderKelasAdmin() {
+  const box = $('kelasAdminList'); box.innerHTML = '';
+  if (!kelasAdmin.length) { box.innerHTML = '<p class="text-sm text-slate-500">Belum ada kelas. Klik "+ Tambah Kelas".</p>'; return; }
+  [...kelasAdmin].sort(urutKelas).forEach(k => {
+    const [pn, pc] = PLATFORM[k.platform] || PLATFORM.lainnya;
+    const row = document.createElement('div'); row.className = 'flex items-center gap-3 border border-slate-200 rounded-lg p-3' + (k.aktif === false ? ' opacity-60' : '');
+    const dot = document.createElement('span'); dot.className = 'w-3 h-3 rounded-full shrink-0'; dot.style.background = pc;
+    const info = document.createElement('div'); info.className = 'flex-1 min-w-0';
+    const n = document.createElement('p'); n.className = 'font-semibold text-sm truncate'; n.textContent = (k.nama || '') + (k.aktif === false ? ' (disembunyikan)' : '');
+    const c = document.createElement('p'); c.className = 'text-xs text-slate-500 truncate'; c.textContent = [k.kelas, jadwalTxt(k), pn, k.guru].filter(Boolean).join(' | ');
+    info.append(n, c);
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Edit'; b.className = 'px-3 py-1 rounded bg-primary text-white text-sm shrink-0'; b.onclick = () => openKelas(k.id);
+    row.append(dot, info, b); box.append(row);
+  });
+}
+async function saveKelas(list) {
+  try { await db.collection('settings').doc('site').set({ kelasOnline: list }, { merge: true }); kelasAdmin = list; renderKelasAdmin(); return true; }
+  catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); return false; }
+}
+function openKelas(id) {
+  const k = kelasAdmin.find(x => x.id === id) || {}; kelasEdit = k.id || null;
+  $('klTitle').textContent = k.id ? 'Edit ' + (k.nama || '') : 'Tambah Kelas';
+  $('klNama').value = k.nama || ''; $('klKelas').value = k.kelas || 'Kelas 1'; $('klGuru').value = k.guru || '';
+  $('klHari').value = k.hari || 'Senin'; $('klMulai').value = k.mulai || ''; $('klSelesai').value = k.selesai || '';
+  $('klPlatform').value = PLATFORM[k.platform] ? k.platform : 'classroom'; $('klKode').value = k.kode || '';
+  $('klLink').value = k.link || ''; $('klMateri').value = k.materi || ''; $('klKet').value = k.ket || '';
+  $('klAktif').checked = k.aktif !== false; $('klHapus').classList.toggle('hidden', !k.id);
+  $('kelasModal').classList.remove('hidden');
+}
+const kelasTutup = () => $('kelasModal').classList.add('hidden');
+$('klTambah').onclick = () => openKelas(null);
+$('klX').onclick = kelasTutup; $('klBatal').onclick = kelasTutup;
+$('klSimpan').onclick = async () => {
+  const g = (i) => $(i).value.trim();
+  if (!g('klNama')) return alert('Nama kelas / mata pelajaran wajib diisi.');
+  if (!httpsOk(g('klLink'))) return alert('Link masuk kelas wajib diisi dan diawali https://');
+  if (g('klMateri') && !httpsOk(g('klMateri'))) return alert('Link materi harus diawali https://');
+  const a = toMin(g('klMulai')), b = toMin(g('klSelesai'));
+  if (b !== null && a === null) return alert('Isi jam mulai terlebih dahulu.');
+  if (a !== null && b !== null && b <= a) return alert('Jam selesai harus setelah jam mulai.');
+  const item = { id: kelasEdit || ('kl' + Date.now().toString(36)), nama: g('klNama'), kelas: $('klKelas').value, guru: g('klGuru'),
+    hari: $('klHari').value, mulai: g('klMulai'), selesai: g('klSelesai'), platform: $('klPlatform').value, kode: g('klKode'),
+    link: g('klLink'), materi: g('klMateri'), ket: g('klKet'), aktif: $('klAktif').checked };
+  const list = [...kelasAdmin]; const i = list.findIndex(x => x.id === item.id);
+  if (i >= 0) list[i] = item; else list.push(item);
+  if (await saveKelas(list)) kelasTutup();
+};
+$('klHapus').onclick = async () => {
+  if (!kelasEdit || !confirm('Hapus kelas ini?')) return;
+  if (await saveKelas(kelasAdmin.filter(x => x.id !== kelasEdit))) kelasTutup();
+};
+$('klSimpanPet').onclick = async () => {
+  try { await db.collection('settings').doc('site').set({ kelasPetunjuk: $('klPetunjuk').value.trim() }, { merge: true });
+    $('klPetMsg').textContent = 'Tersimpan.'; setTimeout(() => $('klPetMsg').textContent = '', 2500); }
+  catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+['klKet', 'klPetunjuk'].forEach(addBoldBar);
 
 showPanel(location.hash.slice(1));
 
