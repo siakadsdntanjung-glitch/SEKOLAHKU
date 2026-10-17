@@ -26,6 +26,7 @@
   .pageHead h2 { font-size:1.75rem; font-weight:700; line-height:1.2; }
   .pageHead p { color:rgba(255,255,255,.8); font-size:.9rem; margin-top:.35rem; }
   .pageHead i { display:block; width:3rem; height:4px; border-radius:2px; background:var(--accent); margin-top:.9rem; }
+  img.rounded-full, .gPh { object-position:center 10%; }
   .gCard { position:relative; overflow:hidden; width:12rem; min-height:18.5rem; background:#fff; border-radius:.9rem; box-shadow:0 1px 3px rgba(15,23,42,.08),0 4px 14px rgba(15,23,42,.05); padding:1.5rem 1rem 1rem; text-align:center; display:flex; flex-direction:column; align-items:center; transition:box-shadow .2s, transform .2s; }
   .gCard::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent); }
   .gCard:hover { box-shadow:0 8px 24px rgba(15,23,42,.12); transform:translateY(-2px); }
@@ -1011,12 +1012,16 @@ function compressFoto(file) {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const size = 400, c = document.createElement('canvas');
-      c.width = c.height = size;
+      const W = img.width, H = img.height;
+      // Simpan foto sampai rasio 3:4 (potret) dan ambil dari ATAS agar kepala tidak terpotong.
+      const sw = Math.min(W, H * 4 / 3), sh = Math.min(H, W * 4 / 3);
+      const sx = (W - sw) / 2, sy = 0;
+      const k = Math.min(1, 480 / Math.max(sw, sh));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(sw * k)); c.height = Math.max(1, Math.round(sh * k));
       const ctx = c.getContext('2d');
-      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size, size);
-      const m = Math.min(img.width, img.height);
-      ctx.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, size, size);
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
       let q = 0.85, out = c.toDataURL('image/jpeg', q);
       while (out.length > 120000 && q > 0.4) { q -= 0.1; out = c.toDataURL('image/jpeg', q); }
