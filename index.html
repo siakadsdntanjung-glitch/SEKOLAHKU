@@ -1918,10 +1918,22 @@ $('kaSimpan').onclick = async () => {
   const nama = g('kaNama'); if (!nama) return alert('Nama aplikasi/karya wajib diisi.');
   const yt = g('kaYt'); if (yt && !(ytUrlOk(yt) && ytId(yt))) return alert('Link YouTube tidak valid. Gunakan alamat https dari youtube.com atau youtu.be yang mengarah ke satu video.');
   const tautan = [];
-  for (const r of document.querySelectorAll('#kaLinks .kaLink')) {
-    const label = r.querySelector('.kaLabel').value.trim(), url = r.querySelector('.kaUrl').value.trim();
+  // rapikan salah ketik umum: "ttps://", "http://", tanpa awalan, spasi di dalam link; awalan https:// yang salah masuk ke nama tombol
+  const fixUrl = (u) => {
+    u = String(u || '').replace(/\s+/g, '');
+    if (/^ttps?:\/\//i.test(u)) u = 'h' + u;
+    else if (/^(www\.|[a-z0-9-]+(\.[a-z0-9-]+)+(\/|$))/i.test(u) && !/^[a-z][a-z0-9+.-]*:/i.test(u)) u = 'https://' + u;
+    if (/^http:\/\//i.test(u)) u = 'https://' + u.slice(7);
+    return u;
+  };
+  const rows = [...document.querySelectorAll('#kaLinks .kaLink')];
+  for (let n = 0; n < rows.length; n++) {
+    const r = rows[n];
+    const label = r.querySelector('.kaLabel').value.trim().replace(/^https?:\/\/\s*/i, '').trim(), url = fixUrl(r.querySelector('.kaUrl').value.trim());
     if (!label && !url) continue;
-    if (!label || !httpsOk(url)) return alert('Setiap tautan harus punya nama tombol dan alamat yang diawali https://');
+    if (!label) return alert('Tautan nomor ' + (n + 1) + ': nama tombol belum diisi.');
+    if (!httpsOk(url)) return alert('Tautan nomor ' + (n + 1) + ' ("' + label + '"): alamat tidak valid. Pastikan diawali https:// dan tidak ada huruf yang terpotong.');
+    r.querySelector('.kaLabel').value = label; r.querySelector('.kaUrl').value = url;
     tautan.push({ label, url });
   }
   const item = { id: karyaEdit >= 0 ? (karyaAdmin[karyaEdit].id || ('k' + Date.now().toString(36))) : ('k' + Date.now().toString(36)),
