@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beranda Sekolah</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { theme: { extend: { colors: { primary: 'var(--primary)', accent: 'var(--accent)', soft: 'var(--soft)' } } } };</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&family=Nunito:wght@400;600;700&family=Lato:wght@400;700&family=Playfair+Display:wght@600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+  :root { --primary:#1e3a8a; --accent:#f59e0b; --soft:#eff6ff; --overlay:.7; --font-h:'Poppins',sans-serif; --font-b:'Inter',sans-serif; }
+  body { font-family: var(--font-b); }
+  h1, h2, h3 { font-family: var(--font-h); }
+  .inp { width:100%; border:1px solid #cbd5e1; border-radius:.5rem; padding:.5rem .9rem; }
+  .inp:focus { outline:none; box-shadow:0 0 0 2px var(--primary); }
+  .tab-on { background:var(--primary); color:#fff; }
+  html { min-height:100%; }
+  body { min-height:100vh; display:flex; flex-direction:column; }
+  main { flex:1 0 auto; }
+  footer { flex-shrink:0; }
+  .pageHead { background:var(--primary); background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 72%,#000)); color:#fff; }
+  .pageHead h2 { font-size:1.75rem; font-weight:700; line-height:1.2; }
+  .pageHead p { color:rgba(255,255,255,.8); font-size:.9rem; margin-top:.35rem; }
+  .pageHead i { display:block; width:3rem; height:4px; border-radius:2px; background:var(--accent); margin-top:.9rem; }
+  .gCard { position:relative; overflow:hidden; width:12rem; min-height:18.5rem; background:#fff; border-radius:.9rem; box-shadow:0 1px 3px rgba(15,23,42,.08),0 4px 14px rgba(15,23,42,.05); padding:1.5rem 1rem 1rem; text-align:center; display:flex; flex-direction:column; align-items:center; transition:box-shadow .2s, transform .2s; }
+  .gCard::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent); }
+  .gCard:hover { box-shadow:0 8px 24px rgba(15,23,42,.12); transform:translateY(-2px); }
+  .gPh { width:6rem; height:6rem; flex-shrink:0; margin-bottom:.75rem; border-radius:9999px; object-fit:cover; border:3px solid var(--soft); box-shadow:0 2px 6px rgba(15,23,42,.18); }
+  .gIni { background:var(--primary); color:#fff; font-size:2.25rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .gName { font-weight:600; color:var(--primary); font-size:.875rem; line-height:1.35; min-height:2.4rem; display:flex; align-items:center; justify-content:center; }
+  .gPill { margin-top:.5rem; background:var(--soft); color:var(--primary); font-size:.75rem; font-weight:500; padding:.25rem .75rem; border-radius:9999px; }
+  .gMapel { margin-top:.5rem; font-size:.75rem; color:#64748b; }
+  .gBtn { margin-top:auto; width:100%; padding-top:.75rem; min-height:3rem; }
+  .gBtn button { width:100%; font-size:.75rem; font-weight:500; color:var(--primary); border:1px solid color-mix(in srgb,var(--primary) 40%,transparent); border-radius:.5rem; padding:.375rem 0; transition:background .15s,color .15s; }
+  .gBtn button:hover { background:var(--primary); color:#fff; }
+  strong { font-weight:800; }
+  .navLink { padding:.4rem .65rem; border-radius:.5rem; white-space:nowrap; color:#334155; transition:background .15s; }
+  .navLink:hover { background:var(--soft); color:var(--primary); }
+  .navLink.nav-on, .navLink.nav-on:hover { background:var(--primary); color:#fff; }
+  .expHint { font-size:.75rem; color:var(--primary); text-decoration:underline; cursor:pointer; margin-top:.25rem; display:inline-block; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<div id="cfgWarn" class="hidden bg-red-600 text-white text-center text-sm py-2 px-4">
+  Firebase belum dikonfigurasi. Isi <b>firebaseConfig</b> di bagian script file ini.
+</div>
+
+<!-- NAVBAR -->
+<header class="sticky top-0 z-40 bg-white shadow">
+  <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between gap-3">
+    <a href="#beranda" id="navNama" class="font-bold text-primary text-lg leading-tight" style="font-family:var(--font-h)">[Nama Sekolah]</a>
+    <nav class="hidden lg:flex gap-0.5 text-sm font-medium">
+      <a href="#beranda" data-p="beranda" class="navLink">Beranda</a>
+      <a href="#profil" data-p="profil" class="navLink">Profil</a>
+    <a href="#guru" data-p="guru" class="navLink">Guru</a>
+    <a href="#karya" data-p="karya" class="navLink">Karya</a>
+    <a href="#dokumentasi" data-p="dokumentasi" class="navLink">Dokumentasi</a>
+      <a href="#statistik" data-p="statistik" class="navLink">Statistik</a>
+      <a href="#berita" data-p="berita" class="navLink">Berita</a>
+      <a href="#ppdb" data-p="ppdb" class="navLink">PPDB</a>
+    <a href="#kontak" data-p="kontak" class="navLink">Kontak</a>
+    </nav>
+    <button id="btnAdmin" class="px-4 py-1.5 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition">Login Admin</button>
+  </div>
+  <nav class="lg:hidden flex gap-1 overflow-x-auto px-3 pb-2 text-sm font-medium border-t border-slate-100 pt-2">
+    <a href="#beranda" data-p="beranda" class="navLink">Beranda</a>
+    <a href="#profil" data-p="profil" class="navLink">Profil</a>
+    <a href="#guru" data-p="guru" class="navLink">Guru</a>
+    <a href="#karya" data-p="karya" class="navLink">Karya</a>
+    <a href="#dokumentasi" data-p="dokumentasi" class="navLink">Dokumentasi</a>
+    <a href="#statistik" data-p="statistik" class="navLink">Statistik</a>
+    <a href="#berita" data-p="berita" class="navLink">Berita</a>
+    <a href="#ppdb" data-p="ppdb" class="navLink">PPDB</a>
+    <a href="#kontak" data-p="kontak" class="navLink">Kontak</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ PANEL BERANDA ============ -->
+<div id="p-beranda" class="pnl">
+
+  <!-- HERO (diperkecil) -->
+  <section id="hero" class="relative min-h-[36vh] flex items-center justify-center text-center text-white"
+    style="background-image:url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80');background-size:cover;background-position:center;">
+    <div class="absolute inset-0" style="background:rgba(15,23,42,var(--overlay))"></div>
+    <div class="relative z-10 max-w-3xl px-6 py-8">
+      <p class="text-accent text-sm font-semibold mb-1">Selamat Datang di</p>
+      <h1 id="heroNama" class="text-3xl sm:text-4xl font-bold leading-tight mb-3">[Nama Sekolah]</h1>
+      <p id="heroTagline" class="text-sm sm:text-base text-slate-200 mb-5">Mencetak generasi cerdas, berkarakter, dan siap menghadapi masa depan.</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="#ppdb" class="px-6 py-2 rounded-lg bg-accent hover:opacity-90 text-slate-900 font-semibold shadow-lg transition">Daftar PPDB</a>
+        <a href="#sambutan" class="px-6 py-2 rounded-lg border-2 border-white hover:bg-white hover:text-slate-900 font-semibold transition">Jelajahi Profil</a>
+        <a id="btnYt" target="_blank" rel="noopener" class="hidden px-6 py-2 rounded-lg bg-red-600 hover:opacity-90 text-white font-semibold transition">YouTube Sekolah</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sambutan (lebar penuh, semua teks terlihat tanpa gulir) -->
+  <div class="max-w-6xl mx-auto px-4 py-6 space-y-5">
+
+    <section id="sambutan" class="scroll-mt-28 bg-white rounded-xl shadow p-5 sm:p-6">
+      <h2 class="text-xl font-bold text-primary mb-4">Sambutan Kepala Sekolah</h2>
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="md:w-44 shrink-0 text-center">
+          <img id="kepsekImg" alt="Foto Kepala Sekolah" class="hidden w-28 h-28 rounded-full object-cover mx-auto mb-2 border-4 border-soft">
+          <p id="kepsekNama" class="font-semibold text-primary text-sm"></p>
+          <p class="text-xs text-slate-500">Kepala Sekolah</p>
+          <button id="btnKepsekRiwayat" class="hidden mt-2 text-sm text-primary underline">Lihat riwayat</button>
+        </div>
+        <p id="sambutanTeks" class="flex-1 min-w-0 whitespace-pre-line leading-relaxed text-slate-700 text-sm text-justify md:columns-2 md:gap-8">Belum ada teks sambutan.</p>
+      </div>
+    </section>
+
+    <!-- Pengumuman | Video (bila ada video, berdampingan; bila tidak, pengumuman selebar penuh) -->
+    <div class="flex flex-col lg:flex-row gap-5 items-start">
+      <section id="pengumuman" class="scroll-mt-28 w-full flex-1 min-w-0 bg-white rounded-xl shadow p-5">
+        <h2 class="text-xl font-bold text-primary mb-3">Pengumuman</h2>
+        <div id="listPengumuman" class="grid grid-cols-[repeat(auto-fill,minmax(18rem,1fr))] gap-3"></div>
+      </section>
+
+      <section id="video" class="hidden scroll-mt-28 w-full flex-1 min-w-0 bg-white rounded-xl shadow p-5">
+        <h2 class="text-xl font-bold text-primary mb-3">Video Profil Sekolah</h2>
+        <div class="aspect-video rounded-lg overflow-hidden">
+          <iframe id="videoFrame" class="w-full h-full" title="Video profil sekolah" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANEL PROFIL ============ -->
+<div id="p-profil" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Profil Sekolah</h2><p>Mengenal sekolah, visi, dan misi kami.</p><i></i></div></div>
+  <section id="profil" class="max-w-4xl mx-auto px-4 py-8 space-y-5">
+    <div id="tentangBox" class="hidden bg-white rounded-xl shadow p-5"><h3 class="font-bold text-primary mb-2">Tentang Sekolah</h3><p id="tentangTeks" class="text-slate-700 leading-relaxed whitespace-pre-line"></p></div>
+    <div class="grid md:grid-cols-2 gap-5 items-start">
+      <div id="visiBox" class="hidden bg-white rounded-xl shadow p-5 border-t-4 border-accent"><h3 class="font-bold text-primary mb-2">Visi</h3><p id="visiTeks" class="text-slate-700 leading-relaxed whitespace-pre-line"></p></div>
+      <div id="misiBox" class="hidden bg-white rounded-xl shadow p-5 border-t-4 border-accent"><h3 class="font-bold text-primary mb-2">Misi</h3><ol id="misiList" class="list-decimal pl-5 space-y-1.5 text-slate-700"></ol></div>
+    </div>
+    <p id="profilKosong" class="text-center text-slate-500">Profil sekolah belum diisi.</p>
+  </section>
+</div>
+
+<!-- ============ PANEL KONTAK ============ -->
+<div id="p-kontak" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Kontak &amp; Lokasi</h2><p>Hubungi kami atau kunjungi sekolah.</p><i></i></div></div>
+  <section id="kontak" class="max-w-6xl mx-auto px-4 py-8">
+    <div class="grid lg:grid-cols-5 gap-5 items-start">
+      <div class="lg:col-span-2 space-y-3">
+      <div id="kAlamatBox" class="hidden bg-white rounded-xl shadow p-4 flex gap-3">
+        <span class="shrink-0 w-10 h-10 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+        <div class="min-w-0"><p class="text-xs text-slate-500">Alamat</p><p id="kAlamat" class="text-sm font-medium text-slate-800 break-words whitespace-pre-line"></p></div></div>
+      <div id="kTelpBox" class="hidden bg-white rounded-xl shadow p-4 flex gap-3">
+        <span class="shrink-0 w-10 h-10 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></span>
+        <div class="min-w-0"><p class="text-xs text-slate-500">Telepon</p><p id="kTelp" class="text-sm font-medium text-slate-800 break-words whitespace-pre-line"></p></div></div>
+      <div id="kEmailBox" class="hidden bg-white rounded-xl shadow p-4 flex gap-3">
+        <span class="shrink-0 w-10 h-10 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+        <div class="min-w-0"><p class="text-xs text-slate-500">Email</p><p id="kEmail" class="text-sm font-medium text-slate-800 break-words whitespace-pre-line"></p></div></div>
+      <div id="kJamBox" class="hidden bg-white rounded-xl shadow p-4 flex gap-3">
+        <span class="shrink-0 w-10 h-10 rounded-full bg-soft text-primary flex items-center justify-center"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <div class="min-w-0"><p class="text-xs text-slate-500">Jam Layanan</p><p id="kJam" class="text-sm font-medium text-slate-800 break-words whitespace-pre-line"></p></div></div>
+        <div id="kSosmed" class="hidden flex flex-wrap gap-2 pt-1"></div>
+        <p id="kKosong" class="text-slate-500 text-sm">Informasi kontak belum diisi.</p>
+      </div>
+      <div id="kMapBox" class="hidden lg:col-span-3 bg-white rounded-xl shadow overflow-hidden">
+        <iframe id="kMap" title="Peta lokasi sekolah" class="w-full h-80 lg:h-[26rem] border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ PANEL GURU ============ -->
+<div id="p-guru" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Guru &amp; Tenaga Kependidikan</h2><p>Pendidik dan tenaga kependidikan yang melayani peserta didik kami.</p><i></i></div></div>
+  <section id="guru" class="max-w-6xl mx-auto px-4 py-10">
+    <div id="listGuru" class="flex flex-wrap justify-center gap-5"></div>
+  </section>
+</div>
+
+<!-- ============ PANEL KARYA ============ -->
+<div id="p-karya" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Hasil Karya</h2><p>Aplikasi dan karya yang dikembangkan di sekolah kami.</p><i></i></div></div>
+  <section id="karya" class="max-w-6xl mx-auto px-4 py-8">
+    <div id="listKarya" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    <p id="karyaKosong" class="hidden text-center text-slate-500">Belum ada hasil karya.</p>
+  </section>
+</div>
+
+<!-- ============ PANEL DOKUMENTASI ============ -->
+<div id="p-dokumentasi" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Dokumentasi Kegiatan</h2><p>Foto dan video kegiatan sekolah.</p><i></i></div></div>
+  <section id="dokumentasi" class="max-w-6xl mx-auto px-4 py-8">
+    <div id="galChips" class="flex flex-wrap gap-2 mb-5"></div>
+    <div id="listGaleri" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+    <p id="galKosong" class="hidden text-center text-slate-500">Belum ada dokumentasi.</p>
+    <div class="text-center mt-6"><button id="galMore" type="button" class="hidden px-6 py-2 rounded-lg border border-primary text-primary font-semibold hover:bg-primary hover:text-white transition">Muat lebih banyak</button></div>
+  </section>
+</div>
+
+<!-- ============ PANEL STATISTIK ============ -->
+<div id="p-statistik" class="pnl hidden">
+<div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Data &amp; Statistik Sekolah</h2><p>Gambaran jumlah peserta didik, guru, dan tenaga kependidikan.</p><i></i></div></div>
+<section id="statistik" class="hidden py-8">
+  <div class="max-w-6xl mx-auto px-4">
+    
+    <div id="kpiRow" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4"></div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div id="cSiswaBox" class="bg-white rounded-xl shadow p-4 md:col-span-2"><h3 class="font-semibold text-primary text-sm mb-2">Jumlah Siswa per Kelas</h3><div class="relative h-52"><canvas id="cSiswa"></canvas></div></div>
+      <div id="cJkBox" class="bg-white rounded-xl shadow p-4"><h3 class="font-semibold text-primary text-sm mb-2">Komposisi Siswa Laki-laki dan Perempuan</h3><div class="relative h-52"><canvas id="cJk"></canvas></div></div>
+      <div id="cTrenBox" class="bg-white rounded-xl shadow p-4"><h3 class="font-semibold text-primary text-sm mb-2">Perkembangan Jumlah Siswa</h3><div class="relative h-52"><canvas id="cTren"></canvas></div></div>
+      <div id="cStatusBox" class="bg-white rounded-xl shadow p-4"><h3 class="font-semibold text-primary text-sm mb-2">Guru dan Tenaga Kependidikan menurut Status</h3><div class="relative h-52"><canvas id="cStatus"></canvas></div></div>
+      <div id="cPendBox" class="bg-white rounded-xl shadow p-4"><h3 class="font-semibold text-primary text-sm mb-2">Pendidikan Terakhir Guru</h3><div class="relative h-52"><canvas id="cPend"></canvas></div></div>
+      <div id="cGuruJkBox" class="bg-white rounded-xl shadow p-4"><h3 class="font-semibold text-primary text-sm mb-2">Guru Laki-laki dan Perempuan</h3><div class="relative h-52"><canvas id="cGuruJk"></canvas></div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ============ PANEL BERITA ============ -->
+<div id="p-berita" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Berita Terbaru</h2><p>Kabar dan kegiatan terkini dari sekolah.</p><i></i></div></div>
+  <section id="berita" class="max-w-6xl mx-auto px-4 py-8">
+    <div id="listBerita" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+  </section>
+</div>
+
+<!-- ============ PANEL PPDB ============ -->
+<div id="p-ppdb" class="pnl hidden">
+  <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Pendaftaran PPDB Online</h2><p>Lengkapi data berikut dengan benar.</p><i></i></div></div>
+  <section id="ppdb" class="max-w-3xl mx-auto px-4 py-8">
+    <div id="ppdbInfoBox" class="hidden bg-white rounded-xl shadow p-5 mb-4 border-l-4 border-accent"><h3 class="font-bold text-primary mb-2 text-sm">Informasi, Syarat &amp; Jadwal</h3><p id="ppdbInfoTeks" class="text-sm text-slate-700 whitespace-pre-line leading-relaxed"></p></div>
+    <form id="ppdbForm" class="bg-white rounded-xl shadow p-5 grid sm:grid-cols-2 gap-x-4 gap-y-3">
+      <div class="sm:col-span-2"><label class="block text-sm font-medium mb-1">Nama Lengkap Siswa</label><input name="nama" required class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">NISN (10 digit)</label><input name="nisn" inputmode="numeric" pattern="\d{10}" maxlength="10" required class="inp"></div>
+      <div>
+        <span class="block text-sm font-medium mb-1">Jenis Kelamin</span>
+        <div class="py-2">
+          <label class="mr-6"><input type="radio" name="jk" value="Laki-laki" required class="mr-2">Laki-laki</label>
+          <label><input type="radio" name="jk" value="Perempuan" class="mr-2">Perempuan</label>
+        </div>
+      </div>
+      <div><label class="block text-sm font-medium mb-1">Tempat Lahir</label><input name="tempat" required class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">Tanggal Lahir</label><input name="tgl" type="date" required class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">Nama Orang Tua/Wali</label><input name="ortu" required class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp</label><input name="wa" type="tel" placeholder="08xxxxxxxxxx" pattern="08[0-9]{8,12}" required class="inp"></div>
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium mb-1">Link Berkas (Google Drive)</label>
+        <input name="berkas" type="url" placeholder="https://drive.google.com/..." class="inp">
+        <p class="text-xs text-slate-500 mt-1">Unggah KK, akta, ijazah ke Google Drive, set "siapa saja yang memiliki link", lalu tempel link di sini.</p>
+      </div>
+      <button class="sm:col-span-2 w-full py-2.5 rounded-lg bg-primary hover:opacity-90 text-white font-semibold transition">Kirim Pendaftaran</button>
+      <p id="ppdbMsg" class="sm:col-span-2 text-center font-medium hidden"></p>
+    </form>
+  </section>
+</div>
+
+</main>
+
+<footer class="bg-slate-900 text-slate-300 text-center text-sm py-6">
+  &copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi.
+  <a id="footYt" target="_blank" rel="noopener" class="hidden ml-3 underline hover:text-white">Kunjungi YouTube sekolah</a>
+  <p id="footKontak" class="hidden mt-1 text-xs text-slate-400"></p>
+</footer>
+
+<a id="waFloat" target="_blank" rel="noopener" aria-label="Hubungi lewat WhatsApp" class="hidden fixed bottom-5 right-5 z-30 w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 text-white shadow-lg flex items-center justify-center transition">
+  <svg class="w-7 h-7" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2zm0 18.2a8.2 8.2 0 01-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.700 6.700 0 01-3.300-2.900c-.2-.4.2-.4.700-1.300.1-.2 0-.3 0-.5l-.8-1.800c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 00-.7.3 3 3 0 00-.9 2.200 5.200 5.200 0 001.100 2.800 11.900 11.900 0 004.600 4c1.700.7 2.400.8 3.200.7a2.700 2.700 0 001.800-1.300 2.200 2.200 0 00.2-1.300c-.1-.1-.2-.2-.5-.3z"/></svg>
+</a>
+
+<!-- MODAL VERIFIKASI PPDB -->
+<div id="verifModal" class="hidden fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[92vh] overflow-y-auto space-y-4">
+    <h3 class="text-xl font-bold text-primary">Verifikasi Pendaftar</h3>
+    <dl id="vInfo" class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm"></dl>
+    <div>
+      <p class="text-sm font-medium mb-1">Kelengkapan berkas</p>
+      <div class="grid grid-cols-2 gap-1 text-sm">
+        <label><input type="checkbox" id="vKk" class="mr-2">Kartu Keluarga</label>
+        <label><input type="checkbox" id="vAkta" class="mr-2">Akta Kelahiran</label>
+        <label><input type="checkbox" id="vIjazah" class="mr-2">Ijazah / SKL</label>
+        <label><input type="checkbox" id="vFoto" class="mr-2">Pas Foto</label>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Status</label>
+      <select id="vStatus" class="inp">
+        <option value="menunggu">Menunggu</option>
+        <option value="terverifikasi">Terverifikasi</option>
+        <option value="perbaikan">Perlu Perbaikan</option>
+        <option value="ditolak">Ditolak</option>
+      </select>
+    </div>
+    <div><label class="block text-sm font-medium mb-1">Catatan untuk pendaftar (opsional)</label><textarea id="vCatatan" rows="3" maxlength="500" class="inp"></textarea></div>
+    <p id="vMeta" class="text-xs text-slate-500"></p>
+    <div class="flex flex-wrap gap-2">
+      <button id="vSimpan" type="button" class="px-4 py-2 rounded-lg bg-primary text-white font-semibold">Simpan Verifikasi</button>
+      <a id="vWa" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg bg-green-600 text-white font-semibold">Hubungi via WhatsApp</a>
+      <button id="vHapus" type="button" class="px-4 py-2 rounded-lg border border-red-300 text-red-600">Hapus</button>
+      <button id="vTutup" type="button" class="px-4 py-2 rounded-lg border border-slate-300">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PROFIL GURU -->
+<div id="guruModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div id="guruModalBody"></div>
+    <button id="guruClose" class="mt-6 w-full py-2 rounded-lg bg-primary text-white font-semibold">Tutup</button>
+  </div>
+</div>
+
+<!-- MODAL TUTORIAL KARYA -->
+<div id="ytModal" class="hidden fixed inset-0 z-[60] bg-black/70 flex items-center justify-center p-4">
+  <div class="w-full max-w-3xl">
+    <div class="flex justify-end mb-2"><button id="ytClose" type="button" class="text-white text-3xl leading-none" aria-label="Tutup">&times;</button></div>
+    <div class="aspect-video bg-black rounded-lg overflow-hidden"><iframe id="ytFrame" class="w-full h-full" title="Video tutorial" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe></div>
+  </div>
+</div>
+
+<!-- MODAL FORM HASIL KARYA (admin) -->
+<div id="karyaModal" class="hidden fixed inset-0 z-[70] bg-black/60 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-lg max-h-[92vh] overflow-y-auto">
+    <div class="flex items-start justify-between mb-4">
+      <h3 id="kaTitle" class="text-xl font-bold text-primary" style="font-family:var(--font-h)">Edit</h3>
+      <button id="kaX" type="button" class="text-2xl leading-none text-slate-500 hover:text-slate-800" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="space-y-3">
+      <div><label class="block text-sm font-medium mb-1">Nama aplikasi/karya</label><input id="kaNama" maxlength="80" class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">Kategori/peran singkat</label><input id="kaKategori" maxlength="60" class="inp" placeholder="Contoh: ABSEN GURU"></div>
+      <div><label class="block text-sm font-medium mb-1">Deskripsi</label><textarea id="kaDeskripsi" rows="3" maxlength="1000" class="inp"></textarea></div>
+      <div><label class="block text-sm font-medium mb-1">Poin fitur (satu per baris, opsional)</label><textarea id="kaFitur" rows="4" maxlength="1500" class="inp"></textarea></div>
+      <div><label class="block text-sm font-medium mb-1">Link tutorial YouTube (opsional)</label><input id="kaYt" type="url" class="inp" placeholder="https://www.youtube.com/watch?v=..."></div>
+      <div><label class="block text-sm font-medium mb-1">Warna aksen</label>
+        <select id="kaWarna" class="inp"><option value="teal">teal</option><option value="biru">biru</option><option value="hijau">hijau</option><option value="oranye">oranye</option><option value="merah">merah</option><option value="ungu">ungu</option><option value="abu">abu-abu</option></select></div>
+      <div><label class="block text-sm font-medium mb-1">Tautan</label>
+        <div id="kaLinks" class="space-y-2"></div>
+        <button id="kaTambahLink" type="button" class="mt-2 text-sm text-primary underline">+ Tambah tautan lagi</button></div>
+    </div>
+    <div class="flex items-center gap-4 mt-5">
+      <button id="kaSimpan" type="button" class="px-6 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button>
+      <button id="kaBatal" type="button" class="text-sm underline text-slate-600">Batal</button>
+      <button id="kaHapus" type="button" class="hidden text-sm underline text-red-600">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX FOTO -->
+<div id="fotoModal" class="hidden fixed inset-0 z-[60] bg-black/85 flex items-center justify-center p-3">
+  <button id="fotoPrev" type="button" class="absolute left-1 sm:left-5 text-white text-5xl px-2 leading-none" aria-label="Sebelumnya">&#8249;</button>
+  <figure class="max-w-4xl w-full">
+    <div class="flex justify-end"><button id="fotoClose" type="button" class="text-white text-3xl leading-none mb-1" aria-label="Tutup">&times;</button></div>
+    <img id="fotoImg" alt="" class="max-h-[72vh] w-auto max-w-full mx-auto rounded">
+    <figcaption class="text-center text-white mt-3 px-8">
+      <p id="fotoJudul" class="font-semibold"></p><p id="fotoTgl" class="text-xs text-slate-300"></p>
+      <p id="fotoKet" class="text-sm text-slate-200 mt-1 whitespace-pre-line"></p>
+    </figcaption>
+  </figure>
+  <button id="fotoNext" type="button" class="absolute right-1 sm:right-5 text-white text-5xl px-2 leading-none" aria-label="Berikutnya">&#8250;</button>
+</div>
+
+<!-- MODAL LOGIN -->
+<div id="loginModal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+  <form id="loginForm" class="bg-white rounded-xl p-6 w-full max-w-sm space-y-4">
+    <h3 class="text-xl font-bold text-primary">Login Admin</h3>
+    <div><label class="block text-sm font-medium mb-1">Email</label><input id="lEmail" type="email" required class="inp"></div>
+    <div><label class="block text-sm font-medium mb-1">Password</label><input id="lPass" type="password" required class="inp"></div>
+    <p id="lErr" class="text-red-600 text-sm hidden"></p>
+    <div class="flex gap-2">
+      <button type="button" id="lBatal" class="flex-1 py-2 rounded-lg border border-slate-300">Batal</button>
+      <button class="flex-1 py-2 rounded-lg bg-primary text-white font-semibold">Masuk</button>
+    </div>
+  </form>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="adminPanel" class="hidden fixed inset-0 z-50 bg-slate-100 overflow-y-auto">
+  <div class="bg-primary text-white px-4 py-3 flex items-center justify-between sticky top-0">
+    <h3 class="font-bold">Panel Admin <span id="aEmail" class="text-xs font-normal opacity-80 ml-2"></span></h3>
+    <div class="flex gap-2">
+      <button id="aTutup" class="px-3 py-1 rounded bg-white/20 text-sm">Lihat Website</button>
+      <button id="aKeluar" class="px-3 py-1 rounded bg-red-500 text-sm">Keluar</button>
+    </div>
+  </div>
+  <div class="max-w-4xl mx-auto p-4">
+    <div class="flex gap-2 mb-4 flex-wrap">
+      <button data-tab="tSet" class="tabBtn tab-on px-4 py-2 rounded-lg text-sm font-semibold bg-white">Pengaturan & Sambutan</button>
+      <button data-tab="tBerita" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Berita / Pengumuman</button>
+      <button data-tab="tProfil" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Profil, Kontak & PPDB</button>
+      <button data-tab="tGuru" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Guru</button>
+      <button data-tab="tKarya" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Hasil Karya</button>
+      <button data-tab="tDok" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Dokumentasi</button>
+      <button data-tab="tStat" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Statistik</button>
+      <button data-tab="tTema" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Tema Tampilan</button>
+      <button data-tab="tPendaftar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Pendaftar</button>
+    </div>
+
+    <!-- tab pengaturan -->
+    <div id="tSet" class="tabBox bg-white rounded-xl shadow p-5 space-y-3">
+      <div><label class="block text-sm font-medium mb-1">Nama Sekolah</label><input id="sNama" class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">Tagline (teks di hero)</label><input id="sTagline" class="inp"></div>
+      <div><label class="block text-sm font-medium mb-1">Nama Kepala Sekolah</label><input id="sKepsek" class="inp"></div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Foto Kepala Sekolah</label>
+        <div class="flex items-center gap-4">
+          <img id="kPrev" alt="" class="hidden w-20 h-20 rounded-full object-cover border">
+          <input id="kFoto" type="file" accept="image/*" class="text-sm">
+        </div>
+      </div>
+      <div><label class="block text-sm font-medium mb-1">Riwayat Pendidikan Kepala Sekolah (satu baris per jenjang)</label><textarea id="sKepsekRiwayat" rows="4" maxlength="2000" class="inp"></textarea></div>
+      <div><label class="block text-sm font-medium mb-1">Riwayat Pekerjaan Kepala Sekolah (satu baris per jabatan)</label><textarea id="sKepsekKerja" rows="4" maxlength="2000" class="inp" placeholder="Kepala SDN Tanjung (2020 - sekarang)&#10;Guru Kelas SDN Sukamaju (2008 - 2020)"></textarea></div>
+      <div><label class="block text-sm font-medium mb-1">Link YouTube Sekolah (channel)</label><input id="sYt" type="url" class="inp" placeholder="https://www.youtube.com/@namasekolah"></div>
+      <div><label class="block text-sm font-medium mb-1">Link Video Profil (opsional, tampil sebagai video di beranda)</label><input id="sVideo" type="url" class="inp" placeholder="https://www.youtube.com/watch?v=..."></div>
+      <div><label class="block text-sm font-medium mb-1">Teks Sambutan</label><textarea id="sSambutan" rows="8" class="inp"></textarea></div>
+      <button id="sSimpan" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan & Publikasikan</button>
+      <span id="sMsg" class="text-sm text-green-700 ml-2"></span>
+    </div>
+
+    <!-- tab berita -->
+    <div id="tBerita" class="tabBox hidden space-y-4">
+      <form id="bForm" class="bg-white rounded-xl shadow p-5 space-y-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Jenis</label>
+          <select id="bTipe" class="inp"><option value="berita">Berita</option><option value="pengumuman">Pengumuman</option></select>
+        </div>
+        <div><label class="block text-sm font-medium mb-1">Judul</label><input id="bJudul" required class="inp"></div>
+        <div><label class="block text-sm font-medium mb-1">Isi</label><textarea id="bIsi" rows="5" required class="inp"></textarea></div>
+        <div><label class="block text-sm font-medium mb-1">URL Gambar (opsional)</label><input id="bGambar" type="url" class="inp" placeholder="https://..."><p class="text-xs text-slate-500 mt-1">Gunakan link langsung ke gambar (berakhiran .jpg / .png) atau link Google Drive yang dibagikan ke &quot;Siapa saja yang memiliki link&quot;. Link Google Photos tidak bisa dipakai.</p></div>
+        <button class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Terbitkan</button>
+      </form>
+      <div id="bList" class="space-y-2"></div>
+    </div>
+
+    <!-- tab profil -->
+    <div id="tProfil" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-3">
+      <div><label class="block text-sm font-medium mb-1">Tentang Sekolah (sejarah singkat, akreditasi, keunggulan)</label><textarea id="pTentang" rows="5" maxlength="4000" class="inp" placeholder=""></textarea></div>
+      <div><label class="block text-sm font-medium mb-1">Visi</label><textarea id="pVisi" rows="3" maxlength="4000" class="inp" placeholder=""></textarea></div>
+      <div><label class="block text-sm font-medium mb-1">Misi (satu baris per butir)</label><textarea id="pMisi" rows="5" maxlength="4000" class="inp" placeholder="Mewujudkan pembelajaran yang aktif dan menyenangkan&#10;Menanamkan karakter dan budi pekerti"></textarea></div>
+      <hr>
+      <div><label class="block text-sm font-medium mb-1">Alamat Sekolah</label><input id="pAlamat" class="inp" placeholder=""></div>
+      <div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-sm font-medium mb-1">Telepon</label><input id="pTelp" class="inp" placeholder="0xxx-xxxxxxx"></div><div><label class="block text-sm font-medium mb-1">Email</label><input id="pEmail" class="inp" placeholder="sekolah@email.com"></div></div>
+      <div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-sm font-medium mb-1">Nomor WhatsApp (tombol hijau mengambang)</label><input id="pWa" class="inp" placeholder="08xxxxxxxxxx"></div><div><label class="block text-sm font-medium mb-1">Jam Layanan</label><input id="pJam" class="inp" placeholder="Senin - Sabtu, 07.00 - 14.00 WIB"></div></div>
+      <div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-sm font-medium mb-1">Link Instagram (opsional)</label><input id="pIg" class="inp" placeholder="https://instagram.com/..."></div><div><label class="block text-sm font-medium mb-1">Link Facebook (opsional)</label><input id="pFb" class="inp" placeholder="https://facebook.com/..."></div></div>
+      <div><label class="block text-sm font-medium mb-1">Peta Google Maps</label><input id="pMaps" class="inp" placeholder="Tempel kode iframe atau link embed dari Google Maps">
+        <p class="text-xs text-slate-500 mt-1">Boleh tempel link biasa atau link pendek dari Google Maps (Bagikan &gt; Salin link), atau kode iframe dari Sematkan peta. Jika dikosongkan, peta dibuat otomatis dari alamat sekolah.</p></div>
+      <hr>
+      <div><label class="block text-sm font-medium mb-1">Info PPDB (syarat, jadwal, biaya) tampil di atas formulir pendaftaran</label><textarea id="pPpdb" rows="6" maxlength="4000" class="inp" placeholder="Jadwal pendaftaran: ...&#10;Syarat: KK, akta kelahiran, ijazah/SKL, pas foto"></textarea></div>
+      <button id="pSimpan" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan &amp; Publikasikan</button>
+      <span id="pMsg" class="text-sm text-green-700 ml-2"></span>
+    </div>
+
+    <!-- tab guru -->
+    <div id="tGuru" class="tabBox hidden space-y-4">
+      <form id="gForm" class="bg-white rounded-xl shadow p-5 space-y-3">
+        <input type="hidden" id="gId">
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div><label class="block text-sm font-medium mb-1">Nama Lengkap & Gelar</label><input id="gNama" required maxlength="100" class="inp"></div>
+          <div><label class="block text-sm font-medium mb-1">Jabatan</label>
+            <input id="gJabatan" required maxlength="80" list="jabatanList" class="inp">
+            <datalist id="jabatanList"><option value="Kepala Sekolah"><option value="Wakil Kepala Sekolah"><option value="Guru Kelas"><option value="Guru Mata Pelajaran"><option value="Guru PAI"><option value="Guru PJOK"><option value="Tenaga Administrasi"><option value="Operator Sekolah"><option value="Pustakawan"></datalist></div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div><label class="block text-sm font-medium mb-1">Mata Pelajaran / Keterangan (opsional)</label><input id="gMapel" maxlength="100" class="inp"></div>
+          <div><label class="block text-sm font-medium mb-1">Urutan tampil (angka kecil tampil lebih dulu)</label><input id="gUrutan" type="number" min="0" value="10" class="inp"></div>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <div><label class="block text-sm font-medium mb-1">Jenis Kelamin</label>
+            <select id="gJk" class="inp"><option value="">Pilih...</option><option>Laki-laki</option><option>Perempuan</option></select></div>
+          <div><label class="block text-sm font-medium mb-1">Status Kepegawaian</label>
+            <select id="gStatus" class="inp"><option value="">Pilih...</option><option>PNS</option><option>PPPK</option><option>Honorer</option><option>Lainnya</option></select></div>
+          <div><label class="block text-sm font-medium mb-1">Pendidikan Terakhir</label>
+            <select id="gPend" class="inp"><option value="">Pilih...</option><option>SMA/SMK</option><option>D3</option><option>S1/D4</option><option>S2</option><option>S3</option></select></div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Riwayat Pendidikan (satu baris per jenjang)</label>
+          <textarea id="gRiwayat" rows="4" maxlength="2000" class="inp" placeholder="S1 PGSD - Universitas Negeri Surabaya (2012)&#10;SMA Negeri 1 Surabaya (2008)"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Riwayat Pekerjaan (satu baris per jabatan)</label>
+          <textarea id="gKerja" rows="4" maxlength="2000" class="inp" placeholder="Guru Kelas SDN Tanjung (2015 - sekarang)&#10;Guru Honorer SDN Sukamaju (2010 - 2015)"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Foto Profil (otomatis dipotong persegi dan dikompres)</label>
+          <div class="flex items-center gap-4">
+            <img id="gPrev" alt="" class="hidden w-20 h-20 rounded-full object-cover border">
+            <input id="gFoto" type="file" accept="image/*" class="text-sm">
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <button id="gSimpanBtn" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan Data Guru</button>
+          <button type="button" id="gBatal" class="hidden px-5 py-2 rounded-lg border border-slate-300">Batal Edit</button>
+        </div>
+        <p class="text-xs text-slate-500">Data di sini tampil untuk umum. Jangan isi NIP, nomor HP, atau alamat pribadi.</p>
+      </form>
+      <div id="gList" class="space-y-2"></div>
+    </div>
+
+    <!-- tab hasil karya -->
+    <div id="tKarya" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-4">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div><h3 class="font-bold text-primary">Hasil Karya</h3><p class="text-xs text-slate-500">Aplikasi atau karya yang tampil di menu Karya. Urutan bisa diatur dengan tombol panah.</p></div>
+        <button id="kaTambah" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">+ Tambah Karya</button>
+      </div>
+      <div id="karyaAdminList" class="space-y-2"></div>
+    </div>
+
+    <!-- tab dokumentasi -->
+    <div id="tDok" class="tabBox hidden space-y-4">
+      <form id="dForm" class="bg-white rounded-xl shadow p-5 space-y-3">
+        <div><label class="block text-sm font-medium mb-1">Jenis</label>
+          <select id="dJenis" class="inp"><option value="foto">Foto kegiatan</option><option value="video">Video (YouTube)</option></select></div>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div><label class="block text-sm font-medium mb-1">Nama kegiatan</label><input id="dJudul" maxlength="100" class="inp" placeholder="Contoh: Upacara Hari Kemerdekaan"></div>
+          <div><label class="block text-sm font-medium mb-1">Tanggal kegiatan</label><input id="dTgl" type="date" class="inp"></div>
+        </div>
+        <div><label class="block text-sm font-medium mb-1">Keterangan (opsional)</label><textarea id="dKet" rows="2" maxlength="500" class="inp"></textarea></div>
+        <div id="dFotoBox"><label class="block text-sm font-medium mb-1">Pilih foto (bisa banyak sekaligus, maksimal 10)</label>
+          <input id="dFile" type="file" accept="image/*" multiple class="inp">
+          <div id="dPrev" class="flex flex-wrap gap-2 mt-2"></div>
+          <p class="text-xs text-slate-500 mt-1">Foto otomatis dikecilkan agar hemat penyimpanan.</p></div>
+        <div id="dVideoBox" class="hidden"><label class="block text-sm font-medium mb-1">Link video YouTube</label><input id="dYt" type="url" class="inp" placeholder="https://www.youtube.com/watch?v=..."></div>
+        <div class="flex items-center gap-3"><button id="dSimpan" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Unggah</button><span id="dMsg" class="text-sm text-slate-600"></span></div>
+      </form>
+      <div class="bg-white rounded-xl shadow p-5"><h3 class="font-bold text-primary mb-3">Dokumentasi Terunggah</h3>
+        <div id="dList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div></div>
+    </div>
+
+    <!-- tab statistik -->
+    <div id="tStat" class="tabBox hidden space-y-4">
+      <div class="bg-white rounded-xl shadow p-5 space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 class="font-semibold">Jumlah Siswa per Kelas</h3>
+          <div class="flex gap-2 text-xs">
+            <button type="button" data-fill="sd" class="fillKelas px-3 py-1 rounded border border-slate-300">Isi Kelas 1-6</button>
+            <button type="button" data-fill="smp" class="fillKelas px-3 py-1 rounded border border-slate-300">Isi Kelas 7-9</button>
+            <button type="button" data-fill="sma" class="fillKelas px-3 py-1 rounded border border-slate-300">Isi Kelas 10-12</button>
+          </div>
+        </div>
+        <div id="stSiswa" class="space-y-2"></div>
+        <button type="button" id="stSiswaAdd" class="text-sm text-primary underline">+ Tambah kelas</button>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 space-y-3">
+        <h3 class="font-semibold">Perkembangan Jumlah Siswa per Tahun Ajaran</h3>
+        <div id="stTren" class="space-y-2"></div>
+        <button type="button" id="stTrenAdd" class="text-sm text-primary underline">+ Tambah tahun ajaran</button>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 space-y-3">
+        <h3 class="font-semibold">Angka Sekilas Lainnya</h3>
+        <p class="text-xs text-slate-500">Contoh: Ekstrakurikuler = 8, Prestasi = 25, Akreditasi = A.</p>
+        <div id="stUmum" class="space-y-2"></div>
+        <button type="button" id="stUmumAdd" class="text-sm text-primary underline">+ Tambah angka</button>
+      </div>
+      <p class="text-xs text-slate-500">Grafik data guru dihitung otomatis dari tab Data Guru (jenis kelamin, status kepegawaian, pendidikan terakhir). Lengkapi data itu di sana.</p>
+      <div class="flex items-center gap-2">
+        <button id="stSimpan" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan Statistik</button>
+        <span id="stMsg" class="text-sm text-green-700"></span>
+      </div>
+    </div>
+
+    <!-- tab tema -->
+    <div id="tTema" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-4">
+      <div>
+        <p class="text-sm font-medium mb-2">Pilih tema cepat</p>
+        <div id="presetBox" class="flex flex-wrap gap-2"></div>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div><label class="block text-sm font-medium mb-1">Warna Utama</label><input id="tPrimary" type="color" class="w-full h-10 rounded border border-slate-300"></div>
+        <div><label class="block text-sm font-medium mb-1">Warna Aksen (tombol)</label><input id="tAccent" type="color" class="w-full h-10 rounded border border-slate-300"></div>
+        <div><label class="block text-sm font-medium mb-1">Warna Latar Lembut</label><input id="tSoft" type="color" class="w-full h-10 rounded border border-slate-300"></div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div><label class="block text-sm font-medium mb-1">Font Judul</label>
+          <select id="tFontH" class="inp fontSel"></select></div>
+        <div><label class="block text-sm font-medium mb-1">Font Isi Teks</label>
+          <select id="tFontB" class="inp fontSel"></select></div>
+      </div>
+      <div><label class="block text-sm font-medium mb-1">URL Gambar Latar Hero</label><input id="tHero" type="url" class="inp" placeholder="https://..."></div>
+      <div><label class="block text-sm font-medium mb-1">Kegelapan overlay hero: <span id="tOvVal"></span>%</label><input id="tOverlay" type="range" min="0" max="90" class="w-full"></div>
+      <p class="text-xs text-slate-500">Perubahan langsung terlihat sebagai pratinjau. Klik Simpan agar tampil untuk semua pengunjung.</p>
+      <div class="flex gap-2 items-center flex-wrap">
+        <button id="tSimpan" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan Tema</button>
+        <button id="tReset" class="px-5 py-2 rounded-lg border border-slate-300">Kembalikan Default</button>
+        <span id="tMsg" class="text-sm text-green-700"></span>
+      </div>
+    </div>
+
+    <!-- tab pendaftar -->
+    <div id="tPendaftar" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-4">
+      <div id="pChips" class="flex flex-wrap gap-2"></div>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input id="pSearch" type="search" placeholder="Cari nama, NISN, orang tua, atau WhatsApp" class="inp">
+        <button id="pCsv" type="button" class="px-4 py-2 rounded-lg border border-slate-300 text-sm whitespace-nowrap">Unduh CSV</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="text-left border-b"><th class="p-2">Pendaftar</th><th class="p-2">NISN</th><th class="p-2">Orang Tua / WA</th><th class="p-2">Status</th><th class="p-2"></th></tr></thead>
+          <tbody id="pBody"></tbody>
+        </table>
+      </div>
+      <p id="pKosong" class="text-slate-500 text-sm hidden">Tidak ada data pendaftar.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= KONFIGURASI FIREBASE (ISI DI SINI) ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyD3-GPo9r33GnCSEsJ11gKN3LEHzljmY8E",
+  authDomain: "pendidikan-bb558.firebaseapp.com",
+  databaseURL: "https://pendidikan-bb558-default-rtdb.firebaseio.com",
+  projectId: "pendidikan-bb558",
+  storageBucket: "pendidikan-bb558.firebasestorage.app",
+  messagingSenderId: "292876476982",
+  appId: "1:292876476982:web:38be49a79609cc002aee97",
+  measurementId: "G-GRLTFN8F4P"
+};
+/* ===================================================================== */
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const errInfo = (e) => 'Kode: ' + (e.code || e.message) + '. Email login: ' + ((auth && auth.currentUser && auth.currentUser.email) || '-') + '. Email ini harus sama persis dengan email di aturan Firestore (webAdmin).';
+const safeUrl = (u) => /^https?:\/\//i.test(u || '') ? esc(u) : '';
+function imgUrl(u) {
+  u = String(u || '').trim();
+  if (!/^https?:\/\//i.test(u)) return '';
+  const m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([\w-]{10,})/);
+  if (m) return esc('https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200');
+  return esc(u);
+}
+$('thn').textContent = new Date().getFullYear();
+
+const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "ISI_API_KEY";
+let auth, db;
+if (configured) {
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.firestore();
+} else {
+  $('cfgWarn').classList.remove('hidden');
+}
+
+let statSiswa = [], statTren = [], statUmum = [], guruList = [];
+const charts = {};
+
+/* ---------- Tema ---------- */
+const DEFAULT_THEME = {
+  primary:'#1e3a8a', accent:'#f59e0b', soft:'#eff6ff', fontH:'Poppins', fontB:'Inter', overlay:70,
+  heroImage:'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1600&q=80'
+};
+const PRESETS = {
+  'Biru Klasik':   { primary:'#1e3a8a', accent:'#f59e0b', soft:'#eff6ff' },
+  'Hijau Sekolah': { primary:'#166534', accent:'#eab308', soft:'#f0fdf4' },
+  'Maroon':        { primary:'#7f1d1d', accent:'#f59e0b', soft:'#fef2f2' },
+  'Ungu':          { primary:'#581c87', accent:'#f97316', soft:'#faf5ff' },
+  'Teal':          { primary:'#115e59', accent:'#f43f5e', soft:'#f0fdfa' }
+};
+const FONTS = ['Poppins','Montserrat','Playfair Display','Merriweather','Inter','Open Sans','Nunito','Lato'];
+const HEX = /^#[0-9a-fA-F]{6}$/;
+let curTheme = { ...DEFAULT_THEME };
+
+function applyTheme(t) {
+  t = { ...DEFAULT_THEME, ...(t || {}) };
+  ['primary','accent','soft'].forEach(k => { if (!HEX.test(t[k])) t[k] = DEFAULT_THEME[k]; });
+  if (!FONTS.includes(t.fontH)) t.fontH = DEFAULT_THEME.fontH;
+  if (!FONTS.includes(t.fontB)) t.fontB = DEFAULT_THEME.fontB;
+  const ov = Math.min(90, Math.max(0, Number(t.overlay) || 0));
+  const img = /^https?:\/\/[^\s"'()]+$/.test(t.heroImage || '') ? t.heroImage : DEFAULT_THEME.heroImage;
+  const r = document.documentElement.style;
+  r.setProperty('--primary', t.primary); r.setProperty('--accent', t.accent); r.setProperty('--soft', t.soft);
+  r.setProperty('--font-h', `'${t.fontH}', sans-serif`); r.setProperty('--font-b', `'${t.fontB}', sans-serif`);
+  r.setProperty('--overlay', ov / 100);
+  $('hero').style.backgroundImage = `url("${img}")`;
+  curTheme = { ...t, overlay: ov, heroImage: img };
+  if (window.chartsReady) renderCharts();
+}
+try { const c = localStorage.getItem('tema'); if (c) applyTheme(JSON.parse(c)); } catch (e) {}
+
+function fillThemeForm() {
+  $('tPrimary').value = curTheme.primary; $('tAccent').value = curTheme.accent; $('tSoft').value = curTheme.soft;
+  $('tFontH').value = curTheme.fontH; $('tFontB').value = curTheme.fontB;
+  $('tHero').value = curTheme.heroImage; $('tOverlay').value = curTheme.overlay; $('tOvVal').textContent = curTheme.overlay;
+}
+function readThemeForm() {
+  applyTheme({ primary:$('tPrimary').value, accent:$('tAccent').value, soft:$('tSoft').value,
+    fontH:$('tFontH').value, fontB:$('tFontB').value, heroImage:$('tHero').value.trim(), overlay:$('tOverlay').value });
+  $('tOvVal').textContent = curTheme.overlay;
+}
+document.querySelectorAll('.fontSel').forEach(sel => FONTS.forEach(f => {
+  const o = document.createElement('option'); o.value = f; o.textContent = f; sel.append(o);
+}));
+Object.keys(PRESETS).forEach(name => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = name;
+  b.className = 'px-3 py-1.5 rounded-lg border border-slate-300 text-sm hover:bg-soft';
+  b.onclick = () => { applyTheme({ ...curTheme, ...PRESETS[name] }); fillThemeForm(); };
+  $('presetBox').append(b);
+});
+['tPrimary','tAccent','tSoft','tFontH','tFontB','tHero','tOverlay'].forEach(id => $(id).addEventListener('input', readThemeForm));
+$('tReset').onclick = () => { applyTheme(DEFAULT_THEME); fillThemeForm(); };
+$('tSimpan').onclick = async () => {
+  readThemeForm();
+  try {
+    await db.collection('settings').doc('site').set({ theme: curTheme }, { merge: true });
+    try { localStorage.setItem('tema', JSON.stringify(curTheme)); } catch (e) {}
+    $('tMsg').textContent = 'Tema tersimpan dan terpublikasi.';
+    setTimeout(() => $('tMsg').textContent = '', 3000);
+  } catch (e) { alert('Gagal menyimpan tema. ' + errInfo(e)); }
+};
+
+/* ---------- Tampilan publik ---------- */
+async function loadSettings() {
+  if (!configured) return;
+  const d = await db.collection('settings').doc('site').get();
+  if (!d.exists) return;
+  const s = d.data();
+  if (s.theme) { applyTheme(s.theme); try { localStorage.setItem('tema', JSON.stringify(curTheme)); } catch (e) {} }
+  applyYoutube(s.ytUrl, s.videoUrl);
+  applyKepsek(s);
+  applyStat(s);
+  applyProfil(s);
+  applyKarya(s);
+  if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; }
+  if (s.tagline) $('heroTagline').innerHTML = fmt(s.tagline);
+  if (s.sambutan) $('sambutanTeks').innerHTML = fmt(s.sambutan);
+  if (s.kepsek) $('kepsekNama').textContent = s.kepsek;
+}
+
+function fmtTgl(ts) {
+  if (!ts || !ts.toDate) return '';
+  return ts.toDate().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+}
+
+async function loadBerita() {
+  if (!configured) return;
+  const snap = await db.collection('berita').orderBy('tanggal', 'desc').get();
+  let b = '', p = '';
+  snap.forEach(doc => {
+    const d = doc.data();
+    if (d.tipe === 'pengumuman') {
+      const pimg = imgUrl(d.gambar);
+      p += `<div class="bg-slate-50 rounded-lg p-3 border-l-4 border-accent" data-exp>
+        ${pimg ? `<a href="${pimg}" target="_blank" rel="noopener" title="Buka gambar"><img src="${pimg}" alt="" loading="lazy" onerror="this.parentNode.remove()" class="w-full max-h-56 object-contain bg-white rounded mb-2 border border-slate-200"></a>` : ''}
+        <p class="text-xs text-slate-500">${esc(fmtTgl(d.tanggal))}</p>
+        <h3 class="font-semibold text-primary text-sm">${fmt(d.judul)}</h3>
+        <p class="clampTxt line-clamp-2 text-sm text-slate-700 mt-1 whitespace-pre-line">${fmt(d.isi)}</p>
+        ${(d.isi || '').length > 90 ? '<span class="expHint">Baca selengkapnya</span>' : ''}</div>`;
+    } else {
+      const img = imgUrl(d.gambar);
+      b += `<article class="bg-white rounded-xl shadow overflow-hidden" data-exp>
+        ${img ? `<img src="${img}" alt="" loading="lazy" onerror="this.remove()" class="w-full h-32 object-cover">` : ''}
+        <div class="p-4"><p class="text-xs text-slate-500">${esc(fmtTgl(d.tanggal))}</p>
+        <h3 class="font-semibold text-primary mb-1">${fmt(d.judul)}</h3>
+        <p class="clampTxt line-clamp-3 text-sm text-slate-700 whitespace-pre-line">${fmt(d.isi)}</p>
+        ${(d.isi || '').length > 120 ? '<span class="expHint">Baca selengkapnya</span>' : ''}</div></article>`;
+    }
+  });
+  $('listBerita').innerHTML = b || '<p class="text-center text-slate-500 col-span-full">Belum ada berita.</p>';
+  $('listPengumuman').innerHTML = p || '<p class="text-center text-slate-500 col-span-full">Belum ada pengumuman.</p>';
+  /* tampilkan 6 pengumuman terbaru; sisanya lewat tombol (tanpa gulir) */
+  const itemP = [...$('listPengumuman').querySelectorAll('[data-exp]')];
+  if (itemP.length > 6) {
+    itemP.slice(6).forEach(el => el.classList.add('hidden'));
+    const mb = document.createElement('button'); mb.type = 'button';
+    mb.className = 'col-span-full text-sm font-medium text-primary underline justify-self-center';
+    mb.textContent = 'Lihat semua pengumuman (' + itemP.length + ')';
+    mb.onclick = () => { itemP.forEach(el => el.classList.remove('hidden')); mb.remove(); };
+    $('listPengumuman').append(mb);
+  }
+}
+
+/* ---------- Form PPDB publik ---------- */
+$('ppdbForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = $('ppdbMsg');
+  msg.classList.remove('hidden');
+  if (!configured) { msg.textContent = 'Firebase belum dikonfigurasi.'; msg.className = 'text-center font-medium text-red-600'; return; }
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  data.tanggalDaftar = firebase.firestore.FieldValue.serverTimestamp();
+  try {
+    await db.collection('pendaftar').add(data);
+    msg.textContent = 'Pendaftaran berhasil dikirim. Panitia akan menghubungi lewat WhatsApp.';
+    msg.className = 'text-center font-medium text-green-700';
+    e.target.reset();
+  } catch (err) {
+    msg.textContent = 'Gagal mengirim. Coba lagi.';
+    msg.className = 'text-center font-medium text-red-600';
+  }
+});
+
+/* ---------- Login admin ---------- */
+$('btnAdmin').onclick = () => {
+  if (!configured) return alert('Isi firebaseConfig terlebih dahulu.');
+  if (auth.currentUser) openPanel(); else $('loginModal').classList.remove('hidden');
+};
+$('lBatal').onclick = () => $('loginModal').classList.add('hidden');
+
+$('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  $('lErr').classList.add('hidden');
+  try {
+    await auth.signInWithEmailAndPassword($('lEmail').value.trim(), $('lPass').value);
+    $('loginModal').classList.add('hidden');
+    $('lPass').value = '';
+    openPanel();
+  } catch (err) {
+    $('lErr').textContent = 'Email atau password salah.';
+    $('lErr').classList.remove('hidden');
+  }
+});
+
+if (configured) {
+  auth.onAuthStateChanged(u => { $('btnAdmin').textContent = u ? 'Panel Admin' : 'Login Admin'; });
+}
+$('aKeluar').onclick = async () => { await auth.signOut(); $('adminPanel').classList.add('hidden'); };
+$('aTutup').onclick = () => { $('adminPanel').classList.add('hidden'); loadSettings(); loadBerita(); loadGuru(); };
+
+/* ---------- Panel admin ---------- */
+document.querySelectorAll('.tabBtn').forEach(btn => btn.onclick = () => {
+  document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('tab-on'));
+  btn.classList.add('tab-on');
+  document.querySelectorAll('.tabBox').forEach(t => t.classList.add('hidden'));
+  $(btn.dataset.tab).classList.remove('hidden');
+});
+
+async function openPanel() {
+  $('adminPanel').classList.remove('hidden');
+  $('aEmail').textContent = auth.currentUser ? auth.currentUser.email : '';
+  const d = await db.collection('settings').doc('site').get();
+  const s = d.exists ? d.data() : {};
+  $('sNama').value = s.nama || ''; $('sTagline').value = s.tagline || '';
+  $('sKepsek').value = s.kepsek || ''; $('sSambutan').value = s.sambutan || '';
+  $('sYt').value = s.ytUrl || ''; $('sVideo').value = s.videoUrl || '';
+  kepsekFoto = s.kepsekFoto || ''; $('sKepsekRiwayat').value = s.kepsekRiwayat || ''; $('sKepsekKerja').value = s.kepsekKerja || ''; $('kFoto').value = '';
+  if (GURU_FOTO.test(kepsekFoto)) { $('kPrev').src = kepsekFoto; $('kPrev').classList.remove('hidden'); } else { $('kPrev').classList.add('hidden'); }
+  if (s.theme) applyTheme(s.theme);
+  fillThemeForm();
+  fillStat(s);
+  karyaAdmin = Array.isArray(s.karya) ? s.karya : []; renderKaryaAdmin();
+  [['pTentang','tentang'],['pVisi','visi'],['pMisi','misi'],['pAlamat','alamat'],['pTelp','telp'],['pEmail','email'],['pWa','wa'],['pJam','jam'],['pIg','ig'],['pFb','fb'],['pMaps','maps'],['pPpdb','ppdbInfo']].forEach(([i,k]) => $(i).value = s[k] || '');
+  adminBerita(); adminPendaftar(); adminGuru(); adminDok();
+}
+
+$('sSimpan').onclick = async () => {
+  const yt = $('sYt').value.trim(), vd = $('sVideo').value.trim();
+  if ((yt && !ytUrlOk(yt)) || (vd && (!ytUrlOk(vd) || !ytId(vd)))) {
+    alert('Link YouTube tidak valid. Gunakan alamat https dari youtube.com atau youtu.be. Link video harus mengarah ke satu video.');
+    return;
+  }
+  try {
+    await db.collection('settings').doc('site').set({
+      nama: $('sNama').value.trim(), tagline: $('sTagline').value.trim(),
+      kepsek: $('sKepsek').value.trim(), sambutan: $('sSambutan').value.trim(),
+      ytUrl: yt, videoUrl: vd,
+      kepsekFoto: kepsekFoto, kepsekRiwayat: $('sKepsekRiwayat').value.trim(), kepsekKerja: $('sKepsekKerja').value.trim()
+    }, { merge: true });
+    $('sMsg').textContent = 'Tersimpan dan terpublikasi.';
+    setTimeout(() => $('sMsg').textContent = '', 3000);
+  } catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+
+$('bForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const gb = $('bGambar').value.trim();
+  if (gb && !/^https?:\/\//i.test(gb)) return alert('Link gambar harus diawali https://');
+  if (/photos\.app\.goo\.gl|photos\.google\.com|drive\.google\.com\/drive\/folders/i.test(gb)) return alert('Link ini tidak bisa ditampilkan sebagai gambar. Gunakan link langsung ke gambar, atau link file (bukan folder) Google Drive yang dibagikan ke "Siapa saja yang memiliki link".');
+  try {
+    await db.collection('berita').add({
+      tipe: $('bTipe').value, judul: $('bJudul').value.trim(), isi: $('bIsi').value.trim(),
+      gambar: $('bGambar').value.trim(), tanggal: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    e.target.reset(); adminBerita();
+  } catch (err) { alert('Gagal menerbitkan. ' + errInfo(err)); }
+});
+
+async function adminBerita() {
+  const snap = await db.collection('berita').orderBy('tanggal', 'desc').get();
+  const box = $('bList'); box.innerHTML = '';
+  snap.forEach(doc => {
+    const d = doc.data();
+    const row = document.createElement('div');
+    row.className = 'bg-white rounded-lg shadow p-3 flex items-center justify-between gap-3';
+    const t = document.createElement('div');
+    t.innerHTML = `<span class="text-xs uppercase px-2 py-0.5 rounded bg-soft text-primary">${esc(d.tipe)}</span> <span class="font-medium">${esc(d.judul)}</span>`;
+    const del = document.createElement('button');
+    del.textContent = 'Hapus'; del.className = 'text-red-600 text-sm';
+    del.onclick = async () => { if (confirm('Hapus item ini?')) { await doc.ref.delete(); adminBerita(); } };
+    row.append(t, del); box.append(row);
+  });
+}
+
+/* ---------- Verifikasi PPDB ---------- */
+const PSTATUS = {
+  menunggu:      ['Menunggu', 'bg-amber-100 text-amber-800'],
+  terverifikasi: ['Terverifikasi', 'bg-green-100 text-green-800'],
+  perbaikan:     ['Perlu Perbaikan', 'bg-orange-100 text-orange-800'],
+  ditolak:       ['Ditolak', 'bg-red-100 text-red-800']
+};
+let pAll = [], pView = [], pFilter = 'semua', pQuery = '', vCur = null;
+const pStat = (d) => (PSTATUS[d.status] ? d.status : 'menunggu');
+
+async function adminPendaftar() {
+  const snap = await db.collection('pendaftar').orderBy('tanggalDaftar', 'desc').get();
+  pAll = snap.docs.map(x => ({ ...x.data(), id: x.id, ref: x.ref }));
+  renderPendaftar();
+}
+
+function renderPendaftar() {
+  const counts = { semua: pAll.length, menunggu: 0, terverifikasi: 0, perbaikan: 0, ditolak: 0 };
+  pAll.forEach(d => counts[pStat(d)]++);
+  const chips = $('pChips'); chips.innerHTML = '';
+  [['semua', 'Semua']].concat(Object.entries(PSTATUS).map(([k, v]) => [k, v[0]])).forEach(([k, label]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = label + ' (' + counts[k] + ')';
+    b.className = 'px-3 py-1.5 rounded-lg text-sm border ' + (pFilter === k ? 'bg-primary text-white border-transparent' : 'border-slate-300 bg-white');
+    b.onclick = () => { pFilter = k; renderPendaftar(); };
+    chips.append(b);
+  });
+  const q = pQuery.toLowerCase();
+  pView = pAll.filter(d => (pFilter === 'semua' || pStat(d) === pFilter) &&
+    (!q || [d.nama, d.nisn, d.ortu, d.wa].join(' ').toLowerCase().includes(q)));
+  const body = $('pBody'); body.innerHTML = '';
+  $('pKosong').classList.toggle('hidden', pView.length > 0);
+  pView.forEach(d => {
+    const st = PSTATUS[pStat(d)];
+    const tr = document.createElement('tr'); tr.className = 'border-b';
+    tr.innerHTML = `<td class="p-2"><p class="font-medium">${esc(d.nama)}</p><p class="text-xs text-slate-500">${esc(d.jk)} · ${esc(d.tempat)}, ${esc(d.tgl)}</p></td>
+      <td class="p-2">${esc(d.nisn)}</td>
+      <td class="p-2">${esc(d.ortu)}<p class="text-xs text-slate-500">${esc(d.wa)}</p></td>
+      <td class="p-2"><span class="text-xs px-2 py-0.5 rounded ${st[1]}">${st[0]}</span></td><td class="p-2"></td>`;
+    const bt = document.createElement('button');
+    bt.textContent = 'Verifikasi'; bt.className = 'px-3 py-1 rounded bg-primary text-white text-xs';
+    bt.onclick = () => openVerif(d);
+    tr.lastElementChild.append(bt); body.append(tr);
+  });
+}
+$('pSearch').addEventListener('input', (e) => { pQuery = e.target.value.trim(); renderPendaftar(); });
+
+$('pCsv').onclick = () => {
+  const cols = ['nama', 'nisn', 'tempat', 'tgl', 'jk', 'ortu', 'wa', 'status', 'catatan'];
+  const cell = (v) => { v = String(v ?? ''); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
+  const rows = [cols.join(',')].concat(pView.map(d => cols.map(c => cell(c === 'status' ? PSTATUS[pStat(d)][0] : d[c])).join(',')));
+  const blob = new Blob(['﻿' + rows.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pendaftar-ppdb.csv'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+function updWa() {
+  if (!vCur) return;
+  let n = String(vCur.wa || '').replace(/\D/g, '');
+  if (n.startsWith('0')) n = '62' + n.slice(1);
+  const label = PSTATUS[$('vStatus').value][0];
+  const cat = $('vCatatan').value.trim();
+  const msg = 'Assalamu\'alaikum, kami panitia PPDB ' + $('navNama').textContent + '. Pendaftaran ananda ' + vCur.nama +
+    ' saat ini berstatus: ' + label + '.' + (cat ? ' Catatan: ' + cat : '') + ' Terima kasih.';
+  $('vWa').href = n ? 'https://wa.me/' + n + '?text=' + encodeURIComponent(msg) : '#';
+}
+
+function openVerif(d) {
+  vCur = d;
+  const info = $('vInfo'); info.innerHTML = '';
+  const add = (k, v, link) => {
+    const dt = document.createElement('dt'); dt.className = 'text-slate-500'; dt.textContent = k;
+    const dd = document.createElement('dd'); dd.className = 'col-span-2 font-medium break-words';
+    if (link && safeUrl(v)) { const a = document.createElement('a'); a.href = v; a.target = '_blank'; a.rel = 'noopener'; a.className = 'text-blue-700 underline'; a.textContent = 'Buka berkas'; dd.append(a); }
+    else dd.textContent = v || '-';
+    info.append(dt, dd);
+  };
+  add('Nama', d.nama); add('NISN', d.nisn); add('Tempat, tgl lahir', (d.tempat || '') + ', ' + (d.tgl || '')); add('Jenis kelamin', d.jk);
+  add('Orang tua/wali', d.ortu); add('WhatsApp', d.wa); add('Berkas', d.berkas, true);
+  const c = d.cek || {};
+  $('vKk').checked = !!c.kk; $('vAkta').checked = !!c.akta; $('vIjazah').checked = !!c.ijazah; $('vFoto').checked = !!c.foto;
+  $('vStatus').value = pStat(d); $('vCatatan').value = d.catatan || '';
+  $('vMeta').textContent = d.verifiedBy ? 'Terakhir diverifikasi oleh ' + d.verifiedBy + (d.verifiedAt && d.verifiedAt.toDate ? ' pada ' + fmtTgl(d.verifiedAt) : '') : 'Belum pernah diverifikasi.';
+  updWa();
+  $('verifModal').classList.remove('hidden');
+}
+$('vStatus').addEventListener('change', updWa);
+$('vCatatan').addEventListener('input', updWa);
+$('vTutup').onclick = () => $('verifModal').classList.add('hidden');
+$('verifModal').addEventListener('click', (e) => { if (e.target === $('verifModal')) $('verifModal').classList.add('hidden'); });
+
+$('vSimpan').onclick = async () => {
+  if (!vCur) return;
+  const upd = {
+    status: $('vStatus').value, catatan: $('vCatatan').value.trim(),
+    cek: { kk: $('vKk').checked, akta: $('vAkta').checked, ijazah: $('vIjazah').checked, foto: $('vFoto').checked },
+    verifiedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    verifiedBy: auth.currentUser ? auth.currentUser.email : ''
+  };
+  try { await vCur.ref.update(upd); $('verifModal').classList.add('hidden'); adminPendaftar(); }
+  catch (e) { alert('Gagal menyimpan verifikasi. ' + errInfo(e)); }
+};
+$('vHapus').onclick = async () => {
+  if (!vCur || !confirm('Hapus data pendaftar ini secara permanen?')) return;
+  try { await vCur.ref.delete(); $('verifModal').classList.add('hidden'); adminPendaftar(); }
+  catch (e) { alert('Gagal menghapus. ' + errInfo(e)); }
+};
+
+
+/* ---------- Guru ---------- */
+const GURU_FOTO = /^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
+let guruFoto = '';
+const guruCache = {};
+
+function compressFoto(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const size = 400, c = document.createElement('canvas');
+      c.width = c.height = size;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size, size);
+      const m = Math.min(img.width, img.height);
+      ctx.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      let q = 0.85, out = c.toDataURL('image/jpeg', q);
+      while (out.length > 120000 && q > 0.4) { q -= 0.1; out = c.toDataURL('image/jpeg', q); }
+      resolve(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gambar tidak dapat dibaca.')); };
+    img.src = url;
+  });
+}
+
+$('gFoto').addEventListener('change', async () => {
+  const f = $('gFoto').files[0];
+  if (!f) return;
+  if (!f.type.startsWith('image/')) { alert('File harus berupa gambar.'); $('gFoto').value = ''; return; }
+  try {
+    guruFoto = await compressFoto(f);
+    $('gPrev').src = guruFoto; $('gPrev').classList.remove('hidden');
+  } catch (e) { alert(e.message); }
+});
+
+function resetGuruForm() {
+  $('gForm').reset(); $('gId').value = ''; guruFoto = '';
+  $('gPrev').classList.add('hidden'); $('gPrev').removeAttribute('src');
+  $('gBatal').classList.add('hidden'); $('gSimpanBtn').textContent = 'Simpan Data Guru';
+}
+$('gBatal').onclick = resetGuruForm;
+
+$('gForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = {
+    nama: $('gNama').value.trim(), jabatan: $('gJabatan').value.trim(), mapel: $('gMapel').value.trim(),
+    urutan: Number($('gUrutan').value) || 0, riwayat: $('gRiwayat').value.trim(), riwayatKerja: $('gKerja').value.trim(),
+    jk: $('gJk').value, status: $('gStatus').value, pendidikan: $('gPend').value, foto: guruFoto,
+    updated: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    const id = $('gId').value, col = db.collection('guru');
+    if (id) await col.doc(id).set(data); else await col.add(data);
+    resetGuruForm(); adminGuru();
+  } catch (err) { alert('Gagal menyimpan data guru. ' + errInfo(err)); }
+});
+
+async function adminGuru() {
+  const snap = await db.collection('guru').orderBy('urutan').get();
+  const box = $('gList'); box.innerHTML = '';
+  snap.forEach(doc => {
+    const d = doc.data();
+    const row = document.createElement('div');
+    row.className = 'bg-white rounded-lg shadow p-3 flex items-center gap-3';
+    const av = document.createElement(GURU_FOTO.test(d.foto || '') ? 'img' : 'div');
+    if (av.tagName === 'IMG') { av.src = d.foto; av.alt = ''; av.className = 'w-12 h-12 rounded-full object-cover'; }
+    else { av.textContent = (d.nama || '?').trim().charAt(0).toUpperCase(); av.className = 'w-12 h-12 rounded-full bg-soft text-primary font-bold flex items-center justify-center'; }
+    const info = document.createElement('div'); info.className = 'flex-1 min-w-0';
+    info.innerHTML = `<p class="font-medium truncate">${esc(d.nama)}</p><p class="text-xs text-slate-500 truncate">${esc(d.jabatan)}${d.mapel ? ' · ' + esc(d.mapel) : ''} · urutan ${esc(d.urutan)}</p>`;
+    const ed = document.createElement('button'); ed.textContent = 'Edit'; ed.className = 'text-sm text-primary';
+    ed.onclick = () => {
+      $('gId').value = doc.id; $('gNama').value = d.nama || ''; $('gJabatan').value = d.jabatan || '';
+      $('gMapel').value = d.mapel || ''; $('gRiwayat').value = d.riwayat || ''; $('gKerja').value = d.riwayatKerja || '';
+      $('gJk').value = d.jk || ''; $('gStatus').value = d.status || ''; $('gPend').value = d.pendidikan || ''; $('gUrutan').value = d.urutan ?? 10; guruFoto = d.foto || '';
+      if (GURU_FOTO.test(guruFoto)) { $('gPrev').src = guruFoto; $('gPrev').classList.remove('hidden'); } else { $('gPrev').classList.add('hidden'); }
+      $('gFoto').value = ''; $('gBatal').classList.remove('hidden'); $('gSimpanBtn').textContent = 'Perbarui Data Guru';
+      $('gForm').scrollIntoView({ behavior: 'smooth' });
+    };
+    const del = document.createElement('button'); del.textContent = 'Hapus'; del.className = 'text-sm text-red-600';
+    del.onclick = async () => { if (confirm('Hapus data guru ini?')) { await doc.ref.delete(); adminGuru(); } };
+    row.append(av, info, ed, del); box.append(row);
+  });
+  if (snap.empty) box.innerHTML = '<p class="text-sm text-slate-500">Belum ada data guru.</p>';
+}
+
+async function loadGuru() {
+  if (!configured) return;
+  try {
+    const snap = await db.collection('guru').orderBy('urutan').get();
+    guruList = [];
+    const items = [];
+    snap.forEach(doc => { const d = doc.data(); guruCache[doc.id] = d; guruList.push(d); items.push({ id: doc.id, d }); });
+    // pimpinan lebih dulu (Kepala, lalu Wakil); sisanya tetap mengikuti urutan data
+    const rank = (j) => /^kepala/i.test(j || '') ? 0 : /wakil/i.test(j || '') ? 1 : 2;
+    items.sort((x, y) => rank(x.d.jabatan) - rank(y.d.jabatan));
+    const h = items.map(({ id, d }) => {
+      const foto = GURU_FOTO.test(d.foto || '') ? d.foto : '';
+      const ini = esc((d.nama || '?').trim().charAt(0).toUpperCase());
+      return `<div class="gCard">
+        ${foto ? `<img src="${foto}" alt="Foto ${esc(d.nama)}" class="gPh">` : `<div class="gPh gIni">${ini}</div>`}
+        <h3 class="gName">${esc(d.nama)}</h3>
+        ${d.jabatan ? `<span class="gPill">${esc(d.jabatan)}</span>` : ''}
+        ${d.mapel ? `<p class="gMapel">${esc(d.mapel)}</p>` : ''}
+        <div class="gBtn">${(d.riwayat || d.riwayatKerja) ? `<button type="button" data-id="${esc(id)}" class="btnRiwayat">Lihat riwayat</button>` : ''}</div></div>`;
+    }).join('');
+    $('listGuru').innerHTML = h || '<p class="text-center text-slate-500 w-full">Belum ada data guru.</p>';
+    renderCharts();
+  } catch (e) { console.error(e); }
+}
+
+/* ---------- YouTube sekolah ---------- */
+const YT_HOST = /^(www\.|m\.)?(youtube\.com|youtu\.be)$/;
+function ytUrlOk(u) {
+  try { const x = new URL(u); return x.protocol === 'https:' && YT_HOST.test(x.hostname); } catch (e) { return false; }
+}
+function ytId(u) {
+  try {
+    const x = new URL(u); let id = '';
+    if (x.hostname.includes('youtu.be')) id = x.pathname.slice(1);
+    else if (x.pathname === '/watch') id = x.searchParams.get('v') || '';
+    else { const m = x.pathname.match(/^\/(embed|shorts|live)\/([^\/?]+)/); if (m) id = m[2]; }
+    return /^[A-Za-z0-9_-]{11}$/.test(id) ? id : '';
+  } catch (e) { return ''; }
+}
+function applyYoutube(ch, vid) {
+  const link = ytUrlOk(ch) ? ch : '';
+  ['btnYt', 'footYt'].forEach(i => {
+    const a = $(i);
+    if (link) { a.href = link; a.classList.remove('hidden'); } else { a.classList.add('hidden'); }
+  });
+  const id = ytUrlOk(vid) ? ytId(vid) : '';
+  if (id) { $('videoFrame').src = 'https://www.youtube-nocookie.com/embed/' + id; $('video').classList.remove('hidden'); }
+  else { $('videoFrame').removeAttribute('src'); $('video').classList.add('hidden'); }
+}
+
+/* ---------- Modal profil guru ---------- */
+function openGuruModal(id) {
+  const d = guruCache[id]; if (!d) return;
+  const body = $('guruModalBody'); body.innerHTML = '';
+  if (GURU_FOTO.test(d.foto || '')) {
+    const im = document.createElement('img');
+    im.src = d.foto; im.alt = ''; im.className = 'w-28 h-28 rounded-full object-cover mx-auto mb-3 border-4 border-soft';
+    body.append(im);
+  }
+  const h = document.createElement('h3'); h.className = 'text-xl font-bold text-primary text-center'; h.textContent = d.nama || '';
+  const j = document.createElement('p'); j.className = 'text-center text-slate-600'; j.textContent = [d.jabatan, d.mapel].filter(Boolean).join(' · ');
+  body.append(h, j);
+  const ket = [d.status, d.pendidikan ? 'Pendidikan terakhir ' + d.pendidikan : ''].filter(Boolean).join(' · ');
+  if (ket) { const kp = document.createElement('p'); kp.className = 'text-center text-xs text-slate-500'; kp.textContent = ket; body.append(kp); }
+  [['Riwayat Pendidikan', d.riwayat], ['Riwayat Pekerjaan', d.riwayatKerja]].forEach(([judul, teks]) => {
+    const lines = (teks || '').split('\n').map(x => x.trim()).filter(Boolean);
+    if (!lines.length) return;
+    const t = document.createElement('h4'); t.className = 'font-semibold mt-5 mb-2'; t.textContent = judul;
+    const ul = document.createElement('ul'); ul.className = 'list-disc pl-5 space-y-1 text-sm text-slate-700';
+    lines.forEach(x => { const li = document.createElement('li'); li.textContent = x; ul.append(li); });
+    body.append(t, ul);
+  });
+  $('guruModal').classList.remove('hidden');
+}
+$('listGuru').addEventListener('click', (e) => { const b = e.target.closest('.btnRiwayat'); if (b) openGuruModal(b.dataset.id); });
+$('guruClose').onclick = () => $('guruModal').classList.add('hidden');
+$('guruModal').addEventListener('click', (e) => { if (e.target === $('guruModal')) $('guruModal').classList.add('hidden'); });
+
+/* ---------- Kepala sekolah (foto & riwayat) ---------- */
+let kepsekFoto = '';
+$('kFoto').addEventListener('change', async () => {
+  const f = $('kFoto').files[0];
+  if (!f) return;
+  if (!f.type.startsWith('image/')) { alert('File harus berupa gambar.'); $('kFoto').value = ''; return; }
+  try { kepsekFoto = await compressFoto(f); $('kPrev').src = kepsekFoto; $('kPrev').classList.remove('hidden'); }
+  catch (e) { alert(e.message); }
+});
+function applyKepsek(s) {
+  const foto = GURU_FOTO.test(s.kepsekFoto || '') ? s.kepsekFoto : '';
+  if (foto) { $('kepsekImg').src = foto; $('kepsekImg').classList.remove('hidden'); } else { $('kepsekImg').classList.add('hidden'); }
+  guruCache.kepsek = { nama: s.kepsek || 'Kepala Sekolah', jabatan: 'Kepala Sekolah', mapel: '', foto: foto, riwayat: s.kepsekRiwayat || '', riwayatKerja: s.kepsekKerja || '' };
+  $('btnKepsekRiwayat').classList.toggle('hidden', !(s.kepsekRiwayat || s.kepsekKerja));
+}
+$('btnKepsekRiwayat').onclick = () => openGuruModal('kepsek');
+
+/* ---------- Statistik & grafik ---------- */
+const ST_F = {
+  siswa: [{ k: 'kelas', ph: 'Kelas / rombel', type: 'text', w: 'flex-1' }, { k: 'l', ph: 'Laki-laki', type: 'number', w: 'w-28' }, { k: 'p', ph: 'Perempuan', type: 'number', w: 'w-28' }],
+  tren:  [{ k: 'tahun', ph: 'Tahun ajaran, mis. 2024/2025', type: 'text', w: 'flex-1' }, { k: 'jumlah', ph: 'Jumlah siswa', type: 'number', w: 'w-32' }],
+  umum:  [{ k: 'label', ph: 'Label, mis. Ekstrakurikuler', type: 'text', w: 'flex-1' }, { k: 'nilai', ph: 'Nilai, mis. 8 atau A', type: 'text', w: 'w-32' }]
+};
+function rowEl(box, fields, vals) {
+  const r = document.createElement('div'); r.className = 'flex gap-2 items-center';
+  fields.forEach(f => {
+    const i = document.createElement('input');
+    i.className = 'inp ' + f.w; i.placeholder = f.ph; i.type = f.type; i.dataset.k = f.k;
+    if (f.type === 'number') { i.min = 0; i.max = 100000; } else { i.maxLength = 40; }
+    const v = vals ? vals[f.k] : ''; i.value = (v === undefined || v === null) ? '' : v;
+    r.append(i);
+  });
+  const x = document.createElement('button');
+  x.type = 'button'; x.textContent = 'Hapus'; x.className = 'text-red-600 text-sm'; x.onclick = () => r.remove();
+  r.append(x); box.append(r);
+}
+function readRows(box) {
+  return Array.from(box.children).map(r => {
+    const o = {};
+    r.querySelectorAll('input').forEach(i => {
+      o[i.dataset.k] = i.type === 'number' ? Math.max(0, Math.min(100000, parseInt(i.value, 10) || 0)) : i.value.trim().slice(0, 40);
+    });
+    return o;
+  });
+}
+function addRowLimited(boxId, fields) {
+  const box = $(boxId);
+  if (box.children.length >= 20) { alert('Maksimal 20 baris.'); return; }
+  rowEl(box, fields, null);
+}
+$('stSiswaAdd').onclick = () => addRowLimited('stSiswa', ST_F.siswa);
+$('stTrenAdd').onclick = () => addRowLimited('stTren', ST_F.tren);
+$('stUmumAdd').onclick = () => addRowLimited('stUmum', ST_F.umum);
+document.querySelectorAll('.fillKelas').forEach(b => b.onclick = () => {
+  const box = $('stSiswa');
+  if (box.children.length && !confirm('Ganti daftar kelas yang sudah ada?')) return;
+  const map = { sd: [1, 6], smp: [7, 9], sma: [10, 12] }; const rng = map[b.dataset.fill];
+  box.innerHTML = '';
+  for (let i = rng[0]; i <= rng[1]; i++) rowEl(box, ST_F.siswa, { kelas: 'Kelas ' + i, l: 0, p: 0 });
+});
+
+function cleanRows(a, num, txt) {
+  return (Array.isArray(a) ? a : []).slice(0, 20).map(r => {
+    const o = {};
+    num.forEach(k => { o[k] = Math.max(0, Math.min(100000, parseInt(r && r[k], 10) || 0)); });
+    txt.forEach(k => { o[k] = String((r && r[k]) ?? '').slice(0, 40); });
+    return o;
+  });
+}
+function applyStat(s) {
+  statSiswa = cleanRows(s.statSiswa, ['l', 'p'], ['kelas']).filter(r => r.kelas);
+  statTren = cleanRows(s.statTren, ['jumlah'], ['tahun']).filter(r => r.tahun);
+  statUmum = cleanRows(s.statUmum, [], ['label', 'nilai']).filter(r => r.label);
+  renderCharts();
+}
+function fillStat(s) {
+  [['stSiswa', ST_F.siswa, s.statSiswa, ['l', 'p'], ['kelas']], ['stTren', ST_F.tren, s.statTren, ['jumlah'], ['tahun']], ['stUmum', ST_F.umum, s.statUmum, [], ['label', 'nilai']]]
+    .forEach(([id, f, data, num, txt]) => {
+      const box = $(id); box.innerHTML = '';
+      cleanRows(data, num, txt).forEach(r => rowEl(box, f, r));
+    });
+}
+$('stSimpan').onclick = async () => {
+  const siswa = readRows($('stSiswa')).filter(r => r.kelas);
+  const tren = readRows($('stTren')).filter(r => r.tahun);
+  const umum = readRows($('stUmum')).filter(r => r.label);
+  try {
+    await db.collection('settings').doc('site').set({ statSiswa: siswa, statTren: tren, statUmum: umum }, { merge: true });
+    $('stMsg').textContent = 'Statistik tersimpan dan terpublikasi.';
+    setTimeout(() => $('stMsg').textContent = '', 3000);
+  } catch (e) { alert('Gagal menyimpan statistik. ' + errInfo(e)); }
+};
+
+function countUp(el, to) {
+  const t0 = performance.now(), dur = 900;
+  const step = (t) => {
+    const k = Math.min(1, (t - t0) / dur);
+    el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+function countBy(list, key) {
+  const m = {};
+  list.forEach(d => { const v = String(d[key] || '').trim(); if (v) m[v] = (m[v] || 0) + 1; });
+  return m;
+}
+const sumVals = (m) => Object.keys(m).reduce((a, k) => a + m[k], 0);
+function chartPal() {
+  const cs = getComputedStyle(document.documentElement);
+  return [cs.getPropertyValue('--primary').trim(), cs.getPropertyValue('--accent').trim(), '#16a34a', '#0ea5e9', '#a855f7', '#f43f5e', '#64748b'];
+}
+const centerPlugin = {
+  id: 'center',
+  afterDraw(chart, args, opts) {
+    if (!opts || !opts.text) return;
+    const a = chart.chartArea, ctx = chart.ctx;
+    ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#334155'; ctx.font = 'bold 24px ' + (opts.font || 'sans-serif');
+    ctx.fillText(opts.text, (a.left + a.right) / 2, (a.top + a.bottom) / 2);
+    ctx.restore();
+  }
+};
+function mk(id, cfg, show) {
+  const box = $(id + 'Box'); if (box) box.classList.toggle('hidden', !show);
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+  if (!show || typeof Chart === 'undefined') return;
+  charts[id] = new Chart($(id), cfg);
+}
+function renderCharts() {
+  const pal = chartPal();
+  const fontFam = getComputedStyle(document.body).fontFamily;
+  if (typeof Chart !== 'undefined') { Chart.defaults.font.family = fontFam; Chart.defaults.color = '#475569'; }
+  const totL = statSiswa.reduce((a, r) => a + r.l, 0), totP = statSiswa.reduce((a, r) => a + r.p, 0), tot = totL + totP;
+  const gStatus = countBy(guruList, 'status'), gPend = countBy(guruList, 'pendidikan'), gJk = countBy(guruList, 'jk');
+  const has = {
+    cSiswa: tot > 0, cJk: tot > 0, cTren: statTren.length > 0,
+    cStatus: sumVals(gStatus) > 0, cPend: sumVals(gPend) > 0, cGuruJk: sumVals(gJk) > 0
+  };
+
+  const kpi = [];
+  if (tot) kpi.push([tot, 'Peserta Didik']);
+  if (guruList.length) kpi.push([guruList.length, 'Guru & Tenaga Kependidikan']);
+  if (tot && guruList.length) kpi.push(['1 : ' + Math.round(tot / guruList.length), 'Rasio Staf : Siswa']);
+  if (statSiswa.length) kpi.push([statSiswa.length, 'Rombongan Belajar']);
+  statUmum.forEach(u => kpi.push([u.nilai, u.label]));
+  const row = $('kpiRow'); row.innerHTML = '';
+  kpi.forEach(([v, label]) => {
+    const c = document.createElement('div'); c.className = 'bg-white rounded-xl shadow p-3 text-center border-t-4 border-accent';
+    const n = document.createElement('p'); n.className = 'text-2xl font-bold text-primary'; n.textContent = v;
+    const l = document.createElement('p'); l.className = 'text-xs text-slate-500 mt-1'; l.textContent = label;
+    c.append(n, l); row.append(c);
+    if (typeof v === 'number') countUp(n, v);
+  });
+  $('statistik').classList.toggle('hidden', !(kpi.length || Object.keys(has).some(k => has[k])));
+  if (typeof Chart === 'undefined') return;
+
+  const legend = { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } };
+  const base = { responsive: true, maintainAspectRatio: false, animation: { duration: 900, easing: 'easeOutQuart' } };
+  const donut = (labels, data, center) => ({
+    type: 'doughnut',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: pal.slice(0, labels.length), borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }] },
+    options: Object.assign({}, base, { cutout: '62%', plugins: { legend: legend, center: { text: String(center), font: fontFam } } }),
+    plugins: [centerPlugin]
+  });
+
+  mk('cSiswa', {
+    type: 'bar',
+    data: { labels: statSiswa.map(r => r.kelas), datasets: [
+      { label: 'Laki-laki', data: statSiswa.map(r => r.l), backgroundColor: pal[0], borderRadius: 6 },
+      { label: 'Perempuan', data: statSiswa.map(r => r.p), backgroundColor: pal[1], borderRadius: 6 }
+    ] },
+    options: Object.assign({}, base, { plugins: { legend: legend }, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } } } })
+  }, has.cSiswa);
+
+  mk('cJk', donut(['Laki-laki', 'Perempuan'], [totL, totP], tot), has.cJk);
+
+  mk('cTren', {
+    type: 'line',
+    data: { labels: statTren.map(r => r.tahun), datasets: [{ label: 'Jumlah siswa', data: statTren.map(r => r.jumlah), borderColor: pal[0], backgroundColor: pal[0] + '22', fill: true, tension: 0.35, pointRadius: 5, pointBackgroundColor: pal[1] }] },
+    options: Object.assign({}, base, { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } })
+  }, has.cTren);
+
+  const sKeys = Object.keys(gStatus);
+  mk('cStatus', donut(sKeys, sKeys.map(k => gStatus[k]), sumVals(gStatus)), has.cStatus);
+
+  const PEND = ['SMA/SMK', 'D3', 'S1/D4', 'S2', 'S3'];
+  const pKeys = PEND.filter(k => gPend[k]).concat(Object.keys(gPend).filter(k => PEND.indexOf(k) < 0));
+  mk('cPend', {
+    type: 'bar',
+    data: { labels: pKeys, datasets: [{ label: 'Jumlah', data: pKeys.map(k => gPend[k]), backgroundColor: pKeys.map((k, i) => pal[i % pal.length]), borderRadius: 6 }] },
+    options: Object.assign({}, base, { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } }, y: { grid: { display: false } } } })
+  }, has.cPend);
+
+  const jKeys = Object.keys(gJk);
+  mk('cGuruJk', donut(jKeys, jKeys.map(k => gJk[k]), sumVals(gJk)), has.cGuruJk);
+}
+window.chartsReady = true;
+
+
+/* ---------- Navigasi panel (halaman tidak memanjang ke bawah) ---------- */
+const PANEL_OF = { beranda:'beranda', dokumentasi:'dokumentasi', karya:'karya', profil:'profil', kontak:'kontak', sambutan:'beranda', video:'beranda', pengumuman:'beranda', guru:'guru', statistik:'statistik', berita:'berita', ppdb:'ppdb' };
+function showPanel(key, push) {
+  const p = PANEL_OF[key] || 'beranda';
+  document.querySelectorAll('.pnl').forEach(el => el.classList.toggle('hidden', el.id !== 'p-' + p));
+  document.querySelectorAll('.navLink').forEach(a => a.classList.toggle('nav-on', a.dataset.p === p));
+  const target = (key !== p && $(key)) ? $(key) : null;
+  if (target) target.scrollIntoView({ behavior: 'smooth' }); else window.scrollTo(0, 0);
+  if (p === 'dokumentasi' && !galLoaded) loadGaleri(true);
+  if (p === 'statistik') Object.keys(charts).forEach(k => { try { charts[k].resize(); } catch (e) {} });
+  if (push) { try { history.replaceState(null, '', '#' + key); } catch (e) {} }
+}
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]'); if (!a) return;
+  const k = a.getAttribute('href').slice(1);
+  if (PANEL_OF[k]) { e.preventDefault(); showPanel(k, true); }
+});
+window.addEventListener('hashchange', () => showPanel(location.hash.slice(1)));
+
+/* teks berita/pengumuman: klik untuk buka / tutup */
+['listBerita', 'listPengumuman'].forEach(id => $(id).addEventListener('click', (e) => {
+  const card = e.target.closest('[data-exp]'); if (!card || e.target.closest('a')) return;
+  const t = card.querySelector('.clampTxt'), h = card.querySelector('.expHint');
+  if (!t || !h) return;
+  const open = !t.classList.contains('line-clamp-2') && !t.classList.contains('line-clamp-3');
+  t.classList.toggle(id === 'listBerita' ? 'line-clamp-3' : 'line-clamp-2', open);
+  h.textContent = open ? 'Baca selengkapnya' : 'Tutup';
+}));
+
+/* ---------- Profil, kontak, info PPDB ---------- */
+function waLink(n) {
+  let d = String(n || '').replace(/\D/g, '');
+  if (d.startsWith('0')) d = '62' + d.slice(1);
+  return d.length >= 9 ? 'https://wa.me/' + d : '';
+}
+function mapSrc(v) {
+  v = String(v || '').trim();
+  const m = v.match(/src=["']([^"']+)["']/);
+  if (m) v = m[1];
+  v = v.replace(/&amp;/g, '&');
+  if (!/^https:\/\/[^\s"'<>]+$/.test(v)) return '';
+  if (/^https:\/\/www\.google\.com\/maps\/embed\?/.test(v)) return v;
+  if (/^https:\/\/maps\.google\.com\/maps\?[^\s]*output=embed/.test(v)) return v;
+  if (!/^https:\/\/(www\.google\.com\/maps|maps\.google\.com)/.test(v)) return '';
+  let q = '';
+  try {
+    const c = v.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    const pl = v.match(/\/maps\/place\/([^\/?#]+)/);
+    if (c) q = c[1] + ',' + c[2];
+    else if (pl) q = decodeURIComponent(pl[1].replace(/\+/g, ' '));
+    else q = new URL(v).searchParams.get('q') || '';
+  } catch (e) { q = ''; }
+  return q ? 'https://maps.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed' : '';
+}
+const mapLink = (v) => /^https:\/\/(www\.google\.com\/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl\/maps)[^\s"'<>]*$/.test(String(v || '').trim()) ? String(v).trim() : '';
+const httpsOk = (u) => /^https:\/\/[^\s"'<>]+$/.test(u || '');
+function setTxt(id, val) { const el = $(id), box = $(id + 'Box'); el.textContent = val || ''; if (box) box.classList.toggle('hidden', !val); return !!val; }
+function applyProfil(s) {
+  const t = setTxt('tentangTeks', s.tentang); $('tentangTeks').innerHTML = fmt(s.tentang); $('tentangBox').classList.toggle('hidden', !t);
+  const v = !!s.visi; $('visiTeks').innerHTML = fmt(s.visi); $('visiBox').classList.toggle('hidden', !v);
+  const misi = (s.misi || '').split('\n').map(x => x.trim()).filter(Boolean);
+  const ol = $('misiList'); ol.innerHTML = '';
+  misi.forEach(x => { const li = document.createElement('li'); li.innerHTML = fmt(x); ol.append(li); });
+  $('misiBox').classList.toggle('hidden', !misi.length);
+  $('profilKosong').classList.toggle('hidden', !!(t || v || misi.length));
+
+  const k = [setTxt('kAlamat', s.alamat), setTxt('kTelp', s.telp), setTxt('kEmail', s.email), setTxt('kJam', s.jam)];
+  const sos = $('kSosmed'); sos.innerHTML = '';
+  [['Instagram', s.ig], ['Facebook', s.fb]].forEach(([n, u]) => {
+    if (!httpsOk(u)) return;
+    const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'px-4 py-1.5 rounded-lg border border-primary text-primary text-sm font-medium hover:bg-primary hover:text-white transition'; a.textContent = n; sos.append(a);
+  });
+  sos.classList.toggle('hidden', !sos.children.length);
+  const ml = mapLink(s.maps);
+  if (ml) {
+    const a = document.createElement('a'); a.href = ml; a.target = '_blank'; a.rel = 'noopener';
+    a.className = 'px-4 py-1.5 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition'; a.textContent = 'Buka di Google Maps'; sos.prepend(a);
+    sos.classList.remove('hidden');
+  }
+  const ms = mapSrc(s.maps) || (s.alamat ? 'https://maps.google.com/maps?q=' + encodeURIComponent(s.alamat) + '&output=embed' : '');
+  if (ms) $('kMap').src = ms; else $('kMap').removeAttribute('src');
+  $('kMapBox').classList.toggle('hidden', !ms);
+  $('kKosong').classList.toggle('hidden', !!(k.some(Boolean) || sos.children.length || ms));
+
+  const wl = waLink(s.wa);
+  $('waFloat').classList.toggle('hidden', !wl); if (wl) $('waFloat').href = wl;
+  const fk = [s.alamat, s.telp].filter(Boolean).join(' | ');
+  $('footKontak').textContent = fk; $('footKontak').classList.toggle('hidden', !fk);
+
+  const pp = !!s.ppdbInfo; $('ppdbInfoTeks').innerHTML = fmt(s.ppdbInfo); $('ppdbInfoBox').classList.toggle('hidden', !pp);
+}
+$('pSimpan').onclick = async () => {
+  const g = (i) => $(i).value.trim();
+  const maps = g('pMaps'), ig = g('pIg'), fb = g('pFb');
+  if (maps && !mapSrc(maps) && !mapLink(maps)) return alert('Peta tidak valid. Tempel link atau kode "Sematkan peta" dari Google Maps (alamat harus berawalan https://www.google.com/maps atau https://maps.app.goo.gl).');
+  if ((ig && !httpsOk(ig)) || (fb && !httpsOk(fb))) return alert('Link Instagram/Facebook harus diawali https://');
+  try {
+    await db.collection('settings').doc('site').set({
+      tentang: g('pTentang'), visi: g('pVisi'), misi: g('pMisi'), alamat: g('pAlamat'), telp: g('pTelp'), email: g('pEmail'),
+      wa: g('pWa'), jam: g('pJam'), ig: ig, fb: fb, maps: maps, ppdbInfo: g('pPpdb')
+    }, { merge: true });
+    $('pMsg').textContent = 'Tersimpan dan terpublikasi.';
+    setTimeout(() => $('pMsg').textContent = '', 3000);
+  } catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+
+/* ---------- Huruf tebal: blok teks lalu klik B (disimpan sebagai **teks**) ---------- */
+function fmt(t) {
+  const bold = (x) => esc(x).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const AL = { kiri: 'left', tengah: 'center', kanan: 'right', rata: 'justify' };
+  const RE = /^\[(kiri|tengah|kanan|rata)\] ?/;
+  const lines = String(t ?? '').split('\n');
+  if (!lines.some(l => RE.test(l))) return bold(t);
+  return lines.map(l => {
+    const m = l.match(RE);
+    return '<span style="display:block;' + (m ? 'text-align:' + AL[m[1]] + ';' : '') + '">' + (bold(m ? l.slice(m[0].length) : l) || '&nbsp;') + '</span>';
+  }).join('');
+}
+const ALIGN_BTNS = [
+  ['kiri', 'Rata kiri', 'M3 6h18M3 10h12M3 14h18M3 18h12'],
+  ['tengah', 'Rata tengah', 'M3 6h18M6 10h12M3 14h18M6 18h12'],
+  ['kanan', 'Rata kanan', 'M3 6h18M9 10h12M3 14h18M9 18h12'],
+  ['rata', 'Rata kiri-kanan', 'M3 6h18M3 10h18M3 14h18M3 18h18']
+];
+function addBoldBar(id) {
+  const el = $(id); if (!el) return;
+  const HINT = 'Blok teks lalu klik B (tebal). Ikon rata mengatur paragraf.';
+  const bar = document.createElement('div'); bar.className = 'flex flex-wrap items-center gap-1.5 mb-1';
+  const btn = 'w-8 h-8 rounded border border-slate-300 hover:bg-slate-100 flex items-center justify-center';
+  const b = document.createElement('button'); b.type = 'button'; b.title = 'Tebalkan teks terpilih (Ctrl+B)'; b.textContent = 'B';
+  b.className = btn + ' font-extrabold';
+  bar.append(b);
+  const h = document.createElement('span'); h.className = 'text-xs text-slate-500 ml-1';
+  const aligns = ALIGN_BTNS.map(([k, label, d]) => {
+    const x = document.createElement('button'); x.type = 'button'; x.title = label; x.setAttribute('aria-label', label);
+    x.className = btn; x.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="' + d + '"/></svg>';
+    x.onmousedown = (ev) => ev.preventDefault(); x.onclick = () => align(k); bar.append(x); return x;
+  });
+  h.textContent = HINT; bar.append(h);
+  el.parentNode.insertBefore(bar, el);
+
+  const bold = () => {
+    const a = el.selectionStart, e = el.selectionEnd, v = el.value;
+    if (a === e) { h.textContent = 'Blok dulu teks yang ingin ditebalkan'; return; }
+    h.textContent = HINT;
+    const sel = v.slice(a, e); let nv, na, ne;
+    if (sel.length > 4 && sel.startsWith('**') && sel.endsWith('**')) { const inner = sel.slice(2, -2); nv = v.slice(0, a) + inner + v.slice(e); na = a; ne = a + inner.length; }
+    else if (v.slice(a - 2, a) === '**' && v.slice(e, e + 2) === '**') { nv = v.slice(0, a - 2) + sel + v.slice(e + 2); na = a - 2; ne = na + sel.length; }
+    else { nv = v.slice(0, a) + '**' + sel + '**' + v.slice(e); na = a + 2; ne = e + 2; }
+    el.value = nv; el.focus(); el.setSelectionRange(na, ne);
+  };
+  const align = (kind) => {
+    const v = el.value, a = el.selectionStart;
+    let e = el.selectionEnd; if (e > a && v[e - 1] === '\n') e--;
+    const start = v.lastIndexOf('\n', a - 1) + 1;
+    let end = v.indexOf('\n', e); if (end < 0) end = v.length;
+    const RE = /^\[(kiri|tengah|kanan|rata)\] ?/;
+    const lines = v.slice(start, end).split('\n');
+    const allSame = lines.every(l => { const m = l.match(RE); return m && m[1] === kind; });
+    const seg = lines.map(l => { const t = l.replace(RE, ''); return allSame ? t : '[' + kind + '] ' + t; }).join('\n');
+    el.value = v.slice(0, start) + seg + v.slice(end);
+    el.focus(); el.setSelectionRange(start, start + seg.length);
+    h.textContent = HINT;
+  };
+  b.onmousedown = (ev) => ev.preventDefault();
+  b.onclick = bold;
+  el.addEventListener('keydown', (ev) => { if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'b') { ev.preventDefault(); bold(); } });
+}
+['bJudul', 'bIsi', 'sTagline', 'sSambutan', 'pTentang', 'pVisi', 'pMisi', 'pPpdb'].forEach(addBoldBar);
+
+/* ---------- Hasil Karya ---------- */
+const KARYA_WARNA = { teal:'#0f766e', biru:'#1d4ed8', hijau:'#15803d', oranye:'#c2410c', merah:'#b91c1c', ungu:'#7e22ce', abu:'#475569' };
+let karyaAdmin = [], karyaEdit = -1, karyaData = [];
+
+/* tampilan publik */
+function applyKarya(s) { karyaData = Array.isArray(s.karya) ? s.karya : []; renderKarya(); }
+function renderKarya() {
+  const box = $('listKarya'); box.innerHTML = '';
+  $('karyaKosong').classList.toggle('hidden', karyaData.length > 0);
+  karyaData.forEach((k) => {
+    const c = KARYA_WARNA[k.warna] || KARYA_WARNA.teal;
+    const card = document.createElement('article');
+    card.className = 'bg-white rounded-xl shadow overflow-hidden flex flex-col';
+    card.style.borderTop = '4px solid ' + c;
+    let h = '<div class="p-5 flex flex-col gap-3 flex-1">';
+    if (k.kategori) h += '<span class="self-start rounded-full text-xs font-semibold px-3 py-1" style="background:' + c + '1f;color:' + c + '">' + esc(k.kategori) + '</span>';
+    h += '<h3 class="text-lg font-bold leading-snug" style="color:' + c + '">' + esc(k.nama) + '</h3>';
+    if (k.deskripsi) h += '<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">' + fmt(k.deskripsi) + '</p>';
+    const fit = String(k.fitur || '').split('\n').map(x => x.trim()).filter(Boolean);
+    if (fit.length) h += '<ul class="text-sm text-slate-700 space-y-1.5">' + fit.map(x => '<li class="flex gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style="background:' + c + '"></span><span>' + fmt(x) + '</span></li>').join('') + '</ul>';
+    h += '<div class="flex-1"></div><div class="flex flex-wrap gap-2 pt-1">';
+    (k.tautan || []).forEach(l => {
+      if (l && httpsOk(l.url)) h += '<a href="' + esc(l.url) + '" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition" style="background:' + c + '">' + esc(l.label) + '</a>';
+    });
+    const id = (k.youtube && ytUrlOk(k.youtube)) ? ytId(k.youtube) : '';
+    if (id) h += '<button type="button" data-yt="' + esc(id) + '" class="btnTutor px-3 py-1.5 rounded-lg text-sm font-medium border" style="border-color:' + c + ';color:' + c + '">Lihat Tutorial</button>';
+    card.innerHTML = h + '</div></div>';
+    box.append(card);
+  });
+}
+$('listKarya').addEventListener('click', (e) => {
+  const b = e.target.closest('.btnTutor'); if (!b) return;
+  $('ytFrame').src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(b.dataset.yt) + '?autoplay=1';
+  $('ytModal').classList.remove('hidden');
+});
+const ytTutup = () => { $('ytModal').classList.add('hidden'); $('ytFrame').removeAttribute('src'); };
+$('ytClose').onclick = ytTutup;
+$('ytModal').addEventListener('click', (e) => { if (e.target === $('ytModal')) ytTutup(); });
+
+/* panel admin */
+function renderKaryaAdmin() {
+  const box = $('karyaAdminList'); box.innerHTML = '';
+  if (!karyaAdmin.length) { box.innerHTML = '<p class="text-sm text-slate-500">Belum ada hasil karya. Klik "+ Tambah Karya".</p>'; return; }
+  karyaAdmin.forEach((k, i) => {
+    const row = document.createElement('div'); row.className = 'flex items-center gap-3 border border-slate-200 rounded-lg p-3';
+    const dot = document.createElement('span'); dot.className = 'w-3 h-3 rounded-full shrink-0'; dot.style.background = KARYA_WARNA[k.warna] || KARYA_WARNA.teal;
+    const info = document.createElement('div'); info.className = 'flex-1 min-w-0';
+    const n = document.createElement('p'); n.className = 'font-semibold text-sm truncate'; n.textContent = k.nama || '';
+    const c = document.createElement('p'); c.className = 'text-xs text-slate-500 truncate'; c.textContent = k.kategori || '';
+    info.append(n, c);
+    const mk = (txt, title, fn, dis) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.title = title; b.disabled = !!dis;
+      b.className = 'px-2.5 py-1 rounded border border-slate-300 text-sm hover:bg-slate-100 disabled:opacity-30'; b.onclick = fn; return b; };
+    row.append(dot, info, mk('▲', 'Naikkan', () => moveKarya(i, -1), i === 0), mk('▼', 'Turunkan', () => moveKarya(i, 1), i === karyaAdmin.length - 1), mk('Edit', 'Edit', () => openKarya(i)));
+    box.append(row);
+  });
+}
+async function saveKarya(list) {
+  try { await db.collection('settings').doc('site').set({ karya: list }, { merge: true }); karyaAdmin = list; renderKaryaAdmin(); return true; }
+  catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); return false; }
+}
+async function moveKarya(i, d) {
+  const j = i + d; if (j < 0 || j >= karyaAdmin.length) return;
+  const a = [...karyaAdmin]; [a[i], a[j]] = [a[j], a[i]]; await saveKarya(a);
+}
+function karyaLinkRow(l) {
+  const r = document.createElement('div'); r.className = 'flex gap-2 items-center kaLink';
+  r.innerHTML = '<input class="inp kaLabel flex-[2] min-w-0" maxlength="40" placeholder="Nama tombol"><input class="inp kaUrl flex-[3] min-w-0" maxlength="500" placeholder="https://..."><button type="button" class="text-sm underline text-primary shrink-0">Hapus</button>';
+  r.querySelector('.kaLabel').value = (l && l.label) || ''; r.querySelector('.kaUrl').value = (l && l.url) || '';
+  r.querySelector('button').onclick = () => r.remove();
+  $('kaLinks').append(r);
+}
+function openKarya(i) {
+  karyaEdit = i; const k = i >= 0 ? karyaAdmin[i] : {};
+  $('kaTitle').textContent = i >= 0 ? 'Edit ' + (k.nama || '') : 'Tambah Hasil Karya';
+  $('kaNama').value = k.nama || ''; $('kaKategori').value = k.kategori || ''; $('kaDeskripsi').value = k.deskripsi || '';
+  $('kaFitur').value = k.fitur || ''; $('kaYt').value = k.youtube || ''; $('kaWarna').value = KARYA_WARNA[k.warna] ? k.warna : 'teal';
+  $('kaLinks').innerHTML = ''; (k.tautan || []).forEach(karyaLinkRow); if (!(k.tautan || []).length) karyaLinkRow();
+  $('kaHapus').classList.toggle('hidden', i < 0);
+  $('karyaModal').classList.remove('hidden');
+}
+const karyaTutup = () => $('karyaModal').classList.add('hidden');
+$('kaTambah').onclick = () => openKarya(-1);
+$('kaTambahLink').onclick = () => karyaLinkRow();
+$('kaX').onclick = karyaTutup; $('kaBatal').onclick = karyaTutup;
+$('kaSimpan').onclick = async () => {
+  const g = (id) => $(id).value.trim();
+  const nama = g('kaNama'); if (!nama) return alert('Nama aplikasi/karya wajib diisi.');
+  const yt = g('kaYt'); if (yt && !(ytUrlOk(yt) && ytId(yt))) return alert('Link YouTube tidak valid. Gunakan alamat https dari youtube.com atau youtu.be yang mengarah ke satu video.');
+  const tautan = [];
+  for (const r of document.querySelectorAll('#kaLinks .kaLink')) {
+    const label = r.querySelector('.kaLabel').value.trim(), url = r.querySelector('.kaUrl').value.trim();
+    if (!label && !url) continue;
+    if (!label || !httpsOk(url)) return alert('Setiap tautan harus punya nama tombol dan alamat yang diawali https://');
+    tautan.push({ label, url });
+  }
+  const item = { id: karyaEdit >= 0 ? (karyaAdmin[karyaEdit].id || ('k' + Date.now().toString(36))) : ('k' + Date.now().toString(36)),
+    nama, kategori: g('kaKategori'), deskripsi: g('kaDeskripsi'), fitur: g('kaFitur'), youtube: yt, warna: $('kaWarna').value, tautan };
+  const list = [...karyaAdmin]; if (karyaEdit >= 0) list[karyaEdit] = item; else list.push(item);
+  if (await saveKarya(list)) karyaTutup();
+};
+$('kaHapus').onclick = async () => {
+  if (karyaEdit < 0 || !confirm('Hapus hasil karya ini?')) return;
+  if (await saveKarya(karyaAdmin.filter((_, i) => i !== karyaEdit))) karyaTutup();
+};
+['kaDeskripsi', 'kaFitur'].forEach(addBoldBar);
+
+/* ---------- Dokumentasi (foto & video kegiatan) ---------- */
+let galDocs = [], galLast = null, galDone = false, galLoaded = false, galBusy = false, galFilter = '', galView = [], galIdx = 0;
+const GAL_PAGE = 12;
+const RULE_HINT = 'Aturan Firestore belum mengizinkan koleksi "dokumentasi". Tambahkan aturan untuk koleksi ini (samakan dengan koleksi guru: dibaca publik, ditulis admin), lalu coba lagi.';
+function tglKeg(d) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(d.tglKegiatan || '')) return new Date(d.tglKegiatan + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  return fmtTgl(d.tanggal);
+}
+function galThumb(d) {
+  if (d.jenis === 'video') { const id = (d.youtube && ytUrlOk(d.youtube)) ? ytId(d.youtube) : ''; return id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : ''; }
+  return GURU_FOTO.test(d.foto || '') ? d.foto : '';
+}
+function bukaYt(id) { $('ytFrame').src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1'; $('ytModal').classList.remove('hidden'); }
+
+/* tampilan publik */
+async function loadGaleri(reset) {
+  if (!configured || galBusy) return; galBusy = true;
+  try {
+    if (reset) { galDocs = []; galLast = null; galDone = false; }
+    let q = db.collection('dokumentasi').orderBy('tanggal', 'desc').limit(GAL_PAGE);
+    if (galLast) q = q.startAfter(galLast);
+    const snap = await q.get();
+    snap.forEach(x => galDocs.push({ id: x.id, ...x.data() }));
+    if (snap.docs.length) galLast = snap.docs[snap.docs.length - 1];
+    if (snap.docs.length < GAL_PAGE) galDone = true;
+    galLoaded = true; renderGaleri();
+  } catch (e) { $('galKosong').textContent = 'Dokumentasi belum dapat dimuat.'; $('galKosong').classList.remove('hidden'); }
+  galBusy = false;
+}
+function renderGaleri() {
+  const names = [...new Set(galDocs.map(d => d.judul).filter(Boolean))].slice(0, 12);
+  if (galFilter && !names.includes(galFilter)) galFilter = '';
+  const chips = $('galChips'); chips.innerHTML = '';
+  if (names.length > 1) [['', 'Semua'], ...names.map(n => [n, n])].forEach(([v, label]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = label;
+    b.className = 'px-3 py-1 rounded-full text-sm border transition ' + (v === galFilter ? 'bg-primary text-white border-primary' : 'border-slate-300 text-slate-700 hover:bg-slate-100');
+    b.onclick = () => { galFilter = v; renderGaleri(); }; chips.append(b);
+  });
+  galView = galDocs.filter(d => !galFilter || d.judul === galFilter);
+  const box = $('listGaleri'); box.innerHTML = '';
+  galView.forEach((d, i) => {
+    const t = galThumb(d); if (!t) return;
+    const b = document.createElement('button'); b.type = 'button';
+    b.className = 'group relative block w-full aspect-[4/3] overflow-hidden rounded-xl shadow bg-slate-200 text-left';
+    const im = document.createElement('img'); im.src = t; im.alt = d.judul || 'Dokumentasi'; im.loading = 'lazy';
+    im.className = 'w-full h-full object-cover group-hover:scale-105 transition duration-300';
+    const cap = document.createElement('div'); cap.className = 'absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2.5 pt-8 text-white text-xs font-medium'; cap.textContent = d.judul || '';
+    b.append(im, cap);
+    if (d.jenis === 'video') {
+      const pl = document.createElement('span'); pl.className = 'absolute inset-0 flex items-center justify-center';
+      pl.innerHTML = '<span class="w-12 h-12 rounded-full bg-black/60 text-white flex items-center justify-center"><svg class="w-6 h-6 ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>';
+      b.append(pl);
+    }
+    b.onclick = () => openGaleri(i); box.append(b);
+  });
+  $('galKosong').textContent = 'Belum ada dokumentasi.';
+  $('galKosong').classList.toggle('hidden', galView.length > 0);
+  $('galMore').classList.toggle('hidden', galDone);
+}
+function openGaleri(i) {
+  const d = galView[i]; if (!d) return; galIdx = i;
+  if (d.jenis === 'video') { const id = ytId(d.youtube || ''); if (id) bukaYt(id); return; }
+  if (!GURU_FOTO.test(d.foto || '')) return;
+  $('fotoImg').src = d.foto; $('fotoJudul').textContent = d.judul || ''; $('fotoTgl').textContent = tglKeg(d);
+  $('fotoKet').innerHTML = fmt(d.keterangan); $('fotoModal').classList.remove('hidden');
+}
+function stepGaleri(dir) {
+  let j = galIdx;
+  for (let n = 0; n < galView.length; n++) {
+    j = (j + dir + galView.length) % galView.length;
+    if (galView[j].jenis !== 'video' && GURU_FOTO.test(galView[j].foto || '')) { openGaleri(j); return; }
+  }
+}
+const fotoTutup = () => { $('fotoModal').classList.add('hidden'); $('fotoImg').removeAttribute('src'); };
+$('fotoClose').onclick = fotoTutup;
+$('fotoPrev').onclick = () => stepGaleri(-1); $('fotoNext').onclick = () => stepGaleri(1);
+$('fotoModal').addEventListener('click', (e) => { if (e.target === $('fotoModal')) fotoTutup(); });
+document.addEventListener('keydown', (e) => {
+  if ($('fotoModal').classList.contains('hidden')) return;
+  if (e.key === 'Escape') fotoTutup(); else if (e.key === 'ArrowLeft') stepGaleri(-1); else if (e.key === 'ArrowRight') stepGaleri(1);
+});
+$('galMore').onclick = () => loadGaleri(false);
+$('aTutup').addEventListener('click', () => { galLoaded = false; if (!$('p-dokumentasi').classList.contains('hidden')) loadGaleri(true); });
+
+/* panel admin */
+function compressGaleri(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let sc = Math.min(1, 1000 / Math.max(img.width, img.height)), q = 0.8, out = '';
+      for (let n = 0; n < 8; n++) {
+        const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL('image/jpeg', q);
+        if (out.length <= 180000) break;
+        if (q > 0.5) q -= 0.1; else sc *= 0.85;
+      }
+      out.length > 400000 ? reject(new Error('Foto terlalu besar.')) : resolve(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gambar tidak dapat dibaca. Gunakan format JPG atau PNG.')); };
+    img.src = url;
+  });
+}
+async function adminDok() {
+  const box = $('dList'); box.innerHTML = '<p class="text-sm text-slate-500 col-span-full">Memuat...</p>';
+  try {
+    const snap = await db.collection('dokumentasi').orderBy('tanggal', 'desc').limit(60).get();
+    box.innerHTML = '';
+    if (snap.empty) { box.innerHTML = '<p class="text-sm text-slate-500 col-span-full">Belum ada dokumentasi.</p>'; return; }
+    snap.forEach(x => {
+      const d = x.data(), t = galThumb(d);
+      const card = document.createElement('div'); card.className = 'border border-slate-200 rounded-lg overflow-hidden flex flex-col';
+      const wrap = document.createElement('div'); wrap.className = 'relative aspect-[4/3] bg-slate-100';
+      if (t) { const im = document.createElement('img'); im.src = t; im.alt = ''; im.className = 'w-full h-full object-cover'; wrap.append(im); }
+      if (d.jenis === 'video') { const tag = document.createElement('span'); tag.className = 'absolute top-1 left-1 bg-red-600 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded'; tag.textContent = 'VIDEO'; wrap.append(tag); }
+      const body = document.createElement('div'); body.className = 'p-2 flex-1 flex flex-col gap-0.5';
+      const n = document.createElement('p'); n.className = 'text-xs font-semibold truncate'; n.textContent = d.judul || '';
+      const g = document.createElement('p'); g.className = 'text-[11px] text-slate-500'; g.textContent = tglKeg(d);
+      const del = document.createElement('button'); del.type = 'button'; del.className = 'self-start mt-1 text-xs text-red-600 underline'; del.textContent = 'Hapus';
+      del.onclick = async () => { if (!confirm('Hapus dokumentasi ini?')) return; try { await x.ref.delete(); adminDok(); } catch (e) { alert('Gagal menghapus. ' + errInfo(e)); } };
+      body.append(n, g, del); card.append(wrap, body); box.append(card);
+    });
+  } catch (e) {
+    box.innerHTML = ''; const p = document.createElement('p'); p.className = 'text-sm text-red-600 col-span-full';
+    p.textContent = e.code === 'permission-denied' ? RULE_HINT : 'Gagal memuat. ' + errInfo(e); box.append(p);
+  }
+}
+$('dJenis').onchange = () => { const v = $('dJenis').value === 'video'; $('dVideoBox').classList.toggle('hidden', !v); $('dFotoBox').classList.toggle('hidden', v); };
+$('dFile').onchange = () => {
+  const pv = $('dPrev'); pv.innerHTML = '';
+  const files = Array.from($('dFile').files);
+  if (files.length > 10) { alert('Maksimal 10 foto sekali unggah.'); $('dFile').value = ''; return; }
+  files.forEach(f => {
+    if (!f.type.startsWith('image/')) return;
+    const im = document.createElement('img'); const u = URL.createObjectURL(f); im.src = u; im.onload = () => URL.revokeObjectURL(u);
+    im.className = 'w-16 h-16 object-cover rounded border'; pv.append(im);
+  });
+};
+$('dForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const judul = $('dJudul').value.trim(); if (!judul) return alert('Nama kegiatan wajib diisi.');
+  const base = { judul, keterangan: $('dKet').value.trim(), tglKegiatan: $('dTgl').value || '' };
+  const msg = $('dMsg'), btn = $('dSimpan'), video = $('dJenis').value === 'video', col = db.collection('dokumentasi');
+  const ts = () => firebase.firestore.FieldValue.serverTimestamp();
+  btn.disabled = true;
+  try {
+    if (video) {
+      const yt = $('dYt').value.trim();
+      if (!(ytUrlOk(yt) && ytId(yt))) { alert('Link YouTube tidak valid. Gunakan alamat https dari youtube.com atau youtu.be yang mengarah ke satu video.'); return; }
+      await col.add({ ...base, jenis: 'video', youtube: yt, tanggal: ts() });
+      msg.textContent = 'Video tersimpan.';
+    } else {
+      const files = Array.from($('dFile').files).filter(f => f.type.startsWith('image/'));
+      if (!files.length) { alert('Pilih minimal satu foto.'); return; }
+      let ok = 0, gagal = 0;
+      for (let i = files.length - 1; i >= 0; i--) {   // dari belakang agar urutan tampil sesuai pilihan
+        msg.textContent = 'Mengunggah ' + (files.length - i) + ' dari ' + files.length + '...';
+        try { await col.add({ ...base, jenis: 'foto', foto: await compressGaleri(files[i]), tanggal: ts() }); ok++; }
+        catch (er) { if (er.code === 'permission-denied') throw er; gagal++; }
+      }
+      msg.textContent = ok + ' foto tersimpan' + (gagal ? ', ' + gagal + ' gagal (format tidak didukung).' : '.');
+    }
+    $('dForm').reset(); $('dJenis').onchange(); $('dPrev').innerHTML = '';
+    adminDok();
+  } catch (er) {
+    msg.textContent = ''; alert(er.code === 'permission-denied' ? RULE_HINT : 'Gagal menyimpan. ' + errInfo(er));
+  } finally { btn.disabled = false; setTimeout(() => { msg.textContent = ''; }, 5000); }
+};
+addBoldBar('dKet');
+
+showPanel(location.hash.slice(1));
+
+loadSettings(); loadBerita(); loadGuru();
+</script>
+</body>
+</html>
