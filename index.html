@@ -73,6 +73,89 @@
   @keyframes liveDot { 0% { box-shadow:0 0 0 0 rgba(22,163,74,.55); } 70% { box-shadow:0 0 0 8px rgba(22,163,74,0); } 100% { box-shadow:0 0 0 0 rgba(22,163,74,0); } }
   .liveDot { width:.5rem; height:.5rem; border-radius:9999px; background:#16a34a; animation:liveDot 1.6s infinite; }
   @media (prefers-reduced-motion:reduce) { .liveDot { animation:none; } }
+
+  /* ===== Tampilan HP (layar sempit) ===== */
+  html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+  body { overflow-x:clip; }
+  nav.overflow-x-auto, #adminTabs { scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  nav.overflow-x-auto::-webkit-scrollbar, #adminTabs::-webkit-scrollbar { display:none; }
+  @supports (height:100dvh) { .max-h-\[90vh\] { max-height:90dvh !important; } .max-h-\[92vh\] { max-height:92dvh !important; } }
+  @media (max-width:640px) {
+    /* header & navigasi */
+    header .max-w-6xl { padding-left:.9rem; padding-right:.9rem; }
+    #navNama { font-size:1rem; }
+    #btnAdmin { padding:.35rem .8rem; font-size:.8rem; }
+    header nav.overflow-x-auto { gap:.15rem; padding:.35rem .6rem .45rem; -webkit-mask-image:linear-gradient(to right,#000 90%,transparent); mask-image:linear-gradient(to right,#000 90%,transparent); }
+    header nav.overflow-x-auto .navLink { padding:.45rem .7rem; font-size:.85rem; }
+
+    /* hero */
+    #hero { min-height:auto; }
+    #hero .max-w-6xl { padding-top:2.25rem; padding-bottom:3.25rem; }
+    #heroNama { font-size:1.75rem; line-height:1.2; }
+    #heroTagline { font-size:.95rem; margin-top:.75rem; }
+    #hero a.rounded-full { padding:.55rem 1.1rem; font-size:.85rem; }
+    #hero .mt-7 { margin-top:1.25rem; gap:.5rem; }
+    .heroArrow { width:2rem; height:2rem; font-size:1.3rem; }
+    #heroDots { bottom:.9rem; }
+
+    /* judul halaman */
+    .pageHead .max-w-6xl { padding-top:1.4rem; padding-bottom:1.4rem; }
+    .pageHead h2 { font-size:1.4rem; }
+    .pageHead p { font-size:.85rem; }
+
+    /* info cepat & kartu umum */
+    #quickBar { padding-left:.9rem; padding-right:.9rem; -webkit-margin-before:-1.6rem; margin-top:-1.6rem; }
+    #quickBar .p-4 { padding:.75rem .9rem; }
+    section.rounded-xl { padding:1.1rem; }
+    #sambutanTeks { text-align:left; font-size:.9rem; line-height:1.7; }
+    #sambutan .md\:w-44 { width:100%; }
+    #sambutan .flex { gap:1rem; }
+
+    /* kartu guru: dua kolom, ringkas */
+    #guru { padding-top:1.25rem; padding-bottom:1.5rem; padding-left:.9rem; padding-right:.9rem; }
+    #listGuru { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem !important; }
+    .gCard { width:auto; min-height:0; padding:1rem .6rem .75rem; border-radius:.8rem; }
+    .gPh { width:4.75rem; height:4.75rem; margin-bottom:.55rem; border-width:2px; }
+    .gIni { font-size:1.75rem; }
+    .gName { font-size:.8rem; min-height:2.2rem; line-height:1.3; }
+    .gPill { font-size:.68rem; padding:.2rem .55rem; line-height:1.3; max-width:100%; }
+    .gMapel { font-size:.7rem; margin-top:.35rem; }
+    .gBtn { padding-top:.6rem; min-height:0; }
+    .gBtn button { font-size:.72rem; padding:.4rem 0; }
+
+    /* chip filter: satu baris, geser ke samping */
+    #kelasChips, #galChips { flex-wrap:nowrap; overflow-x:auto; padding-bottom:.25rem; margin-left:-.25rem; margin-right:-.25rem; scrollbar-width:none; }
+    #kelasChips::-webkit-scrollbar, #galChips::-webkit-scrollbar { display:none; }
+    #kelasChips button, #galChips button { flex:none; white-space:nowrap; }
+
+    /* kartu kelas / karya / berita */
+    #kelas, #karya, #berita, #dokumentasi, #statistik .max-w-6xl, #profil, #kontak, #ppdb { padding-left:.9rem; padding-right:.9rem; }
+    #listKelas, #listKarya, #listBerita { gap:.9rem; }
+    #listKelas article a, #listKarya article a, #listKarya article .btnTutor { flex:1 1 auto; text-align:center; }
+    #listGaleri { gap:.5rem; }
+
+    /* tombol WhatsApp melayang lebih kecil, footer diberi ruang */
+    #waFloat { width:3rem; height:3rem; bottom:1rem; right:1rem; }
+    #waFloat svg { width:1.5rem; height:1.5rem; }
+    footer .max-w-6xl:last-child { padding-bottom:4rem; }
+    footer .py-10 { padding-top:1.75rem; padding-bottom:1.75rem; gap:1.5rem; }
+
+    /* formulir: 16px agar tidak diperbesar otomatis saat diketuk */
+    .inp, select.inp, textarea.inp { font-size:16px; padding:.6rem .8rem; }
+    #ppdbForm { padding:1rem; }
+
+    /* modal & lightbox */
+    #guruModal, #verifModal, #karyaModal, #kelasModal, #loginModal { padding:.6rem; align-items:flex-end; }
+    #guruModal > div, #verifModal > div, #karyaModal > div, #kelasModal > div, #loginForm { border-radius:1rem; padding:1.1rem; }
+    #fotoPrev, #fotoNext { font-size:2.2rem; width:2.4rem; height:2.4rem; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.4); border-radius:9999px; z-index:2; }
+    #fotoImg { max-height:64vh; }
+
+    /* panel admin */
+    #adminTabs { flex-wrap:nowrap !important; overflow-x:auto; padding-bottom:.35rem; }
+    #adminTabs .tabBtn { flex:none; white-space:nowrap; padding:.5rem .9rem; }
+    #adminPanel .max-w-4xl { padding:.75rem; }
+    #adminPanel .tabBox.p-5 { padding:1rem; }
+  }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -529,7 +612,7 @@
     </div>
   </div>
   <div class="max-w-4xl mx-auto p-4">
-    <div class="flex gap-2 mb-4 flex-wrap">
+    <div id="adminTabs" class="flex gap-2 mb-4 flex-wrap">
       <button data-tab="tSet" class="tabBtn tab-on px-4 py-2 rounded-lg text-sm font-semibold bg-white">Pengaturan & Sambutan</button>
       <button data-tab="tBerita" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Berita / Pengumuman</button>
       <button data-tab="tProfil" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Profil, Kontak & PPDB</button>
@@ -1661,6 +1744,12 @@ function showPanel(key, push) {
   const p = PANEL_OF[base] || 'beranda';
   document.querySelectorAll('.pnl').forEach(el => el.classList.toggle('hidden', el.id !== 'p-' + p));
   document.querySelectorAll('.navLink').forEach(a => a.classList.toggle('nav-on', a.dataset.p === p));
+  /* menu HP yang bisa digeser: bawa menu aktif ke tengah layar */
+  document.querySelectorAll('nav.overflow-x-auto .navLink.nav-on').forEach(a => {
+    const nav = a.parentElement; if (!nav.offsetParent || nav.scrollWidth <= nav.clientWidth) return;
+    const x = a.getBoundingClientRect().left - nav.getBoundingClientRect().left + nav.scrollLeft;
+    nav.scrollTo({ left: Math.max(0, x - (nav.clientWidth - a.offsetWidth) / 2), behavior: 'smooth' });
+  });
   const target = (base !== p && $(base)) ? $(base) : null;
   if (deepLink) setTimeout(applyDeep, 60);
   else if (target) target.scrollIntoView({ behavior: 'smooth' }); else window.scrollTo(0, 0);
