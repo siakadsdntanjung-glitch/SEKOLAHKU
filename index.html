@@ -69,6 +69,7 @@
   .heroDot.on { width:1.6rem; background:var(--accent); }
   .capIn { animation:fadeUp .6s ease both; }
   @media (prefers-reduced-motion:reduce) { .hs { transition:opacity .01s; transform:none; } .hs.on { transform:none; } .capIn { animation:none; } }
+  .deepHi { outline:3px solid var(--accent); outline-offset:3px; border-radius:.75rem; transition:outline-color .4s; }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -501,6 +502,7 @@
     <!-- tab berita -->
     <div id="tBerita" class="tabBox hidden space-y-4">
       <form id="bForm" class="bg-white rounded-xl shadow p-5 space-y-3">
+        <p id="bEditInfo" hidden class="text-sm bg-amber-50 border border-amber-200 text-amber-800 rounded-lg px-3 py-2"></p>
         <div>
           <label class="block text-sm font-medium mb-1">Jenis</label>
           <select id="bTipe" class="inp"><option value="berita">Berita</option><option value="pengumuman">Pengumuman</option></select>
@@ -508,7 +510,7 @@
         <div><label class="block text-sm font-medium mb-1">Judul</label><input id="bJudul" required class="inp"></div>
         <div><label class="block text-sm font-medium mb-1">Isi</label><textarea id="bIsi" rows="5" required class="inp"></textarea></div>
         <div><label class="block text-sm font-medium mb-1">URL Gambar (opsional)</label><input id="bGambar" type="url" class="inp" placeholder="https://..."><p class="text-xs text-slate-500 mt-1">Gunakan link langsung ke gambar (berakhiran .jpg / .png) atau link Google Drive yang dibagikan ke &quot;Siapa saja yang memiliki link&quot;. Link Google Photos tidak bisa dipakai.</p></div>
-        <button class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Terbitkan</button>
+        <div class="flex items-center gap-3 flex-wrap"><button id="bSubmit" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Terbitkan</button><button id="bBatal" type="button" hidden class="text-sm underline text-slate-600">Batal edit</button><span id="bMsg" class="text-sm text-green-700"></span></div>
       </form>
       <div id="bList" class="space-y-2"></div>
     </div>
@@ -848,7 +850,7 @@ async function loadBerita() {
     const d = doc.data();
     if (d.tipe === 'pengumuman') {
       const pimg = imgUrl(d.gambar);
-      p += `<div class="bg-slate-50 rounded-lg p-3 border-l-4 border-accent" data-exp>
+      p += `<div class="bg-slate-50 rounded-lg p-3 border-l-4 border-accent" data-exp data-id="${esc(doc.id)}">
         ${pimg ? `<a href="${pimg}" target="_blank" rel="noopener" title="Buka gambar"><img src="${pimg}" alt="" loading="lazy" onerror="this.parentNode.remove()" class="w-full max-h-56 object-contain bg-white rounded mb-2 border border-slate-200"></a>` : ''}
         <p class="text-xs text-slate-500">${esc(fmtTgl(d.tanggal))}</p>
         <h3 class="font-semibold text-primary text-sm">${fmt(d.judul)}</h3>
@@ -856,7 +858,7 @@ async function loadBerita() {
         ${(d.isi || '').length > 90 ? '<span class="expHint">Baca selengkapnya</span>' : ''}</div>`;
     } else {
       const img = imgUrl(d.gambar);
-      b += `<article class="bg-white rounded-xl shadow overflow-hidden" data-exp>
+      b += `<article class="bg-white rounded-xl shadow overflow-hidden" data-exp data-id="${esc(doc.id)}">
         ${img ? `<img src="${img}" alt="" loading="lazy" onerror="this.remove()" class="w-full h-32 object-cover">` : ''}
         <div class="p-4"><p class="text-xs text-slate-500">${esc(fmtTgl(d.tanggal))}</p>
         <h3 class="font-semibold text-primary mb-1">${fmt(d.judul)}</h3>
@@ -876,6 +878,7 @@ async function loadBerita() {
     mb.onclick = () => { itemP.forEach(el => el.classList.remove('hidden')); mb.remove(); };
     $('listPengumuman').append(mb);
   }
+  applyDeep();
 }
 
 /* ---------- Form PPDB publik ---------- */
@@ -969,33 +972,78 @@ $('sSimpan').onclick = async () => {
   } catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
 };
 
+let bEditId = null;
 $('bForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const gb = $('bGambar').value.trim();
   if (gb && !/^https?:\/\//i.test(gb)) return alert('Link gambar harus diawali https://');
   if (/photos\.app\.goo\.gl|photos\.google\.com|drive\.google\.com\/drive\/folders/i.test(gb)) return alert('Link ini tidak bisa ditampilkan sebagai gambar. Gunakan link langsung ke gambar, atau link file (bukan folder) Google Drive yang dibagikan ke "Siapa saja yang memiliki link".');
+  const data = { tipe: $('bTipe').value, judul: $('bJudul').value.trim(), isi: $('bIsi').value.trim(), gambar: gb };
   try {
-    await db.collection('berita').add({
-      tipe: $('bTipe').value, judul: $('bJudul').value.trim(), isi: $('bIsi').value.trim(),
-      gambar: $('bGambar').value.trim(), tanggal: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    e.target.reset(); adminBerita();
-  } catch (err) { alert('Gagal menerbitkan. ' + errInfo(err)); }
+    if (bEditId) {
+      await db.collection('berita').doc(bEditId).update(data);
+      batalEditBerita(); $('bMsg').textContent = 'Perubahan tersimpan.';
+    } else {
+      await db.collection('berita').add({ ...data, tanggal: firebase.firestore.FieldValue.serverTimestamp() });
+      e.target.reset(); $('bMsg').textContent = 'Berhasil diterbitkan.';
+    }
+    setTimeout(() => { $('bMsg').textContent = ''; }, 3500);
+    adminBerita();
+  } catch (err) { alert('Gagal menyimpan. ' + errInfo(err)); }
 });
 
+function plainTxt(t) { return String(t || '').replace(/\*\*/g, '').replace(/^\[(kiri|tengah|kanan|rata)\] ?/gm, '').trim(); }
+function shareUrl(kind, id) { return location.href.split('#')[0] + '#' + (kind === 'pengumuman' ? 'pengumuman' : 'berita') + '/' + id; }
+async function copyText(t) {
+  if (location.protocol === 'file:') alert('Website masih dibuka dari file di komputer. Link baru berfungsi untuk orang lain setelah website dipublikasikan (deploy). Link tetap disalin sebagai contoh.');
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch (e) { prompt('Salin link berikut:', t); return false; }
+}
+function editBerita(id, d) {
+  bEditId = id;
+  $('bTipe').value = d.tipe === 'pengumuman' ? 'pengumuman' : 'berita';
+  $('bJudul').value = d.judul || ''; $('bIsi').value = d.isi || ''; $('bGambar').value = d.gambar || '';
+  $('bSubmit').textContent = 'Simpan Perubahan'; $('bBatal').hidden = false;
+  $('bEditInfo').textContent = 'Sedang mengedit: ' + plainTxt(d.judul); $('bEditInfo').hidden = false;
+  $('bForm').scrollIntoView({ behavior: 'smooth', block: 'start' }); $('bJudul').focus();
+}
+function batalEditBerita() {
+  bEditId = null; $('bForm').reset(); $('bSubmit').textContent = 'Terbitkan'; $('bBatal').hidden = true; $('bEditInfo').hidden = true;
+}
+$('bBatal').onclick = batalEditBerita;
+
 async function adminBerita() {
-  const snap = await db.collection('berita').orderBy('tanggal', 'desc').get();
-  const box = $('bList'); box.innerHTML = '';
+  const box = $('bList');
+  let snap;
+  try { snap = await db.collection('berita').orderBy('tanggal', 'desc').get(); }
+  catch (e) { box.innerHTML = ''; const p = document.createElement('p'); p.className = 'text-sm text-red-600'; p.textContent = 'Gagal memuat. ' + errInfo(e); box.append(p); return; }
+  box.innerHTML = '';
+  if (snap.empty) { box.innerHTML = '<p class="text-sm text-slate-500">Belum ada berita atau pengumuman.</p>'; return; }
   snap.forEach(doc => {
-    const d = doc.data();
+    const d = doc.data(), url = shareUrl(d.tipe, doc.id), judul = plainTxt(d.judul);
     const row = document.createElement('div');
-    row.className = 'bg-white rounded-lg shadow p-3 flex items-center justify-between gap-3';
-    const t = document.createElement('div');
-    t.innerHTML = `<span class="text-xs uppercase px-2 py-0.5 rounded bg-soft text-primary">${esc(d.tipe)}</span> <span class="font-medium">${esc(d.judul)}</span>`;
-    const del = document.createElement('button');
-    del.textContent = 'Hapus'; del.className = 'text-red-600 text-sm';
-    del.onclick = async () => { if (confirm('Hapus item ini?')) { await doc.ref.delete(); adminBerita(); } };
-    row.append(t, del); box.append(row);
+    row.className = 'bg-white rounded-lg shadow p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+    const t = document.createElement('div'); t.className = 'min-w-0';
+    const badge = document.createElement('span'); badge.className = 'text-xs uppercase px-2 py-0.5 rounded bg-soft text-primary'; badge.textContent = d.tipe || 'berita';
+    const tgl = document.createElement('span'); tgl.className = 'ml-2 text-xs text-slate-500'; tgl.textContent = fmtTgl(d.tanggal);
+    const jd = document.createElement('p'); jd.className = 'font-medium mt-1 break-words'; jd.textContent = judul;
+    t.append(badge, tgl, jd);
+    const bar = document.createElement('div'); bar.className = 'flex flex-wrap items-center gap-2 shrink-0';
+    const mk = (txt, title, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.title = title;
+      b.className = cls || 'px-2.5 py-1 rounded border border-slate-300 text-sm hover:bg-slate-100'; b.onclick = fn; return b; };
+    const stat = document.createElement('span'); stat.className = 'text-xs text-green-700';
+    const info = (m) => { stat.textContent = m; setTimeout(() => stat.textContent = '', 2500); };
+    bar.append(
+      mk('Edit', 'Edit isi', () => editBerita(doc.id, d), 'px-3 py-1 rounded bg-primary text-white text-sm'),
+      mk('Salin link', 'Salin link untuk dibagikan', async () => { if (await copyText(url)) info('Link disalin.'); }),
+      mk('WhatsApp', 'Bagikan lewat WhatsApp', () => window.open('https://wa.me/?text=' + encodeURIComponent(judul + '\n' + url), '_blank', 'noopener'))
+    );
+    if (navigator.share) bar.append(mk('Bagikan', 'Bagikan ke aplikasi lain', () => navigator.share({ title: judul, text: judul, url }).catch(() => {})));
+    bar.append(
+      mk('Hapus', 'Hapus', async () => { if (!confirm('Hapus item ini?')) return;
+        try { await doc.ref.delete(); if (bEditId === doc.id) batalEditBerita(); adminBerita(); } catch (e) { alert('Gagal menghapus. ' + errInfo(e)); } }, 'px-2 py-1 text-sm text-red-600 underline'),
+      stat);
+    row.append(t, bar); box.append(row);
   });
 }
 
@@ -1478,12 +1526,28 @@ window.chartsReady = true;
 
 /* ---------- Navigasi panel (halaman tidak memanjang ke bawah) ---------- */
 const PANEL_OF = { beranda:'beranda', dokumentasi:'dokumentasi', karya:'karya', profil:'profil', kontak:'kontak', sambutan:'beranda', video:'beranda', pengumuman:'beranda', guru:'guru', statistik:'statistik', berita:'berita', ppdb:'ppdb' };
+let deepLink = null;
+function parseDeep(h) { const m = String(h || '').match(/^(berita|pengumuman)\/([\w-]{5,40})$/); return m ? { kind: m[1], id: m[2] } : null; }
+function applyDeep() {
+  if (!deepLink) return;
+  const el = document.querySelector('[data-id="' + deepLink.id + '"]'); if (!el) return;
+  deepLink = null;
+  el.classList.remove('hidden');
+  const t = el.querySelector('.clampTxt'), h = el.querySelector('.expHint');
+  if (t) t.classList.remove('line-clamp-2', 'line-clamp-3');
+  if (h) h.textContent = 'Tutup';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.add('deepHi'); setTimeout(() => el.classList.remove('deepHi'), 4500);
+}
 function showPanel(key, push) {
-  const p = PANEL_OF[key] || 'beranda';
+  const base = String(key || '').split('/')[0];
+  deepLink = parseDeep(key);
+  const p = PANEL_OF[base] || 'beranda';
   document.querySelectorAll('.pnl').forEach(el => el.classList.toggle('hidden', el.id !== 'p-' + p));
   document.querySelectorAll('.navLink').forEach(a => a.classList.toggle('nav-on', a.dataset.p === p));
-  const target = (key !== p && $(key)) ? $(key) : null;
-  if (target) target.scrollIntoView({ behavior: 'smooth' }); else window.scrollTo(0, 0);
+  const target = (base !== p && $(base)) ? $(base) : null;
+  if (deepLink) setTimeout(applyDeep, 60);
+  else if (target) target.scrollIntoView({ behavior: 'smooth' }); else window.scrollTo(0, 0);
   if (p === 'dokumentasi' && !galLoaded) loadGaleri(true);
   if (p === 'statistik') Object.keys(charts).forEach(k => { try { charts[k].resize(); } catch (e) {} });
   if (push) { try { history.replaceState(null, '', '#' + key); } catch (e) {} }
