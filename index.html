@@ -4,9 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Beranda Sekolah</title>
+<meta name="description" content="Website resmi sekolah: profil, PPDB online, berita, agenda, prestasi, dan kelas online.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Beranda Sekolah">
+<meta property="og:description" content="Website resmi sekolah: profil, PPDB online, berita, agenda, prestasi, dan kelas online.">
 <meta name="theme-color" content="#1e3a8a">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<script>
+/* Mode aplikasi (PWA) hanya diaktifkan di hosting yang bisa menyimpan file manifest/ikon/sw.js (bukan Blogspot) */
+window.PWA_OK = !/blogspot\./i.test(location.hostname);
+if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png">');
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>tailwind.config = { theme: { extend: { colors: { primary: 'var(--primary)', accent: 'var(--accent)', soft: 'var(--soft)' } } } };</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=Montserrat:wght@600;700&family=Open+Sans:wght@400;600&family=Nunito:wght@400;600;700&family=Lato:wght@400;700&family=Playfair+Display:wght@600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
@@ -374,7 +381,7 @@
       </div>
     </section>
 
-    <section id="aksesCepat" class="grid grid-cols-3 sm:grid-cols-6 gap-3"><a href="#agenda" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg></span>Agenda</a><a href="#unduhan" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg></span>Unduhan</a><a href="#prestasi" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H4v1a4 4 0 004 4M16 6h4v1a4 4 0 01-4 4M12 13v4M8 20h8"/></svg></span>Prestasi</a><a href="#status" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5"/></svg></span>Cek Status PPDB</a><a href="#siswa" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM21 21l-4-4M18 17a3 3 0 100-6 3 3 0 000 6z"/></svg></span>Cari Siswa</a><a href="#saran" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span>Kotak Saran</a></section>
+    <section id="aksesCepat" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3"><a href="#jadwal" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Jadwal Pelajaran</a><a href="#struktur" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg></span>Struktur Organisasi</a><a href="#alumni" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5"/></svg></span>Alumni</a><a href="#ekskul" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg></span>Ekstrakurikuler</a><a href="#fasilitas" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg></span>Fasilitas</a><a href="#agenda" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg></span>Agenda</a><a href="#unduhan" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg></span>Unduhan</a><a href="#prestasi" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H4v1a4 4 0 004 4M16 6h4v1a4 4 0 01-4 4M12 13v4M8 20h8"/></svg></span>Prestasi</a><a href="#status" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5"/></svg></span>Cek Status PPDB</a><a href="#siswa" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM21 21l-4-4M18 17a3 3 0 100-6 3 3 0 000 6z"/></svg></span>Cari Siswa</a><a href="#saran" class="flex flex-col items-center gap-2 bg-white rounded-xl shadow p-3 text-center text-xs font-semibold text-primary hover:shadow-md transition"><span class="w-10 h-10 rounded-full bg-soft flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></span>Kotak Saran</a></section>
     <section id="agendaHome" class="hidden bg-white rounded-xl shadow p-5"><div class="flex items-center justify-between mb-3"><h2 class="text-xl font-bold text-primary">Agenda Terdekat</h2><a href="#agenda" class="text-sm text-primary underline">Lihat semua</a></div><div id="homeAgenda" class="grid md:grid-cols-3 gap-3"></div></section>
 
     <!-- Pengumuman | Video (bila ada video, berdampingan; bila tidak, pengumuman selebar penuh) -->
@@ -543,6 +550,16 @@
   <section class="max-w-4xl mx-auto px-4 py-8"><div id="xpUnduhan" class="space-y-6"></div><p id="xpUnduhanKosong" class="hidden text-center text-slate-500">Belum ada dokumen.</p></section></div>
 <div id="p-prestasi" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Prestasi</h2><p>Capaian siswa, guru, dan sekolah.</p><i></i></div></div>
   <section class="max-w-6xl mx-auto px-4 py-8"><div id="xpPrestasi" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div><p id="xpPrestasiKosong" class="hidden text-center text-slate-500">Belum ada data prestasi.</p></section></div>
+<div id="p-ekskul" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Ekstrakurikuler</h2><p>Kegiatan pengembangan bakat dan minat peserta didik.</p><i></i></div></div>
+  <section class="max-w-6xl mx-auto px-4 py-8"><div id="xpEkskul" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div><p id="xpEkskulKosong" class="hidden text-center text-slate-500">Belum ada data.</p></section></div>
+<div id="p-fasilitas" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Fasilitas</h2><p>Sarana dan prasarana pendukung belajar di sekolah kami.</p><i></i></div></div>
+  <section class="max-w-6xl mx-auto px-4 py-8"><div id="xpFasilitas" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div><p id="xpFasilitasKosong" class="hidden text-center text-slate-500">Belum ada data.</p></section></div>
+<div id="p-jadwal" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Jadwal Pelajaran</h2><p>Jadwal pelajaran setiap kelas.</p><i></i></div></div>
+  <section class="max-w-6xl mx-auto px-4 py-8"><div id="xpJadwal" class="space-y-5 max-w-4xl mx-auto"></div><p id="xpJadwalKosong" class="hidden text-center text-slate-500">Belum ada data.</p></section></div>
+<div id="p-struktur" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Struktur Organisasi</h2><p>Susunan pengurus dan pengelola sekolah.</p><i></i></div></div>
+  <section class="max-w-6xl mx-auto px-4 py-8"><div id="xpStruktur" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div><p id="xpStrukturKosong" class="hidden text-center text-slate-500">Belum ada data.</p></section></div>
+<div id="p-alumni" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Alumni</h2><p>Kisah dan kiprah lulusan sekolah kami.</p><i></i></div></div>
+  <section class="max-w-6xl mx-auto px-4 py-8"><div id="xpAlumni" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div><p id="xpAlumniKosong" class="hidden text-center text-slate-500">Belum ada data.</p></section></div>
 <div id="p-siswa" class="pnl hidden"><div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Cari Data Siswa</h2><p>Cari berdasarkan nama siswa atau nama ibu kandung, lalu validasi dengan NISN atau NIS.</p><i></i></div></div>
   <section class="max-w-xl mx-auto px-4 py-8"><form id="scForm" class="bg-white rounded-xl shadow p-5 space-y-3">
     <div class="flex gap-5 text-sm"><label><input type="radio" name="scKat" value="nama" checked class="mr-2">Nama siswa</label><label><input type="radio" name="scKat" value="ibu" class="mr-2">Nama ibu kandung</label></div>
@@ -581,7 +598,7 @@
     <div>
       <p class="text-white font-semibold mb-3">Tautan</p>
       <ul class="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
-        <li><a href="#profil" class="hover:text-white transition">Profil</a></li><li><a href="#guru" class="hover:text-white transition">Guru</a></li><li><a href="#kelas" class="hover:text-white transition">Kelas Online</a></li><li><a href="#karya" class="hover:text-white transition">Karya</a></li><li><a href="#dokumentasi" class="hover:text-white transition">Dokumentasi</a></li><li><a href="#statistik" class="hover:text-white transition">Statistik</a></li><li><a href="#berita" class="hover:text-white transition">Berita</a></li><li><a href="#ppdb" class="hover:text-white transition">PPDB</a></li><li><a href="#agenda" class="hover:text-white transition">Agenda</a></li><li><a href="#unduhan" class="hover:text-white transition">Unduhan</a></li><li><a href="#prestasi" class="hover:text-white transition">Prestasi</a></li><li><a href="#status" class="hover:text-white transition">Cek Status PPDB</a></li><li><a href="#siswa" class="hover:text-white transition">Cari Siswa</a></li><li><a href="#saran" class="hover:text-white transition">Saran</a></li><li><a href="#kontak" class="hover:text-white transition">Kontak</a></li>
+        <li><a href="#profil" class="hover:text-white transition">Profil</a></li><li><a href="#ekskul" class="hover:text-white transition">Ekstrakurikuler</a></li><li><a href="#fasilitas" class="hover:text-white transition">Fasilitas</a></li><li><a href="#jadwal" class="hover:text-white transition">Jadwal Pelajaran</a></li><li><a href="#struktur" class="hover:text-white transition">Struktur Organisasi</a></li><li><a href="#alumni" class="hover:text-white transition">Alumni</a></li><li><a href="#guru" class="hover:text-white transition">Guru</a></li><li><a href="#kelas" class="hover:text-white transition">Kelas Online</a></li><li><a href="#karya" class="hover:text-white transition">Karya</a></li><li><a href="#dokumentasi" class="hover:text-white transition">Dokumentasi</a></li><li><a href="#statistik" class="hover:text-white transition">Statistik</a></li><li><a href="#berita" class="hover:text-white transition">Berita</a></li><li><a href="#ppdb" class="hover:text-white transition">PPDB</a></li><li><a href="#agenda" class="hover:text-white transition">Agenda</a></li><li><a href="#unduhan" class="hover:text-white transition">Unduhan</a></li><li><a href="#prestasi" class="hover:text-white transition">Prestasi</a></li><li><a href="#status" class="hover:text-white transition">Cek Status PPDB</a></li><li><a href="#siswa" class="hover:text-white transition">Cari Siswa</a></li><li><a href="#saran" class="hover:text-white transition">Saran</a></li><li><a href="#kontak" class="hover:text-white transition">Kontak</a></li>
       </ul>
     </div>
     <div id="footKolKontak" hidden>
@@ -590,7 +607,7 @@
     </div>
   </div>
   <div class="border-t border-white/10">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 text-center">&copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi.</div>
+    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 text-center">&copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi. Pengunjung: <b id="visitCount">-</b></div>
   </div>
 </footer>
 </div>
@@ -621,6 +638,11 @@
       <a href="#agenda" data-p="agenda" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z"/></svg><span>Agenda</span></a>
 <a href="#unduhan" data-p="unduhan" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></svg><span>Unduhan</span></a>
 <a href="#prestasi" data-p="prestasi" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H4v1a4 4 0 004 4M16 6h4v1a4 4 0 01-4 4M12 13v4M8 20h8"/></svg><span>Prestasi</span></a>
+<a href="#ekskul" data-p="ekskul" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg><span>Ekstrakurikuler</span></a>
+<a href="#fasilitas" data-p="fasilitas" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg><span>Fasilitas</span></a>
+<a href="#jadwal" data-p="jadwal" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Jadwal Pelajaran</span></a>
+<a href="#struktur" data-p="struktur" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg><span>Struktur Organisasi</span></a>
+<a href="#alumni" data-p="alumni" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5"/></svg><span>Alumni</span></a>
 <a href="#siswa" data-p="siswa" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM21 21l-4-4M18 17a3 3 0 100-6 3 3 0 000 6z"/></svg><span>Cari Siswa</span></a>
 <a href="#status" data-p="status" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 18a7 7 0 100-14 7 7 0 000 14zM21 21l-5-5"/></svg><span>Cek Status PPDB</span></a>
 <a href="#saran" data-p="saran" class="navLink msItem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg><span>Saran</span></a>
@@ -798,6 +820,12 @@
       <button data-tab="tAgenda" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Agenda</button>
 <button data-tab="tUnduhan" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Unduhan</button>
 <button data-tab="tPrestasi" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Prestasi</button>
+<button data-tab="tEkskul" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Ekstrakurikuler</button>
+<button data-tab="tFasilitas" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Fasilitas</button>
+<button data-tab="tJadwal" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Jadwal Pelajaran</button>
+<button data-tab="tStruktur" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Struktur Organisasi</button>
+<button data-tab="tAlumni" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Alumni</button>
+
 <button data-tab="tSaran" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Kotak Saran</button>
       <button data-tab="tCad" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Spanduk &amp; Cadangan</button>
       <button data-tab="tSiswa" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Siswa</button>
@@ -808,13 +836,26 @@
     <div id="tAgenda" class="tabBox hidden space-y-4"><form id="xf-agenda" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Nama kegiatan</label><input data-f="judul" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Tanggal mulai</label><input data-f="tgl" type="date" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Tanggal selesai (opsional)</label><input data-f="akhir" type="date" maxlength="300"  class="inp"></div><div><label class="block text-sm font-medium mb-1">Kategori (Ujian, Libur, Rapor, Acara)</label><input data-f="kat" type="text" maxlength="300"  class="inp"></div><button id="xb-agenda" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-agenda" class="space-y-2"></div></div>
 <div id="tUnduhan" class="tabBox hidden space-y-4"><form id="xf-unduhan" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Nama dokumen</label><input data-f="judul" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Kategori (Formulir, Surat Edaran, dll)</label><input data-f="kat" type="text" maxlength="300"  class="inp"></div><div><label class="block text-sm font-medium mb-1">Link dokumen (https://, mis. Google Drive)</label><input data-f="url" type="url" maxlength="300" required class="inp"></div><button id="xb-unduhan" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-unduhan" class="space-y-2"></div></div>
 <div id="tPrestasi" class="tabBox hidden space-y-4"><form id="xf-prestasi" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Juara / capaian (mis. Juara 1)</label><input data-f="juara" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Nama lomba</label><input data-f="lomba" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Nama peraih (siswa/guru/sekolah)</label><input data-f="nama" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Tingkat (Kecamatan, Kabupaten, ...)</label><input data-f="tingkat" type="text" maxlength="300"  class="inp"></div><div><label class="block text-sm font-medium mb-1">Tahun</label><input data-f="tahun" type="text" maxlength="300"  class="inp"></div><div><label class="block text-sm font-medium mb-1">Link foto (opsional, https; link Google Drive juga bisa)</label><input data-f="foto" type="url" maxlength="300" class="inp"></div><button id="xb-prestasi" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-prestasi" class="space-y-2"></div></div>
+<div id="tEkskul" class="tabBox hidden space-y-4"><form id="xf-ekskul" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Nama ekstrakurikuler (mis. Pramuka)</label><input data-f="nama" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Pembina</label><input data-f="pembina" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Jadwal (mis. Sabtu, 08.00-10.00)</label><input data-f="jadwal" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Deskripsi singkat</label><input data-f="deskripsi" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Link foto (opsional, https; link Google Drive juga bisa)</label><input data-f="foto" type="url" maxlength="300" class="inp"></div><button id="xb-ekskul" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-ekskul" class="space-y-2"></div></div>
+<div id="tFasilitas" class="tabBox hidden space-y-4"><form id="xf-fasilitas" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Nama fasilitas (mis. Perpustakaan)</label><input data-f="nama" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Jumlah / kondisi (mis. 1 ruang, baik)</label><input data-f="jumlah" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Keterangan singkat</label><input data-f="deskripsi" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Link foto (opsional, https; link Google Drive juga bisa)</label><input data-f="foto" type="url" maxlength="300" class="inp"></div><button id="xb-fasilitas" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-fasilitas" class="space-y-2"></div></div>
+<div id="tJadwal" class="tabBox hidden space-y-4"><form id="xf-jadwal" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Kelas (mis. Kelas 1)</label><input data-f="kelas" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Hari</label><select data-f="hari" required class="inp"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option></select></div><div><label class="block text-sm font-medium mb-1">Jam (mis. 07.00-08.10)</label><input data-f="jam" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Mata pelajaran</label><input data-f="mapel" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Guru pengampu</label><input data-f="guru" type="text" maxlength="300" class="inp"></div><button id="xb-jadwal" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-jadwal" class="space-y-2"></div></div>
+<div id="tStruktur" class="tabBox hidden space-y-4"><form id="xf-struktur" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Jabatan (mis. Kepala Sekolah)</label><input data-f="jabatan" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Nama</label><input data-f="nama" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Urutan tampil (angka kecil lebih dulu)</label><input data-f="urutan" type="number" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Link foto (opsional, https; link Google Drive juga bisa)</label><input data-f="foto" type="url" maxlength="300" class="inp"></div><button id="xb-struktur" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-struktur" class="space-y-2"></div></div>
+<div id="tAlumni" class="tabBox hidden space-y-4"><form id="xf-alumni" class="bg-white rounded-xl shadow p-5 space-y-3"><div><label class="block text-sm font-medium mb-1">Nama alumni</label><input data-f="nama" type="text" maxlength="300" required class="inp"></div><div><label class="block text-sm font-medium mb-1">Angkatan / tahun lulus</label><input data-f="angkatan" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Pendidikan / pekerjaan sekarang</label><input data-f="profesi" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Kisah / pesan singkat</label><input data-f="kisah" type="text" maxlength="300" class="inp"></div><div><label class="block text-sm font-medium mb-1">Link foto (opsional, https; link Google Drive juga bisa)</label><input data-f="foto" type="url" maxlength="300" class="inp"></div><button id="xb-alumni" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></form><div id="xl-alumni" class="space-y-2"></div></div>
 <div id="tSaran" class="tabBox hidden space-y-3"><button id="srMuat" type="button" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold">Muat pesan masuk</button><div id="srList" class="space-y-2"></div></div>
     <div id="tSiswa" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-3">
-  <p class="text-sm text-slate-600">Unggah / tempel data siswa untuk fitur <b>Cari Data Siswa</b>. Baris pertama harus berisi judul kolom: <code>nama, ibu, nisn, nis, kelas, status</code> (pemisah koma, titik koma, atau tab; kolom kelas &amp; status boleh kosong). Setiap siswa wajib punya NISN atau NIS. Siswa dengan NISN/NIS yang sama akan diperbarui, bukan digandakan. Anda bisa langsung memakai <b>template Excel</b> di bawah.</p>
+<div class="rounded-xl border border-slate-200 p-4 space-y-3"><p class="font-semibold text-primary text-sm">Pengaturan Surat Keterangan Lulus</p><p class="text-xs text-slate-500">Siswa berstatus <b>Lulus</b> akan melihat tombol unduh surat setelah mencari datanya. Nama sekolah dan kepala sekolah diambil dari Pengaturan &amp; Sambutan.</p><div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-xs font-medium mb-1">NPSN sekolah</label><input id="skl_npsn" type="text" maxlength="120" class="inp"></div><div><label class="block text-xs font-medium mb-1">Kota / kabupaten (untuk tanda tangan)</label><input id="skl_kota" type="text" maxlength="120" class="inp"></div><div><label class="block text-xs font-medium mb-1">NIP kepala sekolah</label><input id="skl_nip" type="text" maxlength="120" class="inp"></div><div><label class="block text-xs font-medium mb-1">Tahun ajaran kelulusan (mis. 2025/2026)</label><input id="skl_tahun" type="text" maxlength="120" class="inp"></div><div><label class="block text-xs font-medium mb-1">Tanggal surat (kosong = tanggal unduh)</label><input id="skl_tanggal" type="date" maxlength="120" class="inp"></div></div><div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-xs font-medium mb-1">Kop baris 1 (mis. PEMERINTAH KABUPATEN ...)</label><input id="skl_kop1" type="text" maxlength="150" class="inp"></div><div><label class="block text-xs font-medium mb-1">Kop baris 2 (mis. DINAS PENDIDIKAN ...)</label><input id="skl_kop2" type="text" maxlength="150" class="inp"></div></div><div><label class="block text-xs font-medium mb-1">Nomor surat umum (pakai {nis} agar diganti NIS siswa, mis. 420 / {nis} / SDN-X / VII / 2026)</label><input id="skl_nomor" type="text" maxlength="150" class="inp"></div><div><label class="block text-xs font-medium mb-1">Logo sekolah (tampil di kiri kop surat)</label><div class="flex flex-wrap items-center gap-3"><img id="skl_logoPrev" alt="" class="hidden w-16 h-16 object-contain border rounded"><input id="skl_logoFile" type="file" accept="image/*" class="text-sm"><button id="skl_logoHapus" type="button" class="text-xs text-red-600 underline">Hapus logo</button></div></div><div><label class="block text-xs font-medium mb-1">Dasar penetapan kelulusan (paragraf sebelum LULUS/TIDAK LULUS; sesuaikan dengan peraturan tahun berjalan)</label><textarea id="skl_dasar" rows="4" class="inp font-mono text-xs"></textarea></div><div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-xs font-medium mb-1">Mata pelajaran Kelompok A (satu per baris: kode|Nama)</label><textarea id="skl_mapelA" rows="6" class="inp font-mono text-xs"></textarea></div><div><label class="block text-xs font-medium mb-1">Mata pelajaran Kelompok B (satu per baris: kode|Nama)</label><textarea id="skl_mapelB" rows="6" class="inp font-mono text-xs"></textarea></div></div><p class="text-xs text-slate-500">Kode dipakai sebagai judul kolom nilai di Excel, mis. <code>nilai_mtk</code>. Setelah mengubah daftar mapel, unduh template baru.</p><button id="sklSimpan" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Simpan Pengaturan Surat</button></div>
+  <p class="text-sm text-slate-600">Unggah / tempel data siswa untuk fitur <b>Cari Data Siswa</b>. Baris pertama harus berisi judul kolom: <code>nama, ibu, nisn, nis, kelas, status</code> (opsional untuk surat lulus: <code>jk, ortu, tempat, tgl_lahir, tahun_lulus, nosurat, nilai_(kode mapel)</code>; tanggal lahir lengkap, atau pisah menjadi kolom <code>tanggal, bulan, tahun_lahir</code>) (pemisah koma, titik koma, atau tab; kolom kelas &amp; status boleh kosong). Setiap siswa wajib punya NISN atau NIS. Siswa dengan NISN/NIS yang sama akan diperbarui, bukan digandakan. Anda bisa langsung memakai <b>template Excel</b> di bawah.</p>
   <div class="flex flex-wrap items-center gap-3"><button id="sdTemplate" type="button" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold">Unduh Template Excel</button>
     <label class="text-sm">Pilih file (Excel .xlsx/.xls atau CSV): <input id="sdFile" type="file" accept=".xlsx,.xls,.csv,.txt,.tsv" class="text-sm"></label></div>
   <div class="flex flex-wrap gap-5 text-sm"><label><input type="radio" name="sdMode" value="tambah" checked class="mr-2">Tambahkan ke data yang ada</label><label><input type="radio" name="sdMode" value="ganti" class="mr-2">Ganti seluruh data lama</label></div><textarea id="sdTeks" rows="8" class="inp font-mono text-xs" placeholder="Pratinjau data akan muncul di sini setelah file dipilih (atau tempel manual dengan judul kolom: nama, ibu, nisn, nis, kelas, status)"></textarea>
-  <div class="flex flex-wrap items-center gap-3"><button id="sdProses" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Impor &amp; Publikasikan</button><button id="sdHapus" type="button" class="px-4 py-2 rounded-lg border border-red-300 text-red-600 text-sm">Hapus semua data siswa</button><span id="sdMsg" class="text-sm text-slate-600"></span></div></div>
+  <div class="flex flex-wrap items-center gap-3"><button id="sdProses" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Impor &amp; Publikasikan</button><button id="sdHapus" type="button" class="px-4 py-2 rounded-lg border border-red-300 text-red-600 text-sm">Hapus semua data siswa</button><span id="sdMsg" class="text-sm text-slate-600"></span></div>
+  <div class="border-t pt-4 space-y-3"><div class="flex flex-wrap items-center justify-between gap-2"><p class="font-bold text-primary">Daftar Data Siswa <span id="sdJumlah" class="text-sm font-normal text-slate-500"></span></p><div class="flex flex-wrap gap-2"><button id="sdTambah" type="button" class="px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-semibold">+ Tambah Siswa</button><button id="sdRapikan" type="button" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm font-semibold">Rapikan Format Tanggal Lahir</button><button id="sdExport" type="button" class="px-3 py-1.5 rounded-lg border border-primary text-primary text-sm font-semibold">Unduh Excel (format template)</button></div></div>
+  <div class="flex flex-wrap gap-2"><input id="sdCari" type="search" placeholder="Cari nama, ibu, NISN, NIS..." class="inp sm:flex-1 min-w-[12rem]"><select id="sdKelas" class="inp sm:w-44"><option value="">Semua kelas</option></select></div>
+  <div class="flex flex-wrap items-center gap-2 text-sm"><span class="text-slate-500">Ubah status semua hasil filter menjadi:</span><input id="sdBulkVal" value="Lulus" maxlength="30" class="inp w-32"><button id="sdBulk" type="button" class="px-3 py-1.5 rounded-lg border border-slate-300 text-sm font-semibold">Terapkan</button></div>
+  <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-2 py-2">No</th><th class="px-2 py-2">Nama</th><th class="px-2 py-2">Ibu</th><th class="px-2 py-2">NISN</th><th class="px-2 py-2">NIS</th><th class="px-2 py-2">Kelas</th><th class="px-2 py-2">Status</th><th class="px-2 py-2">Aksi</th></tr></thead><tbody id="sdTbody"></tbody></table></div>
+  <div class="flex items-center justify-between text-sm"><button id="sdPrev" type="button" class="px-3 py-1 rounded border">&laquo; Sebelumnya</button><span id="sdHal" class="text-slate-500"></span><button id="sdNext" type="button" class="px-3 py-1 rounded border">Berikutnya &raquo;</button></div></div>
+  <div id="sdModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4" style="z-index:9999"><div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-5 space-y-3"><p id="sdModalJudul" class="font-bold text-primary"></p><div class="grid sm:grid-cols-2 gap-3"><div><label class="block text-xs font-medium mb-1">Nama siswa *</label><input data-sf="nama" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Nama ibu kandung *</label><input data-sf="ibu" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">NISN</label><input data-sf="nisn" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">NIS</label><input data-sf="nis" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Kelas</label><input data-sf="kelas" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Status (isi Lulus untuk SKL)</label><input data-sf="status" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Tempat lahir</label><input data-sf="tempat" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Tanggal lahir</label><input data-sf="tgl" type="date" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Tahun ajaran lulus (mis. 2025/2026)</label><input data-sf="tahun" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Nomor surat (kosong = otomatis)</label><input data-sf="nosurat" type="text" maxlength="100" class="inp"></div><div><label class="block text-xs font-medium mb-1">Jenis kelamin</label><select data-sf="jk" class="inp"><option value="">-</option><option>Laki-laki</option><option>Perempuan</option></select></div><div><label class="block text-xs font-medium mb-1">Nama orang tua/wali</label><input data-sf="ortu" type="text" maxlength="100" class="inp"></div></div><div id="sdNilaiBox" class="hidden"><p class="text-sm font-semibold text-primary mb-2">Nilai Ujian Sekolah (untuk Daftar Nilai pada SKL)</p><div id="sdNilaiGrid" class="grid sm:grid-cols-2 gap-3"></div></div><div class="flex justify-end gap-2"><button id="sdBatal" type="button" class="px-4 py-2 rounded-lg border">Batal</button><button id="sdSimpanBtn" type="button" class="px-4 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button></div></div></div>
+</div>
     <div id="tCad" class="tabBox hidden space-y-4">
   <div class="bg-white rounded-xl shadow p-5 space-y-3"><p class="font-bold text-primary">Spanduk Pengumuman Penting</p><p class="text-xs text-slate-500">Tampil di paling atas website, mis. "PPDB dibuka" atau "Libur karena cuaca". Pengunjung bisa menutupnya.</p>
     <label class="flex items-center gap-2 text-sm font-semibold"><input id="spAktif" type="checkbox"> Tampilkan spanduk</label>
@@ -1217,7 +1258,7 @@ async function loadSettings() {
   applyKelas(s);
   applyPpdb(s); applyExtra(s);
   applyPpdbBerkas(s);
-  if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; }
+  if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; const mt = (q, v) => { const m = document.querySelector(q); if (m && v) m.setAttribute('content', v); }; mt('meta[property="og:title"]', s.nama); mt('meta[name="description"]', (s.tagline ? s.tagline + ' ' : '') + s.nama + ': profil, PPDB online, berita, agenda, dan prestasi.'); mt('meta[property="og:description"]', s.tagline); }
   if (s.tagline) $('heroTagline').innerHTML = fmt(s.tagline);
   if (s.sambutan) $('sambutanTeks').innerHTML = fmt(s.sambutan);
   if (s.kepsek) $('kepsekNama').textContent = s.kepsek;
@@ -1249,7 +1290,7 @@ async function loadBerita() {
         <div class="p-4"><p class="text-xs text-slate-500">${esc(fmtTgl(d.tanggal))}</p>
         <h3 class="font-semibold text-primary mb-1">${fmt(d.judul)}</h3>
         <p class="clampTxt line-clamp-3 text-sm text-slate-700 whitespace-pre-line">${fmt(d.isi)}</p>
-        ${(d.isi || '').length > 120 ? '<span class="expHint">Baca selengkapnya</span>' : ''}</div></article>`;
+        ${(d.isi || '').length > 120 ? '<span class="expHint">Baca selengkapnya</span>' : ''}<a href="https://wa.me/?text=${encodeURIComponent((d.judul || '') + ' - ' + location.origin + location.pathname + '#berita')}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="inline-block mt-2 text-xs font-semibold text-green-700 hover:underline">Bagikan ke WhatsApp</a></div></article>`;
     }
   });
   $('listBerita').innerHTML = b || '<p class="text-center text-slate-500 col-span-full">Belum ada berita.</p>';
@@ -1992,7 +2033,7 @@ window.chartsReady = true;
 
 
 /* ---------- Navigasi panel (halaman tidak memanjang ke bawah) ---------- */
-const PANEL_OF = { beranda:'beranda', kelas:'kelas', dokumentasi:'dokumentasi', karya:'karya', profil:'profil', kontak:'kontak', sambutan:'beranda', video:'beranda', pengumuman:'beranda', guru:'guru', statistik:'statistik', berita:'berita', ppdb:'ppdb', agenda:'agenda', unduhan:'unduhan', prestasi:'prestasi', status:'status', saran:'saran', siswa:'siswa' };
+const PANEL_OF = { beranda:'beranda', kelas:'kelas', dokumentasi:'dokumentasi', karya:'karya', profil:'profil', kontak:'kontak', sambutan:'beranda', video:'beranda', pengumuman:'beranda', guru:'guru', statistik:'statistik', berita:'berita', ppdb:'ppdb', agenda:'agenda', unduhan:'unduhan', prestasi:'prestasi', ekskul:'ekskul', fasilitas:'fasilitas', jadwal:'jadwal', struktur:'struktur', alumni:'alumni', status:'status', saran:'saran', siswa:'siswa' };
 let deepLink = null;
 function parseDeep(h) { const m = String(h || '').match(/^(berita|pengumuman)\/([\w-]{5,40})$/); return m ? { kind: m[1], id: m[2] } : null; }
 function applyDeep() {
@@ -2954,14 +2995,19 @@ renderBerkasForm();
 
 
 /* ---------- Agenda, Unduhan, Prestasi (disimpan di settings/site) ---------- */
-const XD = { agenda: [], unduhan: [], prestasi: [] };
+const XD = { agenda: [], unduhan: [], prestasi: [], ekskul: [], fasilitas: [], jadwal: [], struktur: [], alumni: [] };
 const tglID = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 const xTitle = {
   agenda: (d) => (d.tgl ? tglID(d.tgl) + ' - ' : '') + d.judul,
   unduhan: (d) => (d.kat ? d.kat + ': ' : '') + d.judul,
-  prestasi: (d) => d.juara + ' ' + d.lomba + ' (' + d.nama + ')'
+  prestasi: (d) => d.juara + ' ' + d.lomba + ' (' + d.nama + ')',
+  ekskul: (d) => d.nama + (d.pembina ? ' (' + d.pembina + ')' : ''),
+  fasilitas: (d) => d.nama,
+  jadwal: (d) => [d.kelas, d.hari, d.jam, d.mapel].filter(Boolean).join(' · '),
+  struktur: (d) => d.jabatan + ': ' + d.nama,
+  alumni: (d) => d.nama + (d.angkatan ? ' (' + d.angkatan + ')' : '')
 };
-function applyExtra(s) { Object.keys(XD).forEach(k => XD[k] = Array.isArray(s[k]) ? s[k] : []); renderX(); applySpanduk(s.spanduk); }
+function applyExtra(s) { window.SITE_S = s; { const k = s.skl || {}; (window.SKL_KEYS || []).forEach(n => { const e = $('skl_' + n); if (e) e.value = k[n] || (window.SKL_DEF && window.SKL_DEF[n]) || ''; }); window.SKL_LOGO = k.logo || ''; sklLogoTampil(); } Object.keys(XD).forEach(k => XD[k] = Array.isArray(s[k]) ? s[k] : []); renderX(); applySpanduk(s.spanduk); }
 function renderX() {
   const hari = new Date().toISOString().slice(0, 10);
   const a = XD.agenda.slice().sort((x, y) => (x.tgl || '').localeCompare(y.tgl || ''));
@@ -2980,6 +3026,21 @@ function renderX() {
   $('xpPrestasi').innerHTML = XD.prestasi.slice().sort((x, y) => String(y.tahun || '').localeCompare(String(x.tahun || ''))).map(d =>
     `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-accent">${imgUrl(d.foto) ? `<img src="${imgUrl(d.foto)}" alt="" loading="lazy" class="w-full h-40 object-cover rounded-lg mb-3">` : ''}<p class="text-xs font-semibold uppercase tracking-wide text-accent">${esc(d.juara)}</p><p class="font-semibold text-slate-800 mt-1">${esc(d.lomba)}</p><p class="text-sm text-slate-600 mt-1">${esc(d.nama)}</p><p class="text-xs text-slate-500 mt-2">${esc([d.tingkat, d.tahun].filter(Boolean).join(' · '))}</p></div>`).join('');
   $('xpPrestasiKosong').classList.toggle('hidden', XD.prestasi.length > 0);
+  const foto = (u) => imgUrl(u) ? `<img src="${imgUrl(u)}" alt="" loading="lazy" class="w-full h-40 object-cover rounded-lg mb-3">` : '';
+  $('xpEkskul').innerHTML = XD.ekskul.map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-primary">${foto(d.foto)}<p class="font-semibold text-slate-800">${esc(d.nama)}</p>${d.pembina ? `<p class="text-xs text-slate-500 mt-1">Pembina: ${esc(d.pembina)}</p>` : ''}${d.jadwal ? `<p class="text-xs font-semibold text-primary mt-1">${esc(d.jadwal)}</p>` : ''}${d.deskripsi ? `<p class="text-sm text-slate-600 mt-2">${esc(d.deskripsi)}</p>` : ''}</div>`).join('');
+  $('xpEkskulKosong').classList.toggle('hidden', XD.ekskul.length > 0);
+  $('xpFasilitas').innerHTML = XD.fasilitas.map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-accent">${foto(d.foto)}<p class="font-semibold text-slate-800">${esc(d.nama)}</p>${d.jumlah ? `<p class="text-xs font-semibold text-primary mt-1">${esc(d.jumlah)}</p>` : ''}${d.deskripsi ? `<p class="text-sm text-slate-600 mt-2">${esc(d.deskripsi)}</p>` : ''}</div>`).join('');
+  $('xpFasilitasKosong').classList.toggle('hidden', XD.fasilitas.length > 0);
+  const fotoB = (u, c) => imgUrl(u) ? `<img src="${imgUrl(u)}" alt="" loading="lazy" class="${c}">` : '';
+  const HR = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'], gk = {};
+  XD.jadwal.forEach(d => (gk[d.kelas || 'Umum'] = gk[d.kelas || 'Umum'] || []).push(d));
+  $('xpJadwal').innerHTML = Object.keys(gk).sort().map(g => { const rows = gk[g].slice().sort((a, b) => HR.indexOf(a.hari) - HR.indexOf(b.hari) || (a.jam || '').localeCompare(b.jam || ''));
+    return `<div class="bg-white rounded-xl shadow overflow-hidden"><h3 class="bg-primary text-white font-semibold px-4 py-2">${esc(g)}</h3><div class="overflow-x-auto"><table class="w-full text-sm"><tbody>` + rows.map(d => `<tr class="border-t border-slate-100"><td class="px-4 py-2 font-semibold text-primary whitespace-nowrap">${esc(d.hari)}</td><td class="px-2 py-2 whitespace-nowrap text-slate-500">${esc(d.jam)}</td><td class="px-2 py-2 text-slate-800">${esc(d.mapel)}</td><td class="px-4 py-2 text-slate-500">${esc(d.guru)}</td></tr>`).join('') + '</tbody></table></div></div>'; }).join('');
+  $('xpJadwalKosong').classList.toggle('hidden', XD.jadwal.length > 0);
+  $('xpStruktur').innerHTML = XD.struktur.slice().sort((a, b) => (Number(a.urutan) || 99) - (Number(b.urutan) || 99)).map(d => `<div class="bg-white rounded-xl shadow p-4 text-center">${fotoB(d.foto, 'w-24 h-24 rounded-full object-cover mx-auto mb-3') || '<div class="w-24 h-24 rounded-full bg-soft text-primary text-3xl font-bold flex items-center justify-center mx-auto mb-3">' + esc((d.nama || '?')[0]) + '</div>'}<p class="text-xs font-semibold uppercase tracking-wide text-accent">${esc(d.jabatan)}</p><p class="font-semibold text-slate-800 mt-1">${esc(d.nama)}</p></div>`).join('');
+  $('xpStrukturKosong').classList.toggle('hidden', XD.struktur.length > 0);
+  $('xpAlumni').innerHTML = XD.alumni.slice().sort((a, b) => String(b.angkatan || '').localeCompare(String(a.angkatan || ''))).map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-primary">${fotoB(d.foto, 'w-full h-40 object-cover rounded-lg mb-3')}<p class="font-semibold text-slate-800">${esc(d.nama)}</p><p class="text-xs font-semibold text-primary mt-1">${esc([d.angkatan ? 'Angkatan ' + d.angkatan : '', d.profesi].filter(Boolean).join(' · '))}</p>${d.kisah ? `<p class="text-sm text-slate-600 mt-2">${esc(d.kisah)}</p>` : ''}</div>`).join('');
+  $('xpAlumniKosong').classList.toggle('hidden', XD.alumni.length > 0);
   Object.keys(XD).forEach(k => $('xl-' + k).innerHTML = XD[k].map(d => `<div class="flex items-center justify-between gap-2 bg-white rounded-xl shadow px-4 py-2 text-sm"><span class="min-w-0 truncate">${esc(xTitle[k](d))}</span><span class="shrink-0"><button type="button" data-a="edit" data-id="${esc(d.id)}" class="text-primary underline mr-3">Ubah</button><button type="button" data-a="del" data-id="${esc(d.id)}" class="text-red-600 underline">Hapus</button></span></div>`).join(''));
 }
 async function saveX(k, list) { await db.collection('settings').doc('site').set({ [k]: list }, { merge: true }); XD[k] = list; renderX(); }
@@ -3003,6 +3064,13 @@ Object.keys(XD).forEach(k => {
     }
   });
 });
+
+/* ---------- Penghitung pengunjung (1x per sesi browser) ---------- */
+(async () => { if (!configured) return; try {
+  const ref = db.collection('pengunjung').doc('total'); let sudah = false; try { sudah = sessionStorage.getItem('vc'); } catch (e) {}
+  if (!sudah) { try { await ref.update({ jumlah: firebase.firestore.FieldValue.increment(1) }); } catch (e) { await ref.set({ jumlah: 1 }); } try { sessionStorage.setItem('vc', '1'); } catch (e) {} }
+  const d = await ref.get(); if (d.exists) $('visitCount').textContent = Number(d.data().jumlah).toLocaleString('id-ID');
+} catch (e) {} })();
 
 /* ---------- Cek status PPDB (koleksi statusPpdb, kunci = hash WA + tanggal lahir) ---------- */
 function normNama(s) { return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim(); }
@@ -3058,6 +3126,34 @@ $('srMuat').onclick = async () => {
 };
 
 
+/* ---------- Normalisasi tanggal lahir (menerima 20/05/2013, 5-20-13, 20 Mei 2013, serial Excel, dll) -> 2013-05-20 ---------- */
+function normTgl(v) {
+  v = String(v == null ? '' : v).trim(); if (!v) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+  const pad = (n) => String(n).padStart(2, '0'), ok = (y, m, d) => (y >= 1900 && y <= 2100 && m >= 1 && m <= 12 && d >= 1 && d <= 31) ? y + '-' + pad(m) + '-' + pad(d) : null;
+  let m;
+  if (/^\d{5}$/.test(v)) { const t = new Date(Date.UTC(1899, 11, 30) + (+v) * 864e5); return ok(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate()) || v; }
+  if ((m = v.match(/^(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})$/))) return ok(+m[1], +m[2], +m[3]) || v;
+  if ((m = v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/))) {
+    const a = +m[1], b = +m[2]; let y = +m[3]; if (y < 100) y += y <= new Date().getFullYear() % 100 ? 2000 : 1900;
+    return (b > 12 ? ok(y, a, b) : ok(y, b, a)) || v; /* bila ambigu dianggap hari/bulan */
+  }
+  const BL = { jan: 1, feb: 2, mar: 3, apr: 4, mei: 5, may: 5, jun: 6, jul: 7, agu: 8, aug: 8, sep: 9, okt: 10, oct: 10, nov: 11, des: 12, dec: 12 };
+  if ((m = v.toLowerCase().match(/^(\d{1,2})\s+([a-z]+)\s+(\d{4})$/)) && BL[m[2].slice(0, 3)]) return ok(+m[3], BL[m[2].slice(0, 3)], +m[1]) || v;
+  return v;
+}
+
+/* Gabungkan kolom terpisah (tanggal / bulan / tahun_lahir) menjadi tahun-bulan-tanggal. Bila kolom tgl_lahir sudah lengkap, dipakai apa adanya. */
+function tglGabung(tg, hari, bln, thn) {
+  tg = String(tg || '').trim(); const d = /^\d{1,2}$/.test(tg) ? tg : String(hari || '').trim();
+  bln = String(bln || '').trim(); thn = String(thn || '').trim();
+  if (d && bln && /^\d{4}$/.test(thn)) {
+    const BL = { jan: 1, feb: 2, mar: 3, apr: 4, mei: 5, may: 5, jun: 6, jul: 7, agu: 8, aug: 8, sep: 9, okt: 10, oct: 10, nov: 11, des: 12, dec: 12 };
+    const m = /^\d{1,2}$/.test(bln) ? +bln : BL[bln.toLowerCase().slice(0, 3)];
+    if (m) return normTgl(+d + '/' + m + '/' + thn);
+  }
+  return normTgl(tg);
+}
 /* ---------- Cari data siswa (indeks & detail hanya bisa dibuka bila tahu kuncinya) ---------- */
 const SISWA_MAX = 900000;
 async function siswaDocs(rows) {
@@ -3068,7 +3164,7 @@ async function siswaDocs(rows) {
       if (!q) continue;
       const ik = 'siswaIdx/' + await sha('idx|' + kat + '|' + q);
       m.set(ik, { n: (m.get(ik) ? m.get(ik).n : 0) + 1 });
-      for (const no of nums) m.set('siswaDetail/' + await sha('dt|' + kat + '|' + q + '|' + no), { nama: r.nama, kelas: r.kelas || '', nisn: r.nisn || '', nis: r.nis || '', status: r.status || '' });
+      for (const no of nums) m.set('siswaDetail/' + await sha('dt|' + kat + '|' + q + '|' + no), { nama: r.nama, kelas: r.kelas || '', nisn: r.nisn || '', nis: r.nis || '', status: r.status || '', tempat: r.tempat || '', tgl: r.tgl || '', tahun: r.tahun || '', nosurat: r.nosurat || '', jk: r.jk || '', ortu: r.ortu || '', nilai: r.nilai || {} });
     }
   }
   return m;
@@ -3086,31 +3182,35 @@ function parseSiswa(t) {
   if (L.length < 2) return { err: 'Data kosong. Baris pertama harus judul kolom.' };
   const sep = [',', ';', '\t'].sort((a, b) => L[0].split(b).length - L[0].split(a).length)[0];
   const cl = (x) => String(x || '').trim().replace(/^"|"$/g, '').trim();
-  const hd = L[0].split(sep).map(h => cl(h).toLowerCase()), AL = { nama: ['nama', 'nama siswa'], ibu: ['ibu', 'nama ibu', 'nama ibu kandung'], nisn: ['nisn'], nis: ['nis'], kelas: ['kelas'], status: ['status'] };
+  const hd = L[0].split(sep).map(h => cl(h).toLowerCase().replace(/[_\-]+/g, ' ')), AL = { nama: ['nama', 'nama siswa'], ibu: ['ibu', 'nama ibu', 'nama ibu kandung'], nisn: ['nisn'], nis: ['nis'], kelas: ['kelas'], status: ['status'], tempat: ['tempat', 'tempat lahir'], tgl: ['tgl', 'tgl lahir', 'tgl_lahir', 'tanggal lahir'], tahun: ['tahun', 'tahun lulus', 'tahun ajaran'], nosurat: ['nosurat', 'no surat', 'no_surat', 'nomor surat'], hari: ['tanggal', 'hari lahir'], bulan: ['bulan', 'bulan lahir'], thnlahir: ['tahun lahir', 'thn lahir'], jk: ['jk', 'jenis kelamin', 'jenis klamin', 'l p'], ortu: ['ortu', 'orang tua', 'nama orang tua', 'nama ortu', 'nama wali', 'nama orang tua wali'] };
   const ix = (n) => hd.findIndex(h => AL[n].includes(h));
-  const c = { nama: ix('nama'), ibu: ix('ibu'), nisn: ix('nisn'), nis: ix('nis'), kelas: ix('kelas'), status: ix('status') };
+  const c = { nama: ix('nama'), ibu: ix('ibu'), nisn: ix('nisn'), nis: ix('nis'), kelas: ix('kelas'), status: ix('status'), tempat: ix('tempat'), tgl: ix('tgl'), tahun: ix('tahun'), nosurat: ix('nosurat'), hari: ix('hari'), bulan: ix('bulan'), thnlahir: ix('thnlahir'), jk: ix('jk'), ortu: ix('ortu') };
   if (c.nama < 0 || c.ibu < 0 || (c.nisn < 0 && c.nis < 0)) return { err: 'Judul kolom harus memuat minimal: nama, ibu, serta nisn dan/atau nis.' };
-  const rows = []; let bad = 0;
+  const rows = []; let bad = 0, tglBad = 0; const nilaiCols = hd.map((h, i) => /^nilai /.test(h) ? [i, h.slice(6).replace(/[^a-z0-9]/g, '')] : null).filter(Boolean);
   L.slice(1).forEach(l => {
     const p = l.split(sep), g = (k) => c[k] < 0 ? '' : cl(p[c[k]]);
-    const r = { nama: g('nama').slice(0, 100), ibu: g('ibu').slice(0, 100), nisn: digits(g('nisn')).slice(0, 20), nis: digits(g('nis')).slice(0, 20), kelas: g('kelas').slice(0, 30), status: g('status').slice(0, 30) };
-    if (r.nama && r.ibu && (r.nisn || r.nis)) rows.push(r); else bad++;
+    const r = { nama: g('nama').slice(0, 100), ibu: g('ibu').slice(0, 100), nisn: digits(g('nisn')).slice(0, 20), nis: digits(g('nis')).slice(0, 20), kelas: g('kelas').slice(0, 30), status: g('status').slice(0, 30), tempat: g('tempat').slice(0, 60), tgl: tglGabung(g('tgl'), g('hari'), g('bulan'), g('thnlahir')).slice(0, 30), tahun: g('tahun').slice(0, 20), nosurat: g('nosurat').slice(0, 60), jk: normJk(g('jk')), ortu: g('ortu').slice(0, 100) };
+    const nl = {}; nilaiCols.forEach(([i, kk]) => { const v = parseFloat(String(p[i] || '').replace(',', '.')); if (!isNaN(v)) nl[kk] = v; }); if (Object.keys(nl).length) r.nilai = nl;
+    if (r.nama && r.ibu && (r.nisn || r.nis)) { rows.push(r); if (r.tgl && !/^\d{4}-\d{2}-\d{2}$/.test(r.tgl)) tglBad++; } else bad++;
   });
-  return { rows, bad };
+  return { rows, bad, tglBad };
 }
 const sdSiap = () => { if (window.XLSX) return true; alert('Pustaka Excel belum termuat. Periksa koneksi internet lalu muat ulang halaman.'); return false; };
 $('sdTemplate').onclick = () => {
   if (!sdSiap()) return;
-  const ws = XLSX.utils.aoa_to_sheet([['nama', 'ibu', 'nisn', 'nis', 'kelas', 'status']]);
+  const H = sdHeader(), ct = { nama: 'Ahmad Rizki Pratama', ibu: 'Siti Aminah', nisn: '0123456789', nis: '2024001', kelas: 'Kelas 6', status: 'Lulus', jk: 'Laki-laki', ortu: 'Budi Santoso', tempat: 'Sidoarjo', tgl_lahir: '2013-05-20', tahun_lulus: '2025/2026' };
+  const ws = XLSX.utils.aoa_to_sheet([H]);
   for (let r = 1; r <= 1000; r++) for (const c of [2, 3]) ws[XLSX.utils.encode_cell({ r, c })] = { t: 's', v: '', z: '@' };
-  ws['!ref'] = 'A1:F1001'; ws['!cols'] = [{ wch: 32 }, { wch: 32 }, { wch: 14 }, { wch: 14 }, { wch: 10 }, { wch: 12 }];
+  ws['!ref'] = 'A1:' + XLSX.utils.encode_col(H.length - 1) + '1001'; ws['!cols'] = H.map((h, i) => ({ wch: i < 2 ? 32 : h.startsWith('nilai_') ? 12 : 16 }));
   const pt = XLSX.utils.aoa_to_sheet([
     ['PETUNJUK PENGISIAN'], ['1. Isi data mulai baris 2 pada sheet "Data Siswa". Jangan mengubah / menghapus baris judul (baris 1).'],
     ['2. nama = nama lengkap siswa; ibu = nama ibu kandung (tanpa gelar / singkatan).'],
     ['3. Isi nisn dan/atau nis (wajib salah satu). Kolom ini berformat Teks agar angka 0 di depan tidak hilang.'],
-    ['4. kelas dan status (mis. Aktif) boleh dikosongkan.'], ['5. Simpan file, lalu unggah di menu Data Siswa pada Panel Admin.'], [],
-    ['Contoh baris:'], ['nama', 'ibu', 'nisn', 'nis', 'kelas', 'status'], ['Ahmad Rizki Pratama', 'Siti Aminah', '0123456789', '2024001', 'Kelas 1', 'Aktif']]);
-  pt['!cols'] = [{ wch: 28 }, { wch: 20 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 10 }];
+    ['4. Kolom lain boleh dikosongkan. jk = Laki-laki / Perempuan (atau L / P). ortu = nama orang tua/wali.'],
+    ['5. tgl_lahir harus LENGKAP (mis. 2013-05-20 atau 20/05/2013). Alternatif: pakai 3 kolom tanggal, bulan, tahun_lahir.'],
+    ['6. Kolom nilai_... = Nilai Ujian Sekolah per mata pelajaran (angka 0-100) untuk halaman Daftar Nilai pada SKL.'],
+    ['7. Isi status dengan kata Lulus agar siswa bisa mengunduh Surat Keterangan Lulus.'], [], ['Contoh baris:'], H, H.map(h => ct[h] !== undefined ? ct[h] : (h.startsWith('nilai_') ? 80 : ''))]);
+  pt['!cols'] = [{ wch: 28 }, { wch: 20 }];
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Data Siswa'); XLSX.utils.book_append_sheet(wb, pt, 'Petunjuk');
   XLSX.writeFile(wb, 'template-data-siswa.xlsx');
 };
@@ -3119,7 +3219,8 @@ $('sdFile').addEventListener('change', async (e) => {
   if (/\.(xlsx|xls)$/i.test(f.name)) {
     if (!sdSiap()) return;
     try {
-      const wb = XLSX.read(await f.arrayBuffer(), { type: 'array' }), ws = wb.Sheets['Data Siswa'] || wb.Sheets[wb.SheetNames[0]];
+      const wb = XLSX.read(await f.arrayBuffer(), { type: 'array', cellDates: true }), ws = wb.Sheets['Data Siswa'] || wb.Sheets[wb.SheetNames[0]];
+      Object.keys(ws).forEach(a => { const c = ws[a]; if (c && c.t === 'd' && c.v instanceof Date) c.w = new Date(c.v.getTime() + 43200000).toISOString().slice(0, 10); });
       const m = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
       $('sdTeks').value = m.filter(r => r.some(c => String(c).trim())).map(r => r.map(c => String(c).replace(/[\t\r\n]+/g, ' ').trim()).join('\t')).join('\n');
       $('sdMsg').textContent = 'File dibaca. Periksa pratinjau, lalu klik Impor.';
@@ -3131,7 +3232,7 @@ $('sdProses').onclick = async () => {
   if (p.err) return alert(p.err);
   if (!p.rows.length) return alert('Tidak ada baris yang valid.');
   const tambah = document.querySelector('input[name="sdMode"]:checked').value === 'tambah';
-  if (!confirm((tambah ? 'Tambahkan ' : 'GANTI seluruh data lama dengan ') + p.rows.length + ' siswa' + (p.bad ? ' (' + p.bad + ' baris tidak valid dilewati)' : '') + '?')) return;
+  if (!confirm((tambah ? 'Tambahkan ' : 'GANTI seluruh data lama dengan ') + p.rows.length + ' siswa' + (p.bad ? ' (' + p.bad + ' baris tidak valid dilewati)' : '') + '?' + (p.tglBad ? '\n\nPERINGATAN: ' + p.tglBad + ' siswa tanggal lahirnya tidak lengkap/tidak terbaca (harus ada hari, bulan, dan tahun). Tetap lanjutkan?' : ''))) return;
   try {
     const ms = await db.collection('siswaAdmin').doc('master').get(), old = ms.exists ? (ms.data().rows || []) : [];
     let rows = p.rows, baruN = p.rows.length, ubahN = 0;
@@ -3148,7 +3249,7 @@ $('sdProses').onclick = async () => {
     const lama = await siswaDocs(old), baru = await siswaDocs(rows);
     await siswaCommit([...lama.keys()].filter(k => !baru.has(k)), baru);
     await db.collection('siswaAdmin').doc('master').set({ rows, diperbarui: firebase.firestore.FieldValue.serverTimestamp() });
-    msg.textContent = 'Selesai: ' + baruN + ' siswa baru' + (ubahN ? ', ' + ubahN + ' diperbarui' : '') + (p.bad ? ', ' + p.bad + ' baris dilewati' : '') + '. Total data: ' + rows.length + ' siswa.';
+    msg.textContent = 'Selesai: ' + baruN + ' siswa baru' + (ubahN ? ', ' + ubahN + ' diperbarui' : '') + (p.bad ? ', ' + p.bad + ' baris dilewati' : '') + '. Total data: ' + rows.length + ' siswa.'; sdMuat();
   } catch (err) { msg.textContent = ''; alert('Gagal mengimpor. ' + errInfo(err)); }
 };
 $('sdHapus').onclick = async () => {
@@ -3156,7 +3257,7 @@ $('sdHapus').onclick = async () => {
   try {
     const ms = await db.collection('siswaAdmin').doc('master').get();
     await siswaCommit([...(await siswaDocs(ms.exists ? (ms.data().rows || []) : [])).keys()], new Map());
-    await db.collection('siswaAdmin').doc('master').delete(); $('sdMsg').textContent = 'Semua data siswa dihapus.';
+    await db.collection('siswaAdmin').doc('master').delete(); $('sdMsg').textContent = 'Semua data siswa dihapus.'; SD.rows = []; sdRender();
   } catch (err) { alert('Gagal menghapus. ' + errInfo(err)); }
 };
 
@@ -3188,10 +3289,155 @@ $('scVal').addEventListener('submit', async (e) => {
     }
     try { localStorage.removeItem('scGagal'); } catch (x) {}
     const s = d.data(), row = (k, v) => v ? `<div class="flex justify-between gap-3 border-b py-1.5"><span class="text-slate-500">${k}</span><span class="font-medium text-right">${esc(v)}</span></div>` : '';
-    h.innerHTML = '<p class="font-semibold text-primary mb-2">Data siswa tervalidasi</p>' + row('Nama', s.nama) + row('Kelas', s.kelas) + row('NISN', s.nisn) + row('NIS', s.nis) + row('Status', s.status);
+    h.innerHTML = '<p class="font-semibold text-primary mb-2">Data siswa tervalidasi</p>' + row('Nama', s.nama) + row('Kelas', s.kelas) + row('NISN', s.nisn) + row('NIS', s.nis) + row('Status', s.status) + sklBlok(s);
   } catch (err) { h.innerHTML = '<p class="text-red-600">Gagal memeriksa. Coba lagi nanti.</p>'; }
 });
 
+
+
+/* ---------- Pengaturan mapel & helper SKL ---------- */
+const normJk = (v) => /^l/i.test(String(v || '').trim()) ? 'Laki-laki' : /^p/i.test(String(v || '').trim()) ? 'Perempuan' : '';
+const SKL_DEF = {
+  mapelA: 'agama|Pendidikan Agama dan Budi Pekerti\npancasila|Pendidikan Pancasila dan Kewarganegaraan\nbindo|Bahasa Indonesia\nmtk|Matematika\nipa|Ilmu Pengetahuan Alam (IPA)\nips|Ilmu Pengetahuan Sosial (IPS)',
+  mapelB: 'seni|Seni Budaya dan Keterampilan\npjok|Pendidikan Jasmani, Olahraga, dan Kesehatan\nmulok|Muatan Lokal',
+  dasar: 'Berdasarkan hasil rapat Dewan Guru tentang penentuan kelulusan dan mengacu pada peraturan perundang-undangan yang berlaku tentang Standar Nasional Pendidikan, serta ketentuan penerbitan ijazah pendidikan dasar, dengan ini siswa tersebut dinyatakan :'
+};
+window.SKL_DEF = SKL_DEF; window.SKL_KEYS = ['npsn', 'kota', 'nip', 'tahun', 'tanggal', 'kop1', 'kop2', 'nomor', 'dasar', 'mapelA', 'mapelB'];
+function sklMapelList(t, d) { return String(t || d || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [a, b] = l.split('|'); return b ? { kode: a.trim().toLowerCase().replace(/[^a-z0-9]/g, ''), nama: b.trim() } : { kode: l.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20), nama: l }; }); }
+function sklMapelAll() { const k = (window.SITE_S || {}).skl || {}; return [...sklMapelList(k.mapelA, SKL_DEF.mapelA), ...sklMapelList(k.mapelB, SKL_DEF.mapelB)]; }
+const sdHeader = () => ['nama', 'ibu', 'nisn', 'nis', 'kelas', 'status', 'jk', 'ortu', 'tempat', 'tgl_lahir', 'tahun_lulus', 'nosurat', ...sklMapelAll().map(m => 'nilai_' + m.kode)];
+function sklLogoTampil() { const im = $('skl_logoPrev'); if (!im) return; if (window.SKL_LOGO) { im.src = window.SKL_LOGO; im.classList.remove('hidden'); } else im.classList.add('hidden'); }
+$('skl_logoFile').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const im = new Image(); await new Promise((ok, no) => { im.onload = ok; im.onerror = no; im.src = URL.createObjectURL(f); });
+    const sc = Math.min(1, 200 / Math.max(im.width, im.height)), cv = document.createElement('canvas'); cv.width = Math.round(im.width * sc); cv.height = Math.round(im.height * sc);
+    cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height); let d = cv.toDataURL('image/png'); if (d.length > 150000) d = cv.toDataURL('image/jpeg', 0.85);
+    window.SKL_LOGO = d; sklLogoTampil();
+  } catch (x) { alert('Gambar logo tidak dapat dibaca.'); }
+});
+$('skl_logoHapus').onclick = () => { window.SKL_LOGO = ''; $('skl_logoFile').value = ''; sklLogoTampil(); };
+
+/* ---------- Status kelulusan & Surat Keterangan Lulus ---------- */
+const isLulus = (v) => /lulus/i.test(v || '') && !/tidak|belum/i.test(v || '');
+$('sklSimpan').onclick = async () => {
+  const k = {}; window.SKL_KEYS.forEach(n => k[n] = $('skl_' + n).value.trim()); k.logo = window.SKL_LOGO || '';
+  try { await db.collection('settings').doc('site').set({ skl: k }, { merge: true }); if (window.SITE_S) window.SITE_S.skl = k; alert('Pengaturan surat disimpan.'); } catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+function sklBlok(s) {
+  if (!isLulus(s.status)) return '';
+  window.SKL_DATA = s;
+  return '<div class="mt-4 rounded-xl bg-green-50 border border-green-200 p-4 text-center"><p class="text-green-700 font-bold text-lg">LULUS</p><p class="text-xs text-slate-600 mb-3">Selamat! Unduh Surat Keterangan Lulus (SKL) di bawah ini.</p><button type="button" onclick="sklCetak(window.SKL_DATA)" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Unduh Surat Keterangan Lulus</button><p class="text-[11px] text-slate-500 mt-2">Pada jendela cetak, pilih &quot;Simpan sebagai PDF&quot;.</p></div>';
+}
+function sklCetak(s) {
+  const S = window.SITE_S || {}, k = S.skl || {}, nm = S.nama || 'Nama Sekolah', ID = { day: 'numeric', month: 'long', year: 'numeric' };
+  const tg = (v0) => { const v = normTgl(v0); return /^\d{4}-\d{2}-\d{2}$/.test(v) ? new Date(v + 'T00:00:00').toLocaleDateString('id-ID', ID) : (v || ''); };
+  const tahun = s.tahun || k.tahun || '', tglSurat = k.tanggal ? tg(k.tanggal) : new Date().toLocaleDateString('id-ID', ID);
+  const nomor = s.nosurat || (k.nomor ? k.nomor.replace(/\{nis\}/gi, s.nis || s.nisn || '') : 'SKL/' + (s.nis || s.nisn) + '/' + tahun.replace(/\//g, '-'));
+  const ttl = [s.tempat, tg(s.tgl)].filter(Boolean).join(', ');
+  const A = sklMapelList(k.mapelA, SKL_DEF.mapelA), B = sklMapelList(k.mapelB, SKL_DEF.mapelB), nl = s.nilai || {};
+  const ada = [...A, ...B].map(m => nl[m.kode]).filter(v => typeof v === 'number');
+  const rata = ada.length ? Math.round(ada.reduce((x, y) => x + y, 0) / ada.length * 100) / 100 : null, fn = (v) => String(v).replace('.', ',');
+  const lulus = isLulus(s.status);
+  const r2 = (a, b, w) => `<tr><td style="width:${w || 30}%;padding:3px 0;vertical-align:top">${a}</td><td style="width:3%;vertical-align:top">:</td><td>${esc(b || '-')}</td></tr>`;
+  const logo = /^data:image\//.test(k.logo || '') ? `<img src="${k.logo}" style="width:78px;height:78px;object-fit:contain">` : '';
+  const kop = `<table class="kop"><tr><td style="width:90px">${logo}</td><td style="text-align:center">${k.kop1 ? '<div class="k1">' + esc(k.kop1) + '</div>' : ''}${k.kop2 ? '<div class="k1">' + esc(k.kop2) + '</div>' : ''}<div class="k2">${esc(nm.toUpperCase())}</div>${(k.npsn || S.alamat) ? '<div style="font-size:9pt">' + (k.npsn ? 'NPSN: ' + esc(k.npsn) + ' ' : '') + esc(S.alamat || '') + '</div>' : ''}</td><td style="width:90px"></td></tr></table>`;
+  const ttd = (hdr) => `<table style="margin:26px 0 0 52%;width:48%">${hdr}<tr><td colspan="3">Kepala Sekolah,<br><br><br><br><b><u>${esc(S.kepsek || '...............')}</u></b>${k.nip ? '<br>NIP. ' + esc(k.nip) : ''}</td></tr></table>`;
+  const sub = (cl) => cl.map((m, i) => `<tr><td class="c">${i + 1}</td><td>${esc(m.nama)}</td><td class="c">${nl[m.kode] !== undefined ? fn(nl[m.kode]) : ''}</td></tr>`).join('');
+  const depan = `<div class="pg">${kop}<div style="text-align:center;margin:16px 0 14px"><b><u>SURAT KETERANGAN LULUS</u></b><br><b>NOMOR : ${esc(nomor)}</b></div>
+<p>Yang bertanda tangan di bawah ini, Kepala ${esc(nm)} menerangkan bahwa:</p>
+<table style="margin-left:24px;width:92%">${r2('Nama', s.nama)}${r2('Tempat, Tanggal Lahir', ttl)}${r2('Jenis Kelamin', s.jk)}${r2('Nama Orang tua/wali', s.ortu)}${r2('Nomor Induk Siswa', s.nis)}${r2('NISN', s.nisn)}</table>
+<p style="text-align:justify;margin-top:10px">${esc(k.dasar || SKL_DEF.dasar)}</p>
+<p style="text-align:center;margin:18px 0"><b>${lulus ? 'LULUS' : 'TIDAK LULUS'}</b></p>
+${rata !== null ? `<p>Dari ${esc(nm)} dengan Rata-rata nilai = ${fn(rata)}</p>` : ''}<p>Demikian Surat Keterangan ini dibuat untuk dapat digunakan sebagaimana mestinya.</p>
+${ttd(`<tr><td style="width:40%">Ditetapkan di</td><td style="width:5%">:</td><td>${esc(k.kota || nm)}</td></tr><tr><td>Pada Tanggal</td><td>:</td><td>${esc(tglSurat)}</td></tr>`)}</div>`;
+  const belakang = ada.length ? `<div class="pg" style="page-break-before:always"><div style="text-align:center;border-bottom:3px solid #000;padding-bottom:6px;margin-bottom:16px"><b>DAFTAR NILAI<br>SEKOLAH DASAR<br>TAHUN PELAJARAN ${esc(tahun)}</b></div>
+<table style="width:75%">${r2('Nama', s.nama, 36)}${r2('Tempat dan Tanggal Lahir', ttl, 36)}${r2('Nomor Induk Siswa', s.nis, 36)}${r2('Nomor Induk Siswa Nasional', s.nisn, 36)}</table>
+<table class="nl" style="margin-top:14px"><thead><tr><th style="width:8%">No</th><th>Mata Pelajaran</th><th style="width:22%">Nilai Ujian Sekolah</th></tr></thead><tbody>
+<tr><td colspan="3"><b>Kelompok A</b></td></tr>${sub(A)}<tr><td colspan="3"><b>Kelompok B</b></td></tr>${sub(B)}
+<tr><td colspan="2" class="c"><b>Rata-Rata</b></td><td class="c"><b>${fn(rata)}</b></td></tr></tbody></table>
+${ttd(`<tr><td colspan="3">${esc(k.kota || nm)}, ${esc(tglSurat)}</td></tr>`)}</div>` : '';
+  const html = `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>SKL ${esc(s.nama)}</title><style>@page{size:A4;margin:16mm 20mm}body{font-family:Verdana,Arial,sans-serif;font-size:10pt;line-height:1.45;color:#000;margin:0}table{border-collapse:collapse;width:100%}.kop{border-bottom:3px solid #000;margin-bottom:4px}.k1{font-weight:bold;font-size:11pt;text-transform:uppercase}.k2{font-weight:bold;font-size:14pt}.nl th,.nl td{border:1px solid #000;padding:4px 7px}.nl th{text-align:center}.c{text-align:center}</style></head><body>${depan}${belakang}</body></html>`;
+  const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'; document.body.appendChild(f);
+  const d = f.contentWindow.document; d.open(); d.write(html); d.close();
+  setTimeout(() => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { alert('Cetak tidak didukung di browser ini. Coba buka website lewat Chrome.'); } setTimeout(() => f.remove(), 60000); }, 500);
+}
+
+/* ---------- Daftar data siswa di Panel Admin (lihat, cari, tambah, ubah, hapus) ---------- */
+const SD = { rows: [], page: 1, edit: -1, dimuat: false }, SD_N = 25, SD_F = ['nama', 'ibu', 'nisn', 'nis', 'kelas', 'status', 'tempat', 'tgl', 'tahun', 'nosurat'];
+async function sdMuat() {
+  try { const m = await db.collection('siswaAdmin').doc('master').get(); SD.rows = m.exists ? (m.data().rows || []) : []; SD.dimuat = true; sdRender(); }
+  catch (e) { $('sdJumlah').textContent = '(gagal memuat: ' + (e.code || e.message) + ')'; }
+}
+function sdFilter() {
+  const q = normNama($('sdCari').value), qd = digits($('sdCari').value), kl = $('sdKelas').value, out = [];
+  SD.rows.forEach((r, i) => { if (kl && r.kelas !== kl) return;
+    if (q && !(normNama(r.nama).includes(q) || normNama(r.ibu).includes(q) || (qd && ((r.nisn || '').includes(qd) || (r.nis || '').includes(qd))))) return; out.push(i); });
+  return out;
+}
+function sdRender() {
+  const kl = $('sdKelas'), cur = kl.value, ks = [...new Set(SD.rows.map(r => r.kelas).filter(Boolean))].sort();
+  kl.innerHTML = '<option value="">Semua kelas</option>' + ks.map(k => `<option>${esc(k)}</option>`).join(''); kl.value = ks.includes(cur) ? cur : '';
+  const idx = sdFilter(), hal = Math.max(1, Math.ceil(idx.length / SD_N)); SD.page = Math.min(SD.page, hal);
+  $('sdJumlah').textContent = '(' + idx.length + (idx.length !== SD.rows.length ? ' dari ' + SD.rows.length : '') + ' siswa)';
+  $('sdTbody').innerHTML = idx.slice((SD.page - 1) * SD_N, SD.page * SD_N).map((i, n) => { const r = SD.rows[i];
+    return `<tr class="border-t"><td class="px-2 py-1.5">${(SD.page - 1) * SD_N + n + 1}</td><td class="px-2 py-1.5 font-medium">${esc(r.nama)}</td><td class="px-2 py-1.5">${esc(r.ibu)}</td><td class="px-2 py-1.5">${esc(r.nisn)}</td><td class="px-2 py-1.5">${esc(r.nis)}</td><td class="px-2 py-1.5">${esc(r.kelas)}</td><td class="px-2 py-1.5">${r.status ? `<span class="px-2 py-0.5 rounded-full text-xs ${isLulus(r.status) ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}">${esc(r.status)}</span>` : ''}</td><td class="px-2 py-1.5 whitespace-nowrap"><button type="button" data-ed="${i}" class="text-primary underline mr-2">Ubah</button><button type="button" data-dl="${i}" class="text-red-600 underline">Hapus</button></td></tr>`; }).join('') || '<tr><td colspan="8" class="px-2 py-4 text-center text-slate-500">Belum ada data siswa. Impor file di atas atau klik + Tambah Siswa.</td></tr>';
+  $('sdHal').textContent = 'Halaman ' + SD.page + ' / ' + hal; $('sdPrev').disabled = SD.page <= 1; $('sdNext').disabled = SD.page >= hal;
+}
+async function sdSimpan(rows) {
+  if (JSON.stringify(rows).length > SISWA_MAX) throw new Error('Data terlalu besar (maks sekitar 8.000 siswa).');
+  const ms = await db.collection('siswaAdmin').doc('master').get(), old = ms.exists ? (ms.data().rows || []) : [];
+  const lama = await siswaDocs(old), baru = await siswaDocs(rows);
+  const tulis = new Map([...baru].filter(([k, v]) => !lama.has(k) || JSON.stringify(lama.get(k)) !== JSON.stringify(v)));
+  await siswaCommit([...lama.keys()].filter(k => !baru.has(k)), tulis);
+  await db.collection('siswaAdmin').doc('master').set({ rows, diperbarui: firebase.firestore.FieldValue.serverTimestamp() });
+  SD.rows = rows; sdRender(); $('sdMsg').textContent = 'Tersimpan. Total ' + rows.length + ' siswa.';
+}
+function sdBuka(i) {
+  SD.edit = i; const r = i >= 0 ? SD.rows[i] : {};
+  $('sdModalJudul').textContent = i >= 0 ? 'Ubah Data Siswa' : 'Tambah Siswa';
+  $('sdModal').querySelectorAll('[data-sf]').forEach(e => e.value = e.dataset.sf === 'tgl' ? (normTgl(r.tgl).match(/^\d{4}-\d{2}-\d{2}$/) ? normTgl(r.tgl) : '') : (r[e.dataset.sf] || ''));
+  const mp = sklMapelAll(); $('sdNilaiGrid').innerHTML = mp.map(m => `<div><label class="block text-xs font-medium mb-1">${esc(m.nama)}</label><input data-nf="${esc(m.kode)}" type="number" min="0" max="100" step="0.01" class="inp" value="${esc(String((r.nilai || {})[m.kode] ?? ''))}"></div>`).join('');
+  $('sdNilaiBox').classList.toggle('hidden', !mp.length); $('sdModal').classList.remove('hidden');
+}
+['sdCari', 'sdKelas'].forEach(id => $(id).addEventListener('input', () => { SD.page = 1; sdRender(); }));
+$('sdPrev').onclick = () => { SD.page--; sdRender(); }; $('sdNext').onclick = () => { SD.page++; sdRender(); };
+$('sdTambah').onclick = () => sdBuka(-1); $('sdBatal').onclick = () => $('sdModal').classList.add('hidden');
+$('sdTbody').addEventListener('click', async (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.ed !== undefined) return sdBuka(+b.dataset.ed);
+  if (b.dataset.dl !== undefined) { const r = SD.rows[+b.dataset.dl]; if (!r || !confirm('Hapus data ' + r.nama + '?')) return;
+    try { await sdSimpan(SD.rows.filter((_, i) => i !== +b.dataset.dl)); } catch (err) { alert('Gagal menghapus. ' + (err.code ? errInfo(err) : err.message)); } }
+});
+$('sdSimpanBtn').onclick = async () => {
+  const o = {}; $('sdModal').querySelectorAll('[data-sf]').forEach(e => o[e.dataset.sf] = e.value.trim());
+  o.nisn = digits(o.nisn); o.nis = digits(o.nis); o.nilai = {}; $('sdModal').querySelectorAll('[data-nf]').forEach(e => { const v = parseFloat(e.value); if (!isNaN(v)) o.nilai[e.dataset.nf] = v; });
+  if (!o.nama || !o.ibu || (!o.nisn && !o.nis)) return alert('Nama, nama ibu, dan NISN atau NIS wajib diisi.');
+  const dup = SD.rows.findIndex((r, i) => i !== SD.edit && ((o.nisn && r.nisn === o.nisn) || (o.nis && r.nis === o.nis)));
+  if (dup >= 0) return alert('NISN/NIS sudah dipakai oleh ' + SD.rows[dup].nama + '.');
+  const rows = SD.rows.slice(); if (SD.edit >= 0) rows[SD.edit] = o; else rows.push(o);
+  try { await sdSimpan(rows); $('sdModal').classList.add('hidden'); } catch (err) { alert('Gagal menyimpan. ' + (err.code ? errInfo(err) : err.message)); }
+};
+$('sdBulk').onclick = async () => {
+  const idx = sdFilter(), v = $('sdBulkVal').value.trim();
+  if (!idx.length || !v || !confirm('Ubah status ' + idx.length + ' siswa (hasil filter saat ini) menjadi "' + v + '"?')) return;
+  const rows = SD.rows.slice(); idx.forEach(i => rows[i] = { ...rows[i], status: v });
+  try { await sdSimpan(rows); } catch (err) { alert('Gagal menyimpan. ' + (err.code ? errInfo(err) : err.message)); }
+};
+$('sdRapikan').onclick = async () => {
+  let n = 0; const rows = SD.rows.map(r => { const t = normTgl(r.tgl); if (t !== (r.tgl || '')) { n++; return { ...r, tgl: t }; } return r; });
+  if (!n) return alert('Semua tanggal lahir sudah berformat rapi (atau masih kosong).');
+  if (!confirm('Rapikan format tanggal lahir ' + n + ' siswa menjadi tahun-bulan-tanggal? Tanggal yang ambigu (mis. 05/10/2015) dibaca sebagai hari/bulan/tahun.')) return;
+  try { await sdSimpan(rows); } catch (err) { alert('Gagal menyimpan. ' + (err.code ? errInfo(err) : err.message)); }
+};
+$('sdExport').onclick = () => {
+  if (!sdSiap()) return; if (!SD.rows.length) return alert('Belum ada data siswa.');
+  const H = sdHeader(), val = (r, h) => h === 'tgl_lahir' ? (r.tgl || '') : h === 'tahun_lulus' ? (r.tahun || '') : h.startsWith('nilai_') ? ((r.nilai || {})[h.slice(6)] ?? '') : String(r[h] || '');
+  const ws = XLSX.utils.aoa_to_sheet([H].concat(SD.rows.map(r => H.map(h => val(r, h)))));
+  ws['!cols'] = H.map((h, i) => ({ wch: i < 2 ? 32 : h.startsWith('nilai_') ? 12 : 16 }));
+  const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Data Siswa'); XLSX.writeFile(wb, 'data-siswa.xlsx');
+};
+document.querySelectorAll('[data-tab="tSiswa"]').forEach(b => b.addEventListener('click', () => { if (!SD.dimuat) sdMuat(); }));
 
 /* ---------- Spanduk pengumuman, cadangan data, PWA ---------- */
 const spOk = (u) => /^(https?:\/\/|#)/.test(u || '');
@@ -3227,7 +3473,7 @@ $('cadUnduh').onclick = async () => {
     msg.textContent = 'Cadangan berhasil diunduh.';
   } catch (err) { msg.textContent = ''; alert('Gagal membuat cadangan. ' + errInfo(err)); }
 };
-if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+if (window.PWA_OK && 'serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 
 /* ---------- Menu bawah & lembar menu (HP) ---------- */
 const BN_UTAMA = ['beranda', 'guru', 'kelas', 'berita'];
