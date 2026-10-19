@@ -80,6 +80,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
   .heroDot.on { width:1.6rem; background:var(--accent); }
   .capIn { animation:fadeUp .6s ease both; }
   @media (prefers-reduced-motion:reduce) { .hs { transition:opacity .01s; transform:none; } .hs.on { transform:none; } .capIn { animation:none; } }
+  #fotoPrev[hidden], #fotoNext[hidden] { display:none !important; }
   .deepHi { outline:3px solid var(--accent); outline-offset:3px; border-radius:.75rem; transition:outline-color .4s; }
   @keyframes liveDot { 0% { box-shadow:0 0 0 0 rgba(22,163,74,.55); } 70% { box-shadow:0 0 0 8px rgba(22,163,74,0); } 100% { box-shadow:0 0 0 0 rgba(22,163,74,0); } }
   .liveDot { width:.5rem; height:.5rem; border-radius:9999px; background:#16a34a; animation:liveDot 1.6s infinite; }
@@ -2412,10 +2413,21 @@ function openGaleri(i) {
   const d = galView[i]; if (!d) return; galIdx = i;
   if (d.jenis === 'video') { const id = ytId(d.youtube || ''); if (id) bukaYt(id); return; }
   const full = galFull(d); if (!full) return;
+  fotoSolo = false; $('fotoPrev').hidden = false; $('fotoNext').hidden = false;
   $('fotoImg').src = full; $('fotoJudul').textContent = d.judul || ''; $('fotoTgl').textContent = tglKeg(d);
   $('fotoKet').innerHTML = fmt(d.keterangan); $('fotoModal').classList.remove('hidden');
 }
+/* foto tunggal (mis. Alumni): tampil penuh di lightbox yang sama, tanpa tombol geser galeri */
+let fotoSolo = false;
+function bukaFotoSolo(src, judul, tgl, ket) {
+  if (!src) return;
+  fotoSolo = true; $('fotoPrev').hidden = true; $('fotoNext').hidden = true;
+  $('fotoImg').src = src; $('fotoImg').alt = judul || '';
+  $('fotoJudul').textContent = judul || ''; $('fotoTgl').textContent = tgl || ''; $('fotoKet').textContent = ket || '';
+  $('fotoModal').classList.remove('hidden');
+}
 function stepGaleri(dir) {
+  if (fotoSolo) return;
   let j = galIdx;
   for (let n = 0; n < galView.length; n++) {
     j = (j + dir + galView.length) % galView.length;
@@ -2431,6 +2443,15 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') fotoTutup(); else if (e.key === 'ArrowLeft') stepGaleri(-1); else if (e.key === 'ArrowRight') stepGaleri(1);
 });
 $('galMore').onclick = () => loadGaleri(false);
+['xpPrestasi', 'xpEkskul', 'xpFasilitas', 'xpStruktur'].forEach(id => $(id).addEventListener('click', (e) => {
+  const b = e.target.closest('[data-zoom]'); if (!b) return;
+  bukaFotoSolo(b.dataset.zoom, b.dataset.cap, '', '');
+}));
+$('xpAlumni').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-alb]'); if (!b) return;
+  const d = XD.alumni.find(x => x.id === b.dataset.alb); if (!d) return;
+  bukaFotoSolo(imgRaw(d.foto, 2000), d.nama, [d.angkatan ? 'Angkatan ' + d.angkatan : '', d.profesi].filter(Boolean).join(' · '), '');
+});
 $('aTutup').addEventListener('click', () => { galLoaded = false; if (!$('p-dokumentasi').classList.contains('hidden')) loadGaleri(true); });
 
 /* panel admin */
@@ -3024,22 +3045,23 @@ function renderX() {
     `<div class="flex items-center justify-between gap-3 bg-white rounded-xl shadow px-4 py-3"><span class="text-sm font-medium text-slate-800">${esc(d.judul)}</span><a href="${safeUrl(d.url)}" target="_blank" rel="noopener" class="shrink-0 px-3 py-1.5 rounded-lg border border-primary text-primary text-sm font-semibold hover:bg-primary hover:text-white transition">Unduh</a></div>`).join('') + '</div></div>').join('');
   $('xpUnduhanKosong').classList.toggle('hidden', XD.unduhan.length > 0);
   $('xpPrestasi').innerHTML = XD.prestasi.slice().sort((x, y) => String(y.tahun || '').localeCompare(String(x.tahun || ''))).map(d =>
-    `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-accent">${imgUrl(d.foto) ? `<img src="${imgUrl(d.foto)}" alt="" loading="lazy" class="w-full h-40 object-cover rounded-lg mb-3">` : ''}<p class="text-xs font-semibold uppercase tracking-wide text-accent">${esc(d.juara)}</p><p class="font-semibold text-slate-800 mt-1">${esc(d.lomba)}</p><p class="text-sm text-slate-600 mt-1">${esc(d.nama)}</p><p class="text-xs text-slate-500 mt-2">${esc([d.tingkat, d.tahun].filter(Boolean).join(' · '))}</p></div>`).join('');
+    `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-accent">${foto(d.foto, d.lomba)}<p class="text-xs font-semibold uppercase tracking-wide text-accent">${esc(d.juara)}</p><p class="font-semibold text-slate-800 mt-1">${esc(d.lomba)}</p><p class="text-sm text-slate-600 mt-1">${esc(d.nama)}</p><p class="text-xs text-slate-500 mt-2">${esc([d.tingkat, d.tahun].filter(Boolean).join(' · '))}</p></div>`).join('');
   $('xpPrestasiKosong').classList.toggle('hidden', XD.prestasi.length > 0);
-  const foto = (u) => imgUrl(u) ? `<img src="${imgUrl(u)}" alt="" loading="lazy" class="w-full h-40 object-cover rounded-lg mb-3">` : '';
-  $('xpEkskul').innerHTML = XD.ekskul.map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-primary">${foto(d.foto)}<p class="font-semibold text-slate-800">${esc(d.nama)}</p>${d.pembina ? `<p class="text-xs text-slate-500 mt-1">Pembina: ${esc(d.pembina)}</p>` : ''}${d.jadwal ? `<p class="text-xs font-semibold text-primary mt-1">${esc(d.jadwal)}</p>` : ''}${d.deskripsi ? `<p class="text-sm text-slate-600 mt-2">${esc(d.deskripsi)}</p>` : ''}</div>`).join('');
+  const zoomBtn = (u, cap, imgCls, btnCls) => imgUrl(u) ? `<button type="button" data-zoom="${esc(imgRaw(u, 2000))}" data-cap="${esc(cap || '')}" aria-label="Lihat foto ${esc(cap || '')} ukuran penuh" class="group relative ${btnCls} cursor-zoom-in overflow-hidden"><img src="${imgUrl(u)}" alt="${esc(cap || '')}" loading="lazy" onerror="this.closest('button').remove()" class="${imgCls}"></button>` : '';
+  const foto = (u, cap) => zoomBtn(u, cap, 'w-full h-40 object-cover rounded-lg group-hover:scale-105 transition duration-300', 'block w-full mb-3 rounded-lg');
+  $('xpEkskul').innerHTML = XD.ekskul.map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-primary">${foto(d.foto, d.nama)}<p class="font-semibold text-slate-800">${esc(d.nama)}</p>${d.pembina ? `<p class="text-xs text-slate-500 mt-1">Pembina: ${esc(d.pembina)}</p>` : ''}${d.jadwal ? `<p class="text-xs font-semibold text-primary mt-1">${esc(d.jadwal)}</p>` : ''}${d.deskripsi ? `<p class="text-sm text-slate-600 mt-2">${esc(d.deskripsi)}</p>` : ''}</div>`).join('');
   $('xpEkskulKosong').classList.toggle('hidden', XD.ekskul.length > 0);
-  $('xpFasilitas').innerHTML = XD.fasilitas.map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-accent">${foto(d.foto)}<p class="font-semibold text-slate-800">${esc(d.nama)}</p>${d.jumlah ? `<p class="text-xs font-semibold text-primary mt-1">${esc(d.jumlah)}</p>` : ''}${d.deskripsi ? `<p class="text-sm text-slate-600 mt-2">${esc(d.deskripsi)}</p>` : ''}</div>`).join('');
+  $('xpFasilitas').innerHTML = XD.fasilitas.map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-accent">${foto(d.foto, d.nama)}<p class="font-semibold text-slate-800">${esc(d.nama)}</p>${d.jumlah ? `<p class="text-xs font-semibold text-primary mt-1">${esc(d.jumlah)}</p>` : ''}${d.deskripsi ? `<p class="text-sm text-slate-600 mt-2">${esc(d.deskripsi)}</p>` : ''}</div>`).join('');
   $('xpFasilitasKosong').classList.toggle('hidden', XD.fasilitas.length > 0);
-  const fotoB = (u, c) => imgUrl(u) ? `<img src="${imgUrl(u)}" alt="" loading="lazy" class="${c}">` : '';
+  const fotoB = (u, c, cap) => zoomBtn(u, cap, c, 'block w-fit max-w-full mx-auto mb-3 rounded-full');
   const HR = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'], gk = {};
   XD.jadwal.forEach(d => (gk[d.kelas || 'Umum'] = gk[d.kelas || 'Umum'] || []).push(d));
   $('xpJadwal').innerHTML = Object.keys(gk).sort().map(g => { const rows = gk[g].slice().sort((a, b) => HR.indexOf(a.hari) - HR.indexOf(b.hari) || (a.jam || '').localeCompare(b.jam || ''));
     return `<div class="bg-white rounded-xl shadow overflow-hidden"><h3 class="bg-primary text-white font-semibold px-4 py-2">${esc(g)}</h3><div class="overflow-x-auto"><table class="w-full text-sm"><tbody>` + rows.map(d => `<tr class="border-t border-slate-100"><td class="px-4 py-2 font-semibold text-primary whitespace-nowrap">${esc(d.hari)}</td><td class="px-2 py-2 whitespace-nowrap text-slate-500">${esc(d.jam)}</td><td class="px-2 py-2 text-slate-800">${esc(d.mapel)}</td><td class="px-4 py-2 text-slate-500">${esc(d.guru)}</td></tr>`).join('') + '</tbody></table></div></div>'; }).join('');
   $('xpJadwalKosong').classList.toggle('hidden', XD.jadwal.length > 0);
-  $('xpStruktur').innerHTML = XD.struktur.slice().sort((a, b) => (Number(a.urutan) || 99) - (Number(b.urutan) || 99)).map(d => `<div class="bg-white rounded-xl shadow p-4 text-center">${fotoB(d.foto, 'w-24 h-24 rounded-full object-cover mx-auto mb-3') || '<div class="w-24 h-24 rounded-full bg-soft text-primary text-3xl font-bold flex items-center justify-center mx-auto mb-3">' + esc((d.nama || '?')[0]) + '</div>'}<p class="text-xs font-semibold uppercase tracking-wide text-accent">${esc(d.jabatan)}</p><p class="font-semibold text-slate-800 mt-1">${esc(d.nama)}</p></div>`).join('');
+  $('xpStruktur').innerHTML = XD.struktur.slice().sort((a, b) => (Number(a.urutan) || 99) - (Number(b.urutan) || 99)).map(d => `<div class="bg-white rounded-xl shadow p-4 text-center">${fotoB(d.foto, 'w-24 h-24 rounded-full object-cover', d.nama) || '<div class="w-24 h-24 rounded-full bg-soft text-primary text-3xl font-bold flex items-center justify-center mx-auto mb-3">' + esc((d.nama || '?')[0]) + '</div>'}<p class="text-xs font-semibold uppercase tracking-wide text-accent">${esc(d.jabatan)}</p><p class="font-semibold text-slate-800 mt-1">${esc(d.nama)}</p></div>`).join('');
   $('xpStrukturKosong').classList.toggle('hidden', XD.struktur.length > 0);
-  $('xpAlumni').innerHTML = XD.alumni.slice().sort((a, b) => String(b.angkatan || '').localeCompare(String(a.angkatan || ''))).map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-primary">${fotoB(d.foto, 'w-full h-40 object-cover rounded-lg mb-3')}<p class="font-semibold text-slate-800">${esc(d.nama)}</p><p class="text-xs font-semibold text-primary mt-1">${esc([d.angkatan ? 'Angkatan ' + d.angkatan : '', d.profesi].filter(Boolean).join(' · '))}</p>${d.kisah ? `<p class="text-sm text-slate-600 mt-2">${esc(d.kisah)}</p>` : ''}</div>`).join('');
+  $('xpAlumni').innerHTML = XD.alumni.slice().sort((a, b) => String(b.angkatan || '').localeCompare(String(a.angkatan || ''))).map(d => `<div class="bg-white rounded-xl shadow p-4 border-t-4 border-primary">${imgUrl(d.foto) ? `<button type="button" data-alb="${esc(d.id)}" aria-label="Lihat foto ${esc(d.nama)} ukuran penuh" class="group relative block w-full mb-3 rounded-lg overflow-hidden cursor-zoom-in"><img src="${imgUrl(d.foto)}" alt="Foto ${esc(d.nama)}" loading="lazy" onerror="this.closest('button').remove()" class="w-full h-40 object-cover group-hover:scale-105 transition duration-300"><span class="absolute bottom-2 right-2 rounded-full bg-black/60 text-white text-[11px] font-medium px-2.5 py-1">Lihat foto penuh</span></button>` : ''}<p class="font-semibold text-slate-800">${esc(d.nama)}</p><p class="text-xs font-semibold text-primary mt-1">${esc([d.angkatan ? 'Angkatan ' + d.angkatan : '', d.profesi].filter(Boolean).join(' · '))}</p>${d.kisah ? `<p class="text-sm text-slate-600 mt-2">${esc(d.kisah)}</p>` : ''}</div>`).join('');
   $('xpAlumniKosong').classList.toggle('hidden', XD.alumni.length > 0);
   Object.keys(XD).forEach(k => $('xl-' + k).innerHTML = XD[k].map(d => `<div class="flex items-center justify-between gap-2 bg-white rounded-xl shadow px-4 py-2 text-sm"><span class="min-w-0 truncate">${esc(xTitle[k](d))}</span><span class="shrink-0"><button type="button" data-a="edit" data-id="${esc(d.id)}" class="text-primary underline mr-3">Ubah</button><button type="button" data-a="del" data-id="${esc(d.id)}" class="text-red-600 underline">Hapus</button></span></div>`).join(''));
 }
