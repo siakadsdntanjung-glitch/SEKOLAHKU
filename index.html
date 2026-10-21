@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Beranda Sekolah</title>
 <meta name="description" content="Website resmi sekolah: profil, PPDB online, berita, agenda, prestasi, dan kelas online.">
+<link rel="canonical" href="https://siakadsdntanjung-glitch.github.io/SEKOLAHKU/">
+<meta property="og:url" content="https://siakadsdntanjung-glitch.github.io/SEKOLAHKU/">
+<meta property="og:locale" content="id_ID">
+<meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Beranda Sekolah">
 <meta property="og:description" content="Website resmi sekolah: profil, PPDB online, berita, agenda, prestasi, dan kelas online.">
@@ -244,6 +248,12 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
   .msAdmin { margin-top:.9rem; width:100%; padding:.75rem; border-radius:1rem; border:1px solid rgba(255,255,255,.22); color:#fff; font-weight:600; font-size:.9rem; }
   .msAdmin:active { background:var(--accent); color:#0f172a; border-color:var(--accent); }
 
+  /* ===== Latar website (foto penuh di belakang seluruh halaman) ===== */
+  #siteBg { display:none; position:fixed; inset:0; z-index:-1; background-size:cover; background-position:center; background-repeat:no-repeat; }
+  body.has-bg #siteBg { display:block; }
+  body.has-bg { background:transparent !important; }
+  body.has-bg #shell { background:color-mix(in srgb, var(--panel) calc(var(--panelOp, 65) * 1%), transparent); }
+
   @media (max-width:1279px) {
     body { background:var(--panel); padding-bottom:5.75rem; }
     header nav.overflow-x-auto { display:none !important; }
@@ -267,6 +277,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
+<div id="siteBg" aria-hidden="true"></div>
 
 <div id="cfgWarn" class="hidden bg-red-600 text-white text-center text-sm py-2 px-4">
   Firebase belum dikonfigurasi. Isi <b>firebaseConfig</b> di bagian script file ini.
@@ -833,6 +844,38 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
       <button data-tab="tCad" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Spanduk &amp; Cadangan</button>
       <button data-tab="tSiswa" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Siswa</button>
       <button data-tab="tPendaftar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Pendaftar</button>
+      <button data-tab="tKunjungan" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Pengunjung</button>
+      <button data-tab="tLatarWeb" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Latar Website</button>
+    </div>
+
+    <!-- tab latar website -->
+    <div id="tLatarWeb" class="tabBox hidden space-y-4">
+      <div class="bg-white rounded-xl shadow p-5 space-y-3">
+        <div><h3 class="font-bold text-primary">Latar Website</h3>
+          <p class="text-xs text-slate-500">Foto ini tampil penuh di belakang seluruh halaman website (berbeda dengan tab Foto Latar yang khusus untuk slideshow di bagian atas beranda). Gunakan foto mendatar (landscape) beresolusi baik.</p></div>
+        <div class="aspect-video max-w-md rounded-lg bg-slate-100 overflow-hidden border border-slate-200"><img id="lwPrev" alt="" class="hidden w-full h-full object-cover"><p id="lwKosong" class="h-full flex items-center justify-center text-sm text-slate-400">Belum ada latar website</p></div>
+        <div><label class="block text-sm font-medium mb-1">Pilih foto dari perangkat</label><input id="lwFile" type="file" accept="image/*" class="inp"></div>
+        <div><label class="block text-sm font-medium mb-1">atau tempel link gambar (https)</label><input id="lwUrl" type="url" class="inp" placeholder="https://...">
+          <p class="text-xs text-slate-500 mt-1">Link lebih hemat penyimpanan dan kualitasnya tetap tajam. Boleh link file Google Drive (dibagikan ke &quot;Siapa saja yang memiliki link&quot;).</p></div>
+        <div><label class="block text-sm font-medium mb-1">Kepekatan panel konten: <span id="lwPanelVal"></span>%</label>
+          <input id="lwPanel" type="range" min="30" max="100" value="65" class="w-full">
+          <p class="text-xs text-slate-500">Makin kecil, makin jelas foto latar terlihat di sela-sela konten. Kartu putih tetap terbaca jelas.</p></div>
+        <div class="flex items-center gap-3 flex-wrap"><button id="lwSimpan" type="button" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan &amp; Terapkan</button><button id="lwHapus" type="button" class="px-4 py-2 rounded-lg border border-red-300 text-red-600 text-sm">Hapus latar</button><span id="lwMsg" class="text-sm text-slate-600"></span></div>
+      </div>
+    </div>
+
+    <!-- tab pengunjung -->
+    <div id="tKunjungan" class="tabBox hidden space-y-4">
+      <div class="bg-white rounded-xl shadow p-5 space-y-4">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div><h3 class="font-bold text-primary">Statistik Pengunjung</h3><p class="text-xs text-slate-500">Kunjungan Anda sendiri tidak dihitung selama login sebagai admin. Satu perangkat dihitung satu kali per sesi browser.</p></div>
+          <button id="kjMuat" type="button" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold">Muat ulang</button>
+        </div>
+        <div id="kjKpi" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+        <div><p class="text-sm font-semibold text-slate-700 mb-2">14 hari terakhir</p><div class="relative h-56"><canvas id="kjChart"></canvas></div></div>
+        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-2 py-2">Tanggal</th><th class="px-2 py-2 text-right">Pengunjung</th></tr></thead><tbody id="kjBody"></tbody></table></div>
+        <p id="kjMsg" class="text-xs text-slate-500"></p>
+      </div>
     </div>
 
     <!-- tab pengaturan -->
@@ -1261,6 +1304,7 @@ async function loadSettings() {
   applyKelas(s);
   applyPpdb(s); applyExtra(s);
   applyPpdbBerkas(s);
+  try { seoSchema(s); } catch (e) {}
   if (s.nama) { ['navNama','heroNama','footNama'].forEach(i => $(i).textContent = s.nama); document.title = s.nama; const mt = (q, v) => { const m = document.querySelector(q); if (m && v) m.setAttribute('content', v); }; mt('meta[property="og:title"]', s.nama); mt('meta[name="description"]', (s.tagline ? s.tagline + ' ' : '') + s.nama + ': profil, PPDB online, berita, agenda, dan prestasi.'); mt('meta[property="og:description"]', s.tagline); }
   if (s.tagline) $('heroTagline').innerHTML = fmt(s.tagline);
   if (s.sambutan) $('sambutanTeks').innerHTML = fmt(s.sambutan);
@@ -3100,11 +3144,143 @@ Object.keys(XD).forEach(k => {
 });
 
 /* ---------- Penghitung pengunjung (1x per sesi browser) ---------- */
+const kjKey = (d) => { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 (async () => { if (!configured) return; try {
+  /* tunggu status login dipastikan dulu; admin yang sedang login tidak dihitung */
+  const user = await new Promise(r => { const off = auth.onAuthStateChanged(u => { off(); r(u); }); });
   const ref = db.collection('pengunjung').doc('total'); let sudah = false; try { sudah = sessionStorage.getItem('vc'); } catch (e) {}
-  if (!sudah) { try { await ref.update({ jumlah: firebase.firestore.FieldValue.increment(1) }); } catch (e) { await ref.set({ jumlah: 1 }); } try { sessionStorage.setItem('vc', '1'); } catch (e) {} }
+  if (!sudah && !user) {
+    try { await ref.update({ jumlah: firebase.firestore.FieldValue.increment(1) }); } catch (e) { await ref.set({ jumlah: 1 }); }
+    try { sessionStorage.setItem('vc', '1'); } catch (e) {}
+    /* hitungan harian (terpisah; bila aturan Firestore belum mengizinkan, total tetap berjalan) */
+    try {
+      const k = kjKey(), hr = db.collection('pengunjung').doc('h' + k);
+      try { await hr.update({ jumlah: firebase.firestore.FieldValue.increment(1) }); } catch (e) { await hr.set({ jumlah: 1, tgl: k }); }
+    } catch (e) {}
+  }
   const d = await ref.get(); if (d.exists) $('visitCount').textContent = Number(d.data().jumlah).toLocaleString('id-ID');
 } catch (e) {} })();
+
+/* ---------- Admin: statistik pengunjung ---------- */
+let kjChart = null;
+async function kjMuat() {
+  const msg = $('kjMsg'); msg.textContent = 'Memuat...';
+  try {
+    const tot = await db.collection('pengunjung').doc('total').get();
+    const total = tot.exists ? Number(tot.data().jumlah) || 0 : 0;
+    const snap = await db.collection('pengunjung').orderBy('tgl', 'desc').limit(60).get();
+    const map = {}; snap.forEach(x => { const d = x.data(); if (d.tgl) map[d.tgl] = Number(d.jumlah) || 0; });
+    const hari = []; for (let i = 13; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = kjKey(d); hari.push({ k, n: map[k] || 0, d }); }
+    const jumlah = (n) => { let s = 0; for (let i = 0; i < n; i++) { const d = new Date(); d.setDate(d.getDate() - i); s += map[kjKey(d)] || 0; } return s; };
+    const kpi = [[total, 'Total kunjungan'], [map[kjKey()] || 0, 'Hari ini'], [jumlah(7), '7 hari terakhir'], [jumlah(30), '30 hari terakhir']];
+    $('kjKpi').innerHTML = kpi.map(([v, l]) => '<div class="rounded-xl border border-slate-200 p-3"><p class="text-2xl font-bold text-primary">' + Number(v).toLocaleString('id-ID') + '</p><p class="text-xs text-slate-500 mt-1">' + l + '</p></div>').join('');
+    $('kjBody').innerHTML = hari.slice().reverse().map(h => '<tr class="border-t"><td class="px-2 py-1.5">' + esc(h.d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })) + '</td><td class="px-2 py-1.5 text-right font-medium">' + h.n + '</td></tr>').join('');
+    if (kjChart) { kjChart.destroy(); kjChart = null; }
+    if (typeof Chart !== 'undefined') {
+      const pal = chartPal();
+      kjChart = new Chart($('kjChart'), { type: 'bar', data: { labels: hari.map(h => h.d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })), datasets: [{ label: 'Pengunjung', data: hari.map(h => h.n), backgroundColor: pal[0], borderRadius: 6 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } } });
+    }
+    const ada = Object.keys(map).length;
+    msg.textContent = ada ? 'Data harian mulai tercatat sejak ' + Object.keys(map).sort()[0] + '. Kunjungan sebelumnya hanya masuk ke total.' : 'Belum ada data harian. Pastikan aturan Firestore koleksi "pengunjung" sudah diperbarui (lihat penjelasan dari Claude), lalu data akan terisi dari kunjungan berikutnya.';
+  } catch (e) { msg.textContent = 'Gagal memuat. ' + (e.code === 'permission-denied' ? 'Aturan Firestore belum mengizinkan pembacaan koleksi "pengunjung".' : errInfo(e)); }
+}
+$('kjMuat').onclick = kjMuat;
+document.querySelectorAll('[data-tab="tKunjungan"]').forEach(b => b.addEventListener('click', () => kjMuat()));
+
+/* ---------- Latar website: foto penuh di belakang halaman ---------- */
+const RULE_HINT_LW = 'Aturan Firestore belum mengizinkan koleksi "latarWeb". Pasang file firestore.rules terbaru di Firebase Console (Firestore > Rules > Publish), lalu coba lagi.';
+let bgAdmin = null;   // data tersimpan: { foto | url, panel }
+const bgSrc = (d) => d ? (d.foto ? (GURU_FOTO.test(d.foto) ? d.foto : '') : imgRaw(d.url, 1920)) : '';
+function applyBg(d) {
+  const src = bgSrc(d);
+  if (!src) { document.body.classList.remove('has-bg'); $('siteBg').style.backgroundImage = ''; return; }
+  const p = Math.min(100, Math.max(30, Number(d.panel) || 65));
+  $('siteBg').style.backgroundImage = 'url("' + src + '")';
+  document.documentElement.style.setProperty('--panelOp', p);
+  document.body.classList.add('has-bg');
+}
+async function loadLatarWeb() {
+  if (!configured) return;
+  try { const d = await db.collection('latarWeb').doc('utama').get(); applyBg(d.exists ? d.data() : null); } catch (e) {}
+}
+function compressBg(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let sc = Math.min(1, 1920 / Math.max(img.width, img.height)), q = 0.78, out = '';
+      for (let n = 0; n < 10; n++) {
+        const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc));
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL('image/jpeg', q);
+        if (out.length <= 450000) break;
+        if (q > 0.5) q -= 0.08; else sc *= 0.85;
+      }
+      out.length > 480000 ? reject(new Error('Foto terlalu besar. Perkecil dulu atau gunakan link gambar.')) : resolve(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Gambar tidak dapat dibaca. Gunakan format JPG atau PNG.')); };
+    img.src = url;
+  });
+}
+function lwTampil() {
+  const src = bgSrc(bgAdmin), im = $('lwPrev');
+  if (src) { im.src = src; im.classList.remove('hidden'); } else { im.removeAttribute('src'); im.classList.add('hidden'); }
+  $('lwKosong').classList.toggle('hidden', !!src);
+  const p = bgAdmin ? Math.min(100, Math.max(30, Number(bgAdmin.panel) || 65)) : 65;
+  $('lwPanel').value = p; $('lwPanelVal').textContent = p;
+  $('lwUrl').value = bgAdmin && bgAdmin.url ? bgAdmin.url : ''; $('lwFile').value = '';
+}
+async function lwMuat() {
+  try { const d = await db.collection('latarWeb').doc('utama').get(); bgAdmin = d.exists ? d.data() : null; lwTampil(); }
+  catch (e) { $('lwMsg').textContent = e.code === 'permission-denied' ? RULE_HINT_LW : 'Gagal memuat. ' + errInfo(e); }
+}
+$('lwPanel').addEventListener('input', () => { $('lwPanelVal').textContent = $('lwPanel').value; if (bgAdmin) applyBg({ ...bgAdmin, panel: $('lwPanel').value }); });
+$('lwFile').addEventListener('change', () => {
+  const f = $('lwFile').files[0]; if (!f) return;
+  if (!f.type.startsWith('image/')) { alert('File harus berupa gambar.'); $('lwFile').value = ''; return; }
+  const u = URL.createObjectURL(f); $('lwPrev').src = u; $('lwPrev').classList.remove('hidden'); $('lwKosong').classList.add('hidden');
+});
+$('lwSimpan').onclick = async () => {
+  const f = $('lwFile').files[0], url = $('lwUrl').value.trim(), msg = $('lwMsg'), btn = $('lwSimpan');
+  const data = { panel: Number($('lwPanel').value) || 65, tanggal: firebase.firestore.FieldValue.serverTimestamp() };
+  btn.disabled = true; msg.textContent = 'Menyimpan...';
+  try {
+    if (f) data.foto = await compressBg(f);
+    else if (url) {
+      if (!httpsOk(url) || url.length > 500) throw new Error('Link gambar harus diawali https:// dan tidak terlalu panjang.');
+      if (/photos\.app\.goo\.gl|photos\.google\.com|drive\.google\.com\/drive\/folders/i.test(url) || !imgRaw(url)) throw new Error('Link ini tidak bisa dipakai sebagai gambar. Gunakan link langsung ke gambar atau link file Google Drive.');
+      data.url = url;
+    } else if (bgAdmin && bgAdmin.foto) data.foto = bgAdmin.foto;
+    else if (bgAdmin && bgAdmin.url) data.url = bgAdmin.url;
+    else throw new Error('Pilih foto dari perangkat atau tempel link gambar.');
+    await db.collection('latarWeb').doc('utama').set(data);
+    bgAdmin = data; applyBg(data); lwTampil(); msg.textContent = 'Latar website tersimpan dan diterapkan.';
+  } catch (e) { msg.textContent = ''; alert(e.code === 'permission-denied' ? RULE_HINT_LW : (e.code ? 'Gagal menyimpan. ' + errInfo(e) : e.message)); }
+  finally { btn.disabled = false; setTimeout(() => { msg.textContent = ''; }, 5000); }
+};
+$('lwHapus').onclick = async () => {
+  if (!confirm('Hapus latar website? Tampilan kembali ke warna polos.')) return;
+  try { await db.collection('latarWeb').doc('utama').delete(); bgAdmin = null; applyBg(null); lwTampil(); $('lwMsg').textContent = 'Latar dihapus.'; setTimeout(() => $('lwMsg').textContent = '', 4000); }
+  catch (e) { alert(e.code === 'permission-denied' ? RULE_HINT_LW : 'Gagal menghapus. ' + errInfo(e)); }
+};
+document.querySelectorAll('[data-tab="tLatarWeb"]').forEach(b => b.addEventListener('click', () => lwMuat()));
+$('aTutup').addEventListener('click', loadLatarWeb);
+loadLatarWeb();
+
+/* ---------- SEO: data terstruktur sekolah (JSON-LD) dari pengaturan ---------- */
+function seoSchema(s) {
+  if (!s || !s.nama) return;
+  const o = { '@context': 'https://schema.org', '@type': 'School', name: s.nama, url: 'https://siakadsdntanjung-glitch.github.io/SEKOLAHKU/' };
+  if (s.tagline) o.description = String(s.tagline).replace(/\*\*/g, '').replace(/^\[(kiri|tengah|kanan|rata)\] ?/gm, '');
+  if (s.alamat) o.address = { '@type': 'PostalAddress', streetAddress: s.alamat, addressCountry: 'ID' };
+  if (s.telp) o.telephone = s.telp;
+  if (s.email) o.email = s.email;
+  const sa = [s.ig, s.fb, s.ytUrl].filter(httpsOk); if (sa.length) o.sameAs = sa;
+  let el = document.getElementById('ldSchool');
+  if (!el) { el = document.createElement('script'); el.type = 'application/ld+json'; el.id = 'ldSchool'; document.head.appendChild(el); }
+  el.textContent = JSON.stringify(o).replace(/</g, '\\u003c');
+}
 
 /* ---------- Cek status PPDB (koleksi statusPpdb, kunci = hash WA + tanggal lahir) ---------- */
 function normNama(s) { return String(s || '').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim(); }
