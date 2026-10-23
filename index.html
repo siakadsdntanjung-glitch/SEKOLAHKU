@@ -943,6 +943,9 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
     <button id="xb-survei" class="px-5 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button>
   </form>
   <div id="xl-survei" class="space-y-2"></div>
+  <div class="bg-white rounded-xl shadow p-5 space-y-2"><p class="font-bold text-primary">Kalimat Pembuka Saat Menyalin Link</p><p class="text-xs text-slate-500">Teks ini otomatis ditambahkan di depan link setiap kali Anda menekan "Salin link". Gunakan <code>{aplikasi}</code> untuk nama aplikasi dan <code>{link}</code> untuk posisi link (jika tidak ditulis, link ditaruh di baris terakhir).</p>
+    <textarea id="svPembuka" rows="5" maxlength="800" class="inp"></textarea>
+    <div class="flex items-center gap-3 flex-wrap"><button id="svPembukaSimpan" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Simpan kalimat</button><button id="svPembukaReset" type="button" class="text-sm underline text-slate-600">Kembalikan teks bawaan</button><span id="svPembukaMsg" class="text-sm text-green-700"></span></div></div>
   <div class="bg-white rounded-xl shadow p-5 space-y-2"><p class="font-bold text-primary">Link Survei Umum</p><p class="text-xs text-slate-500">Membuka halaman survei dengan pilihan semua aplikasi.</p>
     <div class="flex gap-2"><input id="svUmumLink" readonly class="inp font-mono text-xs"><button id="svUmumSalin" type="button" class="shrink-0 px-4 rounded-lg border border-primary text-primary text-sm font-semibold">Salin</button></div><p id="svAdminMsg" class="text-xs text-green-700"></p></div>
   <div class="bg-white rounded-xl shadow p-5 space-y-3">
@@ -3150,7 +3153,7 @@ const xTitle = {
   alumni: (d) => d.nama + (d.angkatan ? ' (' + d.angkatan + ')' : ''),
   survei: (d) => d.nama + (d.deskripsi ? ' - ' + d.deskripsi : '')
 };
-function applyExtra(s) { window.SITE_S = s; { const k = s.skl || {}; (window.SKL_KEYS || []).forEach(n => { const e = $('skl_' + n); if (e) e.value = k[n] || (window.SKL_DEF && window.SKL_DEF[n]) || ''; }); window.SKL_LOGO = k.logo || ''; sklLogoTampil(); } Object.keys(XD).forEach(k => XD[k] = Array.isArray(s[k]) ? s[k] : []); renderX(); applySpanduk(s.spanduk); }
+function applyExtra(s) { window.SITE_S = s; window.SV_PEMBUKA = s.surveiPembuka || ''; if ($('svPembuka')) $('svPembuka').value = window.SV_PEMBUKA || SV_PEMBUKA_DEF; { const k = s.skl || {}; (window.SKL_KEYS || []).forEach(n => { const e = $('skl_' + n); if (e) e.value = k[n] || (window.SKL_DEF && window.SKL_DEF[n]) || ''; }); window.SKL_LOGO = k.logo || ''; sklLogoTampil(); } Object.keys(XD).forEach(k => XD[k] = Array.isArray(s[k]) ? s[k] : []); renderX(); applySpanduk(s.spanduk); }
 function renderX() {
   const hari = new Date().toISOString().slice(0, 10);
   const a = XD.agenda.slice().sort((x, y) => (x.tgl || '').localeCompare(y.tgl || ''));
@@ -3202,7 +3205,7 @@ Object.keys(XD).forEach(k => {
   });
   $('xl-' + k).addEventListener('click', async (e) => {
     const b = e.target.closest('[data-a]'); if (!b) return;
-    if (b.dataset.a === 'copy') { svSalinLink(svLink(b.dataset.id), $('svAdminMsg')); return; }
+    if (b.dataset.a === 'copy') { svSalinLink(svPesan(b.dataset.id), $('svAdminMsg')); return; }
     if (b.dataset.a === 'edit') {
       const it = XD[k].find(x => x.id === b.dataset.id); if (!it) return;
       form.querySelectorAll('[data-f]').forEach(i => i.value = it[i.dataset.f] || ''); editId = it.id; $('xb-' + k).textContent = 'Perbarui'; form.scrollIntoView({ behavior: 'smooth' });
@@ -3772,9 +3775,16 @@ let svPilih = '';
 const SV_ASPEK = [['umum', 'Kepuasan keseluruhan'], ['mudah', 'Kemudahan penggunaan'], ['tampil', 'Tampilan'], ['cepat', 'Kecepatan / kelancaran'], ['guna', 'Manfaat bagi pekerjaan / pembelajaran']];
 let svNilai = {};
 const svLink = (id) => location.href.split('#')[0] + '#survei' + (id ? '/' + id : '');
+const SV_PEMBUKA_DEF = 'Salam sehat untuk semua Bapak/Ibu Kepala Sekolah dan Bapak/Ibu Guru.\nIzin waktunya sejenak untuk mengisi survei terhadap penggunaan {aplikasi} yang kami buat. Silakan isi melalui link berikut:\n{link}';
+function svPesan(id) {
+  const d = (XD.survei || []).find(x => x.id === id), url = svLink(id), tpl = (window.SV_PEMBUKA || '').trim() || SV_PEMBUKA_DEF;
+  let t = tpl.replace(/\{aplikasi\}/gi, d ? 'aplikasi ' + d.nama : 'aplikasi dan website sekolah').replace(/\{link\}/gi, url);
+  if (t.indexOf(url) < 0) t += '\n' + url;
+  return t;
+}
 async function svSalinLink(url, el) {
   const ok = await copyText(url);
-  if (el) { el.classList.remove('hidden'); el.textContent = ok ? 'Link disalin: ' + url : 'Salin link secara manual dari kotak yang muncul.'; setTimeout(() => { el.textContent = ''; }, 6000); }
+  if (el) { el.classList.remove('hidden'); el.textContent = ok ? 'Pesan dan link disalin, siap ditempel (WhatsApp, dll).' : 'Salin teks secara manual dari kotak yang muncul.'; setTimeout(() => { el.textContent = ''; }, 6000); }
 }
 function svBintang() {
   const box = $('svAspek'); box.innerHTML = '';
@@ -3806,8 +3816,14 @@ function renderSurvei() {
   if ($('svUmumLink')) $('svUmumLink').value = svLink('');
 }
 $('svApp').addEventListener('change', () => { svPilih = $('svApp').value; try { history.replaceState(null, '', '#survei/' + svPilih); } catch (e) {} });
-$('svSalin').onclick = () => { if ($('svApp').value) svSalinLink(svLink($('svApp').value), $('svSalinMsg')); };
-$('svUmumSalin').onclick = () => svSalinLink(svLink(''), $('svAdminMsg'));
+$('svSalin').onclick = () => { if ($('svApp').value) svSalinLink(svPesan($('svApp').value), $('svSalinMsg')); };
+$('svPembukaSimpan').onclick = async () => {
+  const v = $('svPembuka').value.trim();
+  try { await db.collection('settings').doc('site').set({ surveiPembuka: v }, { merge: true }); window.SV_PEMBUKA = v; $('svPembukaMsg').textContent = 'Tersimpan.'; setTimeout(() => $('svPembukaMsg').textContent = '', 3000); }
+  catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
+$('svPembukaReset').onclick = () => { $('svPembuka').value = SV_PEMBUKA_DEF; };
+$('svUmumSalin').onclick = () => svSalinLink(svPesan(''), $('svAdminMsg'));
 $('svForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const m = $('svMsg'); m.classList.remove('hidden');
