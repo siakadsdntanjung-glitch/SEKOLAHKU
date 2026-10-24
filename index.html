@@ -148,6 +148,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
     #kelas, #karya, #berita, #dokumentasi, #statistik .max-w-6xl, #profil, #kontak, #ppdb { padding-left:.9rem; padding-right:.9rem; }
     #listKelas, #listKarya, #listBerita { gap:.9rem; }
     #listKelas article a, #listKarya article a, #listKarya article .btnTutor { flex:1 1 auto; text-align:center; }
+    #listKarya article a.orderBtn { flex:none; text-align:left; }
     #listGaleri { gap:.5rem; }
 
     /* tombol WhatsApp melayang lebih kecil, footer diberi ruang */
@@ -161,8 +162,8 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
     #ppdbForm { padding:1rem; }
 
     /* modal & lightbox */
-    #guruModal, #verifModal, #karyaModal, #kelasModal, #loginModal { padding:.6rem; align-items:flex-end; }
-    #guruModal > div, #verifModal > div, #karyaModal > div, #kelasModal > div, #loginForm { border-radius:1rem; padding:1.1rem; }
+    #guruModal, #verifModal, #karyaModal, #kelasModal, #loginModal, #pesanModal { padding:.6rem; align-items:flex-end; }
+    #guruModal > div, #verifModal > div, #karyaModal > div, #kelasModal > div, #pesanModal > div, #loginForm { border-radius:1rem; padding:1.1rem; }
     #fotoPrev, #fotoNext { font-size:2.2rem; width:2.4rem; height:2.4rem; padding:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.4); border-radius:9999px; z-index:2; }
     #fotoImg { max-height:64vh; max-height:68dvh; }
 
@@ -481,6 +482,11 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
   <section id="karya" class="max-w-6xl mx-auto px-4 py-8">
     <div id="listKarya" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
     <p id="karyaKosong" class="hidden text-center text-slate-500">Belum ada hasil karya.</p>
+    <div id="rekBox" class="hidden mt-10">
+      <h3 class="text-lg font-bold text-primary mb-1">Informasi Pembayaran</h3>
+      <p class="text-sm text-slate-600 mb-4">Pembayaran dilakukan melalui rekening berikut. Setelah transfer, kirim bukti pembayaran lewat WhatsApp.</p>
+      <div id="rekList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
   </section>
 </div>
 
@@ -748,6 +754,13 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
       <div><label class="block text-sm font-medium mb-1">Deskripsi</label><textarea id="kaDeskripsi" rows="3" maxlength="1000" class="inp"></textarea></div>
       <div><label class="block text-sm font-medium mb-1">Poin fitur (satu per baris, opsional)</label><textarea id="kaFitur" rows="4" maxlength="1500" class="inp"></textarea></div>
       <div><label class="block text-sm font-medium mb-1">Link tutorial YouTube (opsional)</label><input id="kaYt" type="url" class="inp" placeholder="https://www.youtube.com/watch?v=..."></div>
+      <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-3">
+        <p class="text-sm font-semibold text-primary">Tombol Pesan</p>
+        <label class="flex items-center gap-2 text-sm"><input id="kaPesanOn" type="checkbox" checked> Tampilkan tombol pesan pada karya ini</label>
+        <div><label class="block text-sm font-medium mb-1">Pilihan jenis pesanan (satu per baris)</label><textarea id="kaPesan" rows="4" maxlength="700" class="inp" placeholder="Aplikasi Android | Rp 1.500.000&#10;Website Sekolah | Rp 2.000.000&#10;Aplikasi Web | mulai Rp 750.000"></textarea>
+          <p class="text-xs text-slate-500 mt-1">Format: <b>Nama jenis | harga</b> (harga boleh dikosongkan). Tiap baris menjadi satu tombol; pembeli tinggal klik sesuai kebutuhan. Bila kosong, tampil satu tombol &quot;Pesan Sekarang&quot;.</p></div>
+        <div><label class="block text-sm font-medium mb-1">Nomor WhatsApp penerima pesanan (opsional)</label><input id="kaWa" type="tel" maxlength="20" class="inp" placeholder="Kosongkan = pakai nomor WhatsApp di tab Kontak"></div>
+      </div>
       <div><label class="block text-sm font-medium mb-1">Warna aksen</label>
         <select id="kaWarna" class="inp"><option value="teal">teal</option><option value="biru">biru</option><option value="hijau">hijau</option><option value="oranye">oranye</option><option value="merah">merah</option><option value="ungu">ungu</option><option value="abu">abu-abu</option></select></div>
       <div><label class="block text-sm font-medium mb-1">Tautan</label>
@@ -758,6 +771,25 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
       <button id="kaSimpan" type="button" class="px-6 py-2 rounded-lg bg-primary text-white font-semibold">Simpan</button>
       <button id="kaBatal" type="button" class="text-sm underline text-slate-600">Batal</button>
       <button id="kaHapus" type="button" class="hidden text-sm underline text-red-600">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PESANAN + REKENING (pembeli) -->
+<div id="pesanModal" class="hidden fixed inset-0 z-[70] bg-black/60 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl p-6 w-full max-w-md max-h-[92vh] overflow-y-auto">
+    <div class="flex items-start justify-between mb-3">
+      <h3 class="text-xl font-bold text-primary" style="font-family:var(--font-h)">Pesanan Anda</h3>
+      <button id="pmX" type="button" class="text-2xl leading-none text-slate-500 hover:text-slate-800" aria-label="Tutup">&times;</button>
+    </div>
+    <div class="rounded-lg bg-soft p-3 mb-4"><p id="pmKarya" class="text-xs text-slate-500"></p><p id="pmJenis" class="font-semibold text-slate-800"></p><p id="pmHarga" class="text-sm font-semibold text-primary"></p></div>
+    <div id="pmRekWrap"><p class="text-sm font-semibold text-slate-700 mb-2">Rekening pembayaran</p>
+    <div id="pmRek" class="space-y-2"></div></div>
+    <div class="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3"><p class="text-sm font-semibold text-amber-900 mb-1">Cara pemesanan</p><p id="pmLangkah" class="text-sm text-slate-700 whitespace-pre-line leading-relaxed"></p></div>
+    <p class="text-xs text-slate-500 mt-3">Klik tombol di bawah untuk mengirim pesanan lewat WhatsApp, lalu ikuti langkah di atas.</p>
+    <div class="flex items-center gap-4 mt-4">
+      <a id="pmWa" target="_blank" rel="noopener" class="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-semibold transition">Lanjut ke WhatsApp</a>
+      <button id="pmBatal" type="button" class="text-sm underline text-slate-600">Batal</button>
     </div>
   </div>
 </div>
@@ -849,6 +881,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
       <button data-tab="tGuru" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Guru</button>
       <button data-tab="tKelas" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Kelas Online</button>
       <button data-tab="tKarya" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Hasil Karya</button>
+      <button data-tab="tRek" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Rekening Pembayaran</button>
       <button data-tab="tLatar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Foto Latar</button>
       <button data-tab="tDok" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Dokumentasi</button>
       <button data-tab="tStat" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Statistik</button>
@@ -1100,6 +1133,19 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
         <button id="kaTambah" type="button" class="px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold">+ Tambah Karya</button>
       </div>
       <div id="karyaAdminList" class="space-y-2"></div>
+    </div>
+
+    <!-- tab rekening pembayaran -->
+    <div id="tRek" class="tabBox hidden bg-white rounded-xl shadow p-5">
+      <div class="space-y-3">
+        <div><h3 class="font-bold text-primary">Rekening Pembayaran</h3><p class="text-xs text-slate-500">Rekening ini otomatis ditampilkan kepada pembeli saat mereka mengklik tombol Pesan, dan juga di bagian bawah menu Karya, sehingga pembeli tidak perlu menanyakan rekening lagi. Boleh lebih dari satu rekening (maks. 5).</p></div>
+        <div id="rekAdminRows" class="space-y-3"></div>
+        <datalist id="bankList"><option value="BCA"><option value="BRI"><option value="BNI"><option value="Mandiri"><option value="BSI (Bank Syariah Indonesia)"><option value="CIMB Niaga"><option value="Bank Jatim"><option value="Permata"><option value="BTN"><option value="Jago"><option value="SeaBank"><option value="DANA"><option value="OVO"><option value="GoPay"><option value="ShopeePay"></datalist>
+        <div class="pt-2 border-t border-slate-200"><label class="block text-sm font-medium mb-1" for="rekLangkah">Cara pemesanan / format balasan untuk pembeli</label>
+          <textarea id="rekLangkah" rows="6" maxlength="900" class="inp"></textarea>
+          <p class="text-xs text-slate-500 mt-1">Teks ini tampil kepada pembeli saat mengklik tombol Pesan. Anda juga bisa menyalinnya untuk dipakai sebagai pesan otomatis di WhatsApp Business. <button id="rekSalinLangkah" type="button" class="underline text-primary">Salin teks</button> &middot; <button id="rekResetLangkah" type="button" class="underline text-primary">Kembalikan ke bawaan</button></p></div>
+        <div class="flex items-center gap-4"><button id="rekTambah" type="button" class="text-sm text-primary underline">+ Tambah rekening</button><button id="rekSimpan" type="button" class="px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold">Simpan Rekening</button></div>
+      </div>
     </div>
 
     <!-- tab foto latar -->
@@ -1526,7 +1572,7 @@ async function openPanel() {
   if (s.theme) applyTheme(s.theme);
   fillThemeForm();
   fillStat(s);
-  karyaAdmin = Array.isArray(s.karya) ? s.karya : []; renderKaryaAdmin();
+  karyaAdmin = Array.isArray(s.karya) ? s.karya : []; renderKaryaAdmin(); renderRekAdmin(Array.isArray(s.rekening) ? s.rekening : []); $('rekLangkah').value = String(s.langkahPesan || '').trim() || DEF_LANGKAH;
   $('lDetik').value = s.latarDetik || 6;
   kelasAdmin = Array.isArray(s.kelasOnline) ? s.kelasOnline : []; $('klPetunjuk').value = s.kelasPetunjuk || ''; renderKelasAdmin();
   ppdbBukaAdmin = s.ppdbBuka !== false; $('ppdbPesan').value = s.ppdbPesanTutup || ''; renderPpdbSwitch(); applyPpdbBerkas(s); fillBk();
@@ -2345,10 +2391,90 @@ function addBoldBar(id) {
 
 /* ---------- Hasil Karya ---------- */
 const KARYA_WARNA = { teal:'#0f766e', biru:'#1d4ed8', hijau:'#15803d', oranye:'#c2410c', merah:'#b91c1c', ungu:'#7e22ce', abu:'#475569' };
-let karyaAdmin = [], karyaEdit = -1, karyaData = [];
+let karyaAdmin = [], karyaEdit = -1, karyaData = [], siteWa = '';
+/* Pilihan pesanan: satu baris = satu jenis aplikasi/website. Format: "Nama jenis | harga (opsional)" */
+function parsePesan(t) {
+  return String(t || '').split('\n').map(x => x.trim()).filter(Boolean).slice(0, 8).map(x => {
+    const i = x.indexOf('|');
+    return i < 0 ? { label: x.slice(0, 60), harga: '' } : { label: x.slice(0, i).trim().slice(0, 60), harga: x.slice(i + 1).trim().slice(0, 40) };
+  }).filter(o => o.label);
+}
+function pesanHtml(k, c) {
+  if (k.pesanOn === false) return '';
+  const wa = (k.wa && waLink(k.wa)) || waLink(siteWa); if (!wa) return '';
+  let ops = parsePesan(k.pesan); const tunggal = !ops.length;
+  if (tunggal) ops = [{ label: 'Pesan Sekarang', harga: '' }];
+  const arrow = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  return '<div class="border-t border-slate-100 pt-3"><p class="text-xs font-semibold text-slate-500 mb-2">' + (tunggal ? 'Tertarik dengan karya ini?' : 'Pesan sesuai kebutuhan Anda') + '</p><div class="flex flex-col gap-2">'
+    + ops.map(o => {
+      const msg = 'Halo, saya ingin memesan *' + o.label + '* (karya: ' + (k.nama || '') + ').' + (o.harga ? '\nHarga: ' + o.harga : '') + '\n\nNama:\nNama Sekolah:\nEmail:\nKebutuhan khusus:';
+      return '<a href="' + esc(wa + '?text=' + encodeURIComponent(msg)) + '" data-karya="' + esc(k.nama || '') + '" data-jenis="' + esc(o.label) + '" data-harga="' + esc(o.harga) + '" target="_blank" rel="noopener" class="orderBtn flex items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition" style="background:' + c + '"><span class="min-w-0">' + esc(o.label) + '</span><span class="shrink-0 flex items-center gap-1.5 text-xs font-medium">' + (o.harga ? esc(o.harga) : 'Pesan') + arrow + '</span></a>';
+    }).join('') + '</div></div>';
+}
 
 /* tampilan publik */
-function applyKarya(s) { karyaData = Array.isArray(s.karya) ? s.karya : []; renderKarya(); }
+function applyKarya(s) { karyaData = Array.isArray(s.karya) ? s.karya : []; siteWa = s.wa || ''; langkahData = String(s.langkahPesan || '').trim() || DEF_LANGKAH; renderKarya(); renderRek(Array.isArray(s.rekening) ? s.rekening : []); }
+/* ---------- Rekening pembayaran ---------- */
+const DEF_LANGKAH = 'Terima kasih atas pesanan Anda. Langkah selanjutnya:\n1. Lakukan pembayaran ke rekening yang tertera.\n2. Kirim bukti transfer pada chat ini.\n3. Lakukan registrasi pada aplikasi atau website yang Anda beli.\n4. Kirim informasi data lengkap pendaftaran: Email dan Nama Sekolah.';
+let rekData = [], langkahData = DEF_LANGKAH;
+function renderRek(list) {
+  const box = $('rekList'); box.innerHTML = '';
+  const ok = list.filter(r => r && r.bank && r.noRek && r.nama); rekData = ok;
+  $('rekBox').classList.toggle('hidden', !ok.length);
+  ok.forEach((r) => {
+    const d = document.createElement('div'); d.className = 'bg-white rounded-xl shadow p-4 border-t-4 border-accent';
+    d.innerHTML = '<p class="text-xs font-semibold uppercase tracking-wide text-slate-500">' + esc(r.bank) + '</p>'
+      + '<p class="font-mono text-xl font-bold text-slate-800 mt-1 break-all">' + esc(r.noRek) + '</p>'
+      + '<p class="text-sm text-slate-600 mt-1">a.n. <span class="font-medium text-slate-800">' + esc(r.nama) + '</span></p>'
+      + '<button type="button" class="mt-3 px-3 py-1.5 rounded-lg border border-primary text-primary text-xs font-semibold hover:bg-primary hover:text-white transition">Salin nomor</button>';
+    d.querySelector('button').onclick = async (e) => { const b = e.currentTarget; const okc = await copyText(r.noRek); b.textContent = okc ? 'Tersalin' : 'Gagal menyalin'; setTimeout(() => b.textContent = 'Salin nomor', 1800); };
+    box.append(d);
+  });
+}
+function rekRow(r) {
+  const row = document.createElement('div'); row.className = 'rekRow grid sm:grid-cols-[1fr_1.2fr_1.4fr_auto] gap-2 items-center bg-white border border-slate-200 rounded-lg p-2';
+  row.innerHTML = '<input class="inp rkBank" list="bankList" maxlength="40" placeholder="Jenis bank (mis. BRI)" aria-label="Jenis bank"><input class="inp rkNo" inputmode="numeric" maxlength="30" placeholder="Nomor rekening" aria-label="Nomor rekening"><input class="inp rkNama" maxlength="80" placeholder="Nama pemilik rekening" aria-label="Nama pemilik"><button type="button" class="text-sm underline text-red-600 px-2">Hapus</button>';
+  row.querySelector('.rkBank').value = (r && r.bank) || ''; row.querySelector('.rkNo').value = (r && r.noRek) || ''; row.querySelector('.rkNama').value = (r && r.nama) || '';
+  row.querySelector('button').onclick = () => row.remove();
+  $('rekAdminRows').append(row);
+}
+function renderRekAdmin(list) { $('rekAdminRows').innerHTML = ''; (list || []).forEach(rekRow); if (!(list || []).length) rekRow(); }
+/* Klik tombol Pesan: bila rekening sudah diisi admin, tampilkan dulu rekeningnya, baru lanjut ke WhatsApp */
+$('listKarya').addEventListener('click', (e) => {
+  const a = e.target.closest('a.orderBtn'); if (!a) return;
+  e.preventDefault();
+  $('pmKarya').textContent = a.dataset.karya || ''; $('pmJenis').textContent = a.dataset.jenis || '';
+  $('pmHarga').textContent = a.dataset.harga ? 'Harga: ' + a.dataset.harga : ''; $('pmHarga').hidden = !a.dataset.harga;
+  $('pmLangkah').textContent = langkahData; $('pmRekWrap').hidden = !rekData.length;
+  const box = $('pmRek'); box.innerHTML = '';
+  rekData.forEach((r) => {
+    const d = document.createElement('div'); d.className = 'flex items-center justify-between gap-3 border border-slate-200 rounded-lg p-3';
+    d.innerHTML = '<div class="min-w-0"><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">' + esc(r.bank) + '</p><p class="font-mono font-bold text-slate-800 break-all">' + esc(r.noRek) + '</p><p class="text-xs text-slate-600">a.n. ' + esc(r.nama) + '</p></div><button type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-primary text-primary text-xs font-semibold hover:bg-primary hover:text-white transition">Salin</button>';
+    d.querySelector('button').onclick = async (ev) => { const b = ev.currentTarget; b.textContent = (await copyText(r.noRek)) ? 'Tersalin' : 'Gagal'; setTimeout(() => b.textContent = 'Salin', 1800); };
+    box.append(d);
+  });
+  $('pmWa').href = a.href; $('pesanModal').classList.remove('hidden');
+});
+const pesanTutup = () => $('pesanModal').classList.add('hidden');
+$('pmX').onclick = pesanTutup; $('pmBatal').onclick = pesanTutup; $('pmWa').addEventListener('click', () => setTimeout(pesanTutup, 300));
+$('pesanModal').addEventListener('click', (e) => { if (e.target === $('pesanModal')) pesanTutup(); });
+$('rekSalinLangkah').onclick = async (e) => { const b = e.currentTarget; b.textContent = (await copyText($('rekLangkah').value)) ? 'Tersalin' : 'Gagal'; setTimeout(() => b.textContent = 'Salin teks', 1800); };
+$('rekResetLangkah').onclick = () => { $('rekLangkah').value = DEF_LANGKAH; };
+$('rekTambah').onclick = () => { if (document.querySelectorAll('#rekAdminRows .rekRow').length >= 5) return alert('Maksimal 5 rekening.'); rekRow(); };
+$('rekSimpan').onclick = async () => {
+  const lk = $('rekLangkah').value.trim();
+  const out = [], rows = [...document.querySelectorAll('#rekAdminRows .rekRow')];
+  for (let n = 0; n < rows.length; n++) {
+    const r = rows[n], bank = r.querySelector('.rkBank').value.trim(), no = r.querySelector('.rkNo').value.trim().replace(/[\s.-]+/g, ''), nama = r.querySelector('.rkNama').value.trim();
+    if (!bank && !no && !nama) continue;
+    if (!bank) return alert('Rekening nomor ' + (n + 1) + ': jenis bank belum diisi.');
+    if (!/^\d{5,25}$/.test(no)) return alert('Rekening nomor ' + (n + 1) + ': nomor rekening harus berupa angka (5 sampai 25 digit).');
+    if (!nama) return alert('Rekening nomor ' + (n + 1) + ': nama pemilik belum diisi.');
+    out.push({ bank, noRek: no, nama });
+  }
+  try { await db.collection('settings').doc('site').set({ rekening: out, langkahPesan: lk }, { merge: true }); langkahData = lk || DEF_LANGKAH; renderRekAdmin(out); renderRek(out); alert(out.length ? 'Rekening tersimpan.' : 'Semua rekening dihapus.'); }
+  catch (e) { alert('Gagal menyimpan. ' + errInfo(e)); }
+};
 function renderKarya() {
   const box = $('listKarya'); box.innerHTML = '';
   $('karyaKosong').classList.toggle('hidden', karyaData.length > 0);
@@ -2369,7 +2495,7 @@ function renderKarya() {
     });
     const id = (k.youtube && ytUrlOk(k.youtube)) ? ytId(k.youtube) : '';
     if (id) h += '<button type="button" data-yt="' + esc(id) + '" class="btnTutor px-3 py-1.5 rounded-lg text-sm font-medium border" style="border-color:' + c + ';color:' + c + '">Lihat Tutorial</button>';
-    card.innerHTML = h + '</div></div>';
+    card.innerHTML = h + '</div>' + pesanHtml(k, c) + '</div>';
     box.append(card);
   });
 }
@@ -2418,7 +2544,8 @@ function openKarya(i) {
   karyaEdit = i; const k = i >= 0 ? karyaAdmin[i] : {};
   $('kaTitle').textContent = i >= 0 ? 'Edit ' + (k.nama || '') : 'Tambah Hasil Karya';
   $('kaNama').value = k.nama || ''; $('kaKategori').value = k.kategori || ''; $('kaDeskripsi').value = k.deskripsi || '';
-  $('kaFitur').value = k.fitur || ''; $('kaYt').value = k.youtube || ''; $('kaWarna').value = KARYA_WARNA[k.warna] ? k.warna : 'teal';
+  $('kaFitur').value = k.fitur || ''; $('kaYt').value = k.youtube || '';
+  $('kaPesan').value = k.pesan || ''; $('kaWa').value = k.wa || ''; $('kaPesanOn').checked = k.pesanOn !== false; $('kaWarna').value = KARYA_WARNA[k.warna] ? k.warna : 'teal';
   $('kaLinks').innerHTML = ''; (k.tautan || []).forEach(karyaLinkRow); if (!(k.tautan || []).length) karyaLinkRow();
   $('kaHapus').classList.toggle('hidden', i < 0);
   $('karyaModal').classList.remove('hidden');
@@ -2431,6 +2558,7 @@ $('kaSimpan').onclick = async () => {
   const g = (id) => $(id).value.trim();
   const nama = g('kaNama'); if (!nama) return alert('Nama aplikasi/karya wajib diisi.');
   const yt = g('kaYt'); if (yt && !(ytUrlOk(yt) && ytId(yt))) return alert('Link YouTube tidak valid. Gunakan alamat https dari youtube.com atau youtu.be yang mengarah ke satu video.');
+  const kaWa = g('kaWa'); if (kaWa && !waLink(kaWa)) return alert('Nomor WhatsApp penerima pesanan tidak valid. Contoh: 081234567890.');
   const tautan = [];
   // rapikan salah ketik umum: "ttps://", "http://", tanpa awalan, spasi di dalam link; awalan https:// yang salah masuk ke nama tombol
   const fixUrl = (u) => {
@@ -2451,7 +2579,8 @@ $('kaSimpan').onclick = async () => {
     tautan.push({ label, url });
   }
   const item = { id: karyaEdit >= 0 ? (karyaAdmin[karyaEdit].id || ('k' + Date.now().toString(36))) : ('k' + Date.now().toString(36)),
-    nama, kategori: g('kaKategori'), deskripsi: g('kaDeskripsi'), fitur: g('kaFitur'), youtube: yt, warna: $('kaWarna').value, tautan };
+    nama, kategori: g('kaKategori'), deskripsi: g('kaDeskripsi'), fitur: g('kaFitur'), youtube: yt, warna: $('kaWarna').value, tautan,
+    pesan: g('kaPesan'), wa: kaWa, pesanOn: $('kaPesanOn').checked };
   const list = [...karyaAdmin]; if (karyaEdit >= 0) list[karyaEdit] = item; else list.push(item);
   if (await saveKarya(list)) karyaTutup();
 };
