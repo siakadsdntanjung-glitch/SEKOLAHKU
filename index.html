@@ -40,6 +40,10 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
   .pageHead { background:var(--primary); background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 72%,#000)); color:#fff; }
   .pageHead h2 { font-size:1.75rem; font-weight:700; line-height:1.2; }
   .pageHead p { color:rgba(255,255,255,.8); font-size:.9rem; margin-top:.35rem; }
+  .pageHead .max-w-6xl { position:relative; }
+  .copyLink { position:absolute; right:1rem; bottom:1.75rem; display:inline-flex; align-items:center; gap:.4rem; padding:.35rem .8rem; border-radius:9999px; border:1px solid currentColor; background:transparent; color:inherit; font-size:.75rem; font-weight:600; opacity:.9; transition:background .15s, opacity .15s; }
+  .copyLink:hover { opacity:1; background:color-mix(in srgb, currentColor 14%, transparent); }
+  @media (max-width:640px) { .copyLink { bottom:1.4rem; padding:.3rem .65rem; } }
   .pageHead i { display:block; width:3rem; height:4px; border-radius:2px; background:var(--accent); margin-top:.9rem; }
   img.rounded-full, .gPh { object-position:center 10%; }
   .gCard { position:relative; overflow:hidden; width:12rem; min-height:18.5rem; background:#fff; border-radius:.9rem; box-shadow:0 1px 3px rgba(15,23,42,.08),0 4px 14px rgba(15,23,42,.05); padding:1.5rem 1rem 1rem; text-align:center; display:flex; flex-direction:column; align-items:center; transition:box-shadow .2s, transform .2s; }
@@ -1620,10 +1624,10 @@ $('bForm').addEventListener('submit', async (e) => {
 
 function plainTxt(t) { return String(t || '').replace(/\*\*/g, '').replace(/^\[(kiri|tengah|kanan|rata)\] ?/gm, '').trim(); }
 function shareUrl(kind, id) { return location.href.split('#')[0] + '#' + (kind === 'pengumuman' ? 'pengumuman' : 'berita') + '/' + id; }
-async function copyText(t) {
-  if (location.protocol === 'file:') alert('Website masih dibuka dari file di komputer. Link baru berfungsi untuk orang lain setelah website dipublikasikan (deploy). Link tetap disalin sebagai contoh.');
+async function copyText(t, lbl) {
+  if (!lbl && location.protocol === 'file:') alert('Website masih dibuka dari file di komputer. Link baru berfungsi untuk orang lain setelah website dipublikasikan (deploy). Link tetap disalin sebagai contoh.');
   try { await navigator.clipboard.writeText(t); return true; }
-  catch (e) { prompt('Salin link berikut:', t); return false; }
+  catch (e) { prompt(lbl || 'Salin link berikut:', t); return false; }
 }
 /* Berbagi dengan foto: foto dilampirkan lewat menu bagikan perangkat (HP), link ikut di keterangan */
 async function fotoBerita(d) {
@@ -2235,6 +2239,24 @@ document.addEventListener('click', (e) => {
 });
 window.addEventListener('hashchange', () => showPanel(location.hash.slice(1)));
 
+/* ---------- Salin link tiap menu ---------- */
+const CL_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>';
+function menuLink(key) { return location.origin + location.pathname + (key && key !== 'beranda' ? '#' + key : ''); }
+function bikinSalinLink(key, cls, withIcon) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = cls; b.title = 'Salin link halaman ini'; b.setAttribute('aria-label', 'Salin link halaman ini');
+  const normal = (withIcon ? CL_ICON : '') + '<span>Salin Link</span>'; b.innerHTML = normal;
+  b.onclick = async () => {
+    const ok = await copyText(menuLink(key));
+    b.innerHTML = '<span>' + (ok ? 'Link tersalin' : 'Gagal menyalin') + '</span>'; setTimeout(() => b.innerHTML = normal, 1800);
+  };
+  return b;
+}
+document.querySelectorAll('.pnl').forEach((pn) => {
+  const key = pn.id.replace(/^p-/, ''), ph = pn.querySelector('.pageHead .max-w-6xl');
+  if (ph) ph.append(bikinSalinLink(key, 'copyLink', true));
+});
+{ const row = document.querySelector('#hero .flex-wrap'); if (row) row.append(bikinSalinLink('beranda', 'px-6 py-2.5 rounded-full border border-white/60 font-semibold hover:bg-white hover:text-slate-900 transition', false)); }
+
 /* teks berita/pengumuman: klik untuk buka / tutup */
 ['listBerita', 'listPengumuman'].forEach(id => $(id).addEventListener('click', (e) => {
   const card = e.target.closest('[data-exp]'); if (!card || e.target.closest('a')) return;
@@ -2427,7 +2449,7 @@ function renderRek(list) {
       + '<p class="font-mono text-xl font-bold text-slate-800 mt-1 break-all">' + esc(r.noRek) + '</p>'
       + '<p class="text-sm text-slate-600 mt-1">a.n. <span class="font-medium text-slate-800">' + esc(r.nama) + '</span></p>'
       + '<button type="button" class="mt-3 px-3 py-1.5 rounded-lg border border-primary text-primary text-xs font-semibold hover:bg-primary hover:text-white transition">Salin nomor</button>';
-    d.querySelector('button').onclick = async (e) => { const b = e.currentTarget; const okc = await copyText(r.noRek); b.textContent = okc ? 'Tersalin' : 'Gagal menyalin'; setTimeout(() => b.textContent = 'Salin nomor', 1800); };
+    d.querySelector('button').onclick = async (e) => { const b = e.currentTarget; const okc = await copyText(r.noRek, 'Salin nomor rekening berikut:'); b.textContent = okc ? 'Tersalin' : 'Gagal menyalin'; setTimeout(() => b.textContent = 'Salin nomor', 1800); };
     box.append(d);
   });
 }
@@ -2450,7 +2472,7 @@ $('listKarya').addEventListener('click', (e) => {
   rekData.forEach((r) => {
     const d = document.createElement('div'); d.className = 'flex items-center justify-between gap-3 border border-slate-200 rounded-lg p-3';
     d.innerHTML = '<div class="min-w-0"><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">' + esc(r.bank) + '</p><p class="font-mono font-bold text-slate-800 break-all">' + esc(r.noRek) + '</p><p class="text-xs text-slate-600">a.n. ' + esc(r.nama) + '</p></div><button type="button" class="shrink-0 px-3 py-1.5 rounded-lg border border-primary text-primary text-xs font-semibold hover:bg-primary hover:text-white transition">Salin</button>';
-    d.querySelector('button').onclick = async (ev) => { const b = ev.currentTarget; b.textContent = (await copyText(r.noRek)) ? 'Tersalin' : 'Gagal'; setTimeout(() => b.textContent = 'Salin', 1800); };
+    d.querySelector('button').onclick = async (ev) => { const b = ev.currentTarget; b.textContent = (await copyText(r.noRek, 'Salin nomor rekening berikut:')) ? 'Tersalin' : 'Gagal'; setTimeout(() => b.textContent = 'Salin', 1800); };
     box.append(d);
   });
   $('pmWa').href = a.href; $('pesanModal').classList.remove('hidden');
@@ -2458,7 +2480,7 @@ $('listKarya').addEventListener('click', (e) => {
 const pesanTutup = () => $('pesanModal').classList.add('hidden');
 $('pmX').onclick = pesanTutup; $('pmBatal').onclick = pesanTutup; $('pmWa').addEventListener('click', () => setTimeout(pesanTutup, 300));
 $('pesanModal').addEventListener('click', (e) => { if (e.target === $('pesanModal')) pesanTutup(); });
-$('rekSalinLangkah').onclick = async (e) => { const b = e.currentTarget; b.textContent = (await copyText($('rekLangkah').value)) ? 'Tersalin' : 'Gagal'; setTimeout(() => b.textContent = 'Salin teks', 1800); };
+$('rekSalinLangkah').onclick = async (e) => { const b = e.currentTarget; b.textContent = (await copyText($('rekLangkah').value, 'Salin teks berikut:')) ? 'Tersalin' : 'Gagal'; setTimeout(() => b.textContent = 'Salin teks', 1800); };
 $('rekResetLangkah').onclick = () => { $('rekLangkah').value = DEF_LANGKAH; };
 $('rekTambah').onclick = () => { if (document.querySelectorAll('#rekAdminRows .rekRow').length >= 5) return alert('Maksimal 5 rekening.'); rekRow(); };
 $('rekSimpan').onclick = async () => {
