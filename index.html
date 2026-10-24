@@ -424,6 +424,10 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 <div id="p-profil" class="pnl hidden">
   <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Profil Sekolah</h2><p>Mengenal sekolah, visi, dan misi kami.</p><i></i></div></div>
   <section id="profil" class="max-w-4xl mx-auto px-4 py-8 space-y-5">
+    <div id="identBox" class="hidden grid grid-cols-2 gap-4">
+      <div id="identStatusBox" class="hidden bg-white rounded-xl shadow p-5 border-t-4 border-accent"><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status Sekolah</p><p id="identStatus" class="text-2xl font-bold text-primary mt-1"></p></div>
+      <div id="identAkreBox" class="hidden bg-white rounded-xl shadow p-5 border-t-4 border-accent"><p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Akreditasi</p><p id="identAkre" class="text-2xl font-bold text-primary mt-1"></p></div>
+    </div>
     <div id="tentangBox" class="hidden bg-white rounded-xl shadow p-5"><h3 class="font-bold text-primary mb-2">Tentang Sekolah</h3><p id="tentangTeks" class="text-slate-700 leading-relaxed whitespace-pre-line"></p></div>
     <div class="grid md:grid-cols-2 gap-5 items-start">
       <div id="visiBox" class="hidden bg-white rounded-xl shadow p-5 border-t-4 border-accent"><h3 class="font-bold text-primary mb-2">Visi</h3><p id="visiTeks" class="text-slate-700 leading-relaxed whitespace-pre-line"></p></div>
@@ -1051,6 +1055,10 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 
     <!-- tab profil -->
     <div id="tProfil" class="tabBox hidden bg-white rounded-xl shadow p-5 space-y-3">
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div><label class="block text-sm font-medium mb-1" for="pStatusSek">Status Sekolah</label><select id="pStatusSek" class="inp"><option value="Negeri">Negeri</option><option value="Swasta">Swasta</option><option value="">Tidak ditampilkan</option></select></div>
+        <div><label class="block text-sm font-medium mb-1" for="pAkre">Akreditasi</label><select id="pAkre" class="inp"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="Belum terakreditasi">Belum terakreditasi</option><option value="">Tidak ditampilkan</option></select></div>
+      </div>
       <div><label class="block text-sm font-medium mb-1">Tentang Sekolah (sejarah singkat, akreditasi, keunggulan)</label><textarea id="pTentang" rows="5" maxlength="4000" class="inp" placeholder=""></textarea></div>
       <div><label class="block text-sm font-medium mb-1">Visi</label><textarea id="pVisi" rows="3" maxlength="4000" class="inp" placeholder=""></textarea></div>
       <div><label class="block text-sm font-medium mb-1">Misi (satu baris per butir)</label><textarea id="pMisi" rows="5" maxlength="4000" class="inp" placeholder="Mewujudkan pembelajaran yang aktif dan menyenangkan&#10;Menanamkan karakter dan budi pekerti"></textarea></div>
@@ -1581,6 +1589,7 @@ async function openPanel() {
   kelasAdmin = Array.isArray(s.kelasOnline) ? s.kelasOnline : []; $('klPetunjuk').value = s.kelasPetunjuk || ''; renderKelasAdmin();
   ppdbBukaAdmin = s.ppdbBuka !== false; $('ppdbPesan').value = s.ppdbPesanTutup || ''; renderPpdbSwitch(); applyPpdbBerkas(s); fillBk();
   [['pTentang','tentang'],['pVisi','visi'],['pMisi','misi'],['pAlamat','alamat'],['pTelp','telp'],['pEmail','email'],['pWa','wa'],['pJam','jam'],['pIg','ig'],['pFb','fb'],['pMaps','maps'],['pPpdb','ppdbInfo']].forEach(([i,k]) => $(i).value = s[k] || '');
+  $('pStatusSek').value = s.statusSekolah === undefined ? STATUS_DEF : (s.statusSekolah || ''); $('pAkre').value = s.akreditasi === undefined ? AKRE_DEF : (s.akreditasi || '');
   adminBerita(); adminPendaftar(); adminGuru(); adminDok(); adminLatar();
 }
 
@@ -2295,14 +2304,20 @@ function mapSrc(v) {
 const mapLink = (v) => /^https:\/\/(www\.google\.com\/maps|maps\.google\.com|maps\.app\.goo\.gl|goo\.gl\/maps)[^\s"'<>]*$/.test(String(v || '').trim()) ? String(v).trim() : '';
 const httpsOk = (u) => /^https:\/\/[^\s"'<>]+$/.test(u || '');
 function setTxt(id, val) { const el = $(id), box = $(id + 'Box'); el.textContent = val || ''; if (box) box.classList.toggle('hidden', !val); return !!val; }
+const STATUS_DEF = 'Negeri', AKRE_DEF = 'A';
 function applyProfil(s) {
+  const stt = s.statusSekolah === undefined ? STATUS_DEF : String(s.statusSekolah || ''), akr = s.akreditasi === undefined ? AKRE_DEF : String(s.akreditasi || '');
+  $('identStatus').textContent = stt; $('identStatusBox').classList.toggle('hidden', !stt);
+  $('identAkre').textContent = akr; $('identAkreBox').classList.toggle('hidden', !akr);
+  $('identBox').classList.toggle('hidden', !(stt || akr));
+  $('identBox').classList.toggle('grid-cols-2', !!(stt && akr)); $('identBox').classList.toggle('grid-cols-1', !(stt && akr));
   const t = setTxt('tentangTeks', s.tentang); $('tentangTeks').innerHTML = fmt(s.tentang); $('tentangBox').classList.toggle('hidden', !t);
   const v = !!s.visi; $('visiTeks').innerHTML = fmt(s.visi); $('visiBox').classList.toggle('hidden', !v);
   const misi = (s.misi || '').split('\n').map(x => x.trim()).filter(Boolean);
   const ol = $('misiList'); ol.innerHTML = '';
   misi.forEach(x => { const li = document.createElement('li'); li.innerHTML = fmt(x); ol.append(li); });
   $('misiBox').classList.toggle('hidden', !misi.length);
-  $('profilKosong').classList.toggle('hidden', !!(t || v || misi.length));
+  $('profilKosong').classList.toggle('hidden', !!(t || v || misi.length || stt || akr));
 
   const k = [setTxt('kAlamat', s.alamat), setTxt('kTelp', s.telp), setTxt('kEmail', s.email), setTxt('kJam', s.jam)];
   const sos = $('kSosmed'); sos.innerHTML = '';
@@ -2340,7 +2355,8 @@ $('pSimpan').onclick = async () => {
   try {
     await db.collection('settings').doc('site').set({
       tentang: g('pTentang'), visi: g('pVisi'), misi: g('pMisi'), alamat: g('pAlamat'), telp: g('pTelp'), email: g('pEmail'),
-      wa: g('pWa'), jam: g('pJam'), ig: ig, fb: fb, maps: maps, ppdbInfo: g('pPpdb')
+      wa: g('pWa'), jam: g('pJam'), ig: ig, fb: fb, maps: maps, ppdbInfo: g('pPpdb'),
+      statusSekolah: $('pStatusSek').value, akreditasi: $('pAkre').value
     }, { merge: true });
     $('pMsg').textContent = 'Tersimpan dan terpublikasi.';
     setTimeout(() => $('pMsg').textContent = '', 3000);
