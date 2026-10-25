@@ -24,6 +24,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -908,7 +909,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 <button data-tab="tSaran" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Kotak Saran</button>
       <button data-tab="tCad" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Spanduk &amp; Cadangan</button>
       <button data-tab="tSiswa" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Siswa</button>
-      <button data-tab="tPendaftar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Pendaftar</button>
+      <button data-tab="tPendaftar" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Data Pendaftar<span id="pdBadge" class="hidden ml-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-red-600 text-white text-[11px] font-bold" title="Menunggu verifikasi"></span></button>
       <button data-tab="tKunjungan" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Pengunjung</button>
       <button data-tab="tLatarWeb" class="tabBtn px-4 py-2 rounded-lg text-sm font-semibold bg-white">Latar Website</button>
     </div>
@@ -940,6 +941,16 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
         <div><p class="text-sm font-semibold text-slate-700 mb-2">14 hari terakhir</p><div class="relative h-56"><canvas id="kjChart"></canvas></div></div>
         <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-2 py-2">Tanggal</th><th class="px-2 py-2 text-right">Pengunjung</th></tr></thead><tbody id="kjBody"></tbody></table></div>
         <p id="kjMsg" class="text-xs text-slate-500"></p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow p-5 space-y-4">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div><h3 class="font-bold text-primary">Aplikasi yang Diunduh Pengunjung</h3><p class="text-xs text-slate-500">Dihitung setiap kali pengunjung menekan tombol tautan pada menu Karya (mis. Unduh APK) atau memasang website ke layar utama. Satu perangkat dihitung satu kali per tautan per sesi browser; klik Anda sendiri saat login admin tidak dihitung.</p></div>
+          <button id="udMuat" type="button" class="px-4 py-2 rounded-lg border border-primary text-primary text-sm font-semibold">Muat ulang</button>
+        </div>
+        <div id="udKpi" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-100 text-left text-xs uppercase text-slate-500"><tr><th class="px-2 py-2">Aplikasi</th><th class="px-2 py-2">Tautan</th><th class="px-2 py-2 text-right">Diunduh</th><th class="px-2 py-2">Terakhir</th><th class="px-2 py-2"></th></tr></thead><tbody id="udBody"></tbody></table></div>
+        <p id="udMsg" class="text-xs text-slate-500"></p>
       </div>
     </div>
 
@@ -1318,6 +1329,10 @@ const firebaseConfig = {
 };
 /* ===================================================================== */
 
+/* App Check (perlindungan dari spam/bot). Isi dengan "site key" reCAPTCHA v3 dari Firebase Console > App Check.
+   Dikosongkan = fitur nonaktif dan website berjalan seperti biasa. */
+const APPCHECK_SITE_KEY = '6Ld-vNYtAAAAAHv2pAPLXpgiE4d6MatsWu_ZFmPR';
+
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const errInfo = (e) => 'Kode: ' + (e.code || e.message) + '. Email login: ' + ((auth && auth.currentUser && auth.currentUser.email) || '-') + '. Email ini harus sama persis dengan email di aturan Firestore (webAdmin).';
@@ -1336,6 +1351,12 @@ const configured = !!firebaseConfig.apiKey && firebaseConfig.apiKey !== "ISI_API
 let auth, db;
 if (configured) {
   firebase.initializeApp(firebaseConfig);
+  if (APPCHECK_SITE_KEY && firebase.appCheck) {
+    try {
+      if (['localhost', '127.0.0.1'].includes(location.hostname)) self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+      firebase.appCheck().activate(new firebase.appCheck.ReCaptchaEnterpriseProvider(APPCHECK_SITE_KEY), true);
+    } catch (e) { console.warn('App Check gagal diaktifkan', e); }
+  }
   auth = firebase.auth();
   db = firebase.firestore();
 } else {
@@ -1558,10 +1579,34 @@ $('loginForm').addEventListener('submit', async (e) => {
 });
 
 if (configured) {
-  auth.onAuthStateChanged(u => { $('btnAdmin').textContent = u ? 'Panel Admin' : 'Login Admin'; });
+  auth.onAuthStateChanged(u => { if (!u) pdN = 0; pdTampil(); if (u) pdHitung(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && auth.currentUser && Date.now() - pdTerakhir > 120000) pdHitung(); });
 }
 $('aKeluar').onclick = async () => { await auth.signOut(); $('adminPanel').classList.add('hidden'); };
 $('aTutup').onclick = () => { $('adminPanel').classList.add('hidden'); loadSettings(); loadBerita(); loadGuru(); };
+
+/* ---------- Penanda pendaftar PPDB baru ---------- */
+let pdN = 0, pdTerakhir = 0;
+let pdSeen = 0; try { pdSeen = Number(localStorage.getItem('pdSeen')) || 0; if (!pdSeen) { pdSeen = Date.now(); localStorage.setItem('pdSeen', String(pdSeen)); } } catch (e) {}
+function pdTampil() {
+  const u = auth && auth.currentUser, b = $('btnAdmin'), teks = pdN > 99 ? '99+' : String(pdN);
+  b.textContent = u ? 'Panel Admin' : 'Login Admin';
+  if (u && pdN > 0) {
+    const sp = document.createElement('span');
+    sp.className = 'ml-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 rounded-full bg-red-600 text-white text-[11px] font-bold';
+    sp.textContent = teks; sp.title = pdN + ' pendaftar menunggu verifikasi'; b.append(sp);
+  }
+  const t = $('pdBadge'); t.textContent = teks; t.classList.toggle('hidden', !(u && pdN > 0));
+}
+async function pdHitung() {
+  pdTerakhir = Date.now();
+  try {
+    const snap = await db.collection('pendaftar').get();
+    let n = 0; snap.forEach(x => { const st = x.data().status; if (!st || st === 'menunggu') n++; });
+    pdN = n;
+  } catch (e) { pdN = 0; }
+  pdTampil();
+}
 
 /* ---------- Panel admin ---------- */
 document.querySelectorAll('.tabBtn').forEach(btn => btn.onclick = () => {
@@ -1569,6 +1614,7 @@ document.querySelectorAll('.tabBtn').forEach(btn => btn.onclick = () => {
   btn.classList.add('tab-on');
   document.querySelectorAll('.tabBox').forEach(t => t.classList.add('hidden'));
   $(btn.dataset.tab).classList.remove('hidden');
+  if (btn.dataset.tab === 'tPendaftar') { try { localStorage.setItem('pdSeen', String(Date.now())); } catch (e) {} }
 });
 
 async function openPanel() {
@@ -1744,6 +1790,7 @@ async function adminPendaftar() {
 function renderPendaftar() {
   const counts = { semua: pAll.length, menunggu: 0, terverifikasi: 0, perbaikan: 0, ditolak: 0 };
   pAll.forEach(d => counts[pStat(d)]++);
+  pdN = counts.menunggu; pdTerakhir = Date.now(); pdTampil();
   const chips = $('pChips'); chips.innerHTML = '';
   [['semua', 'Semua']].concat(Object.entries(PSTATUS).map(([k, v]) => [k, v[0]])).forEach(([k, label]) => {
     const b = document.createElement('button');
@@ -1760,7 +1807,8 @@ function renderPendaftar() {
   pView.forEach(d => {
     const st = PSTATUS[pStat(d)];
     const tr = document.createElement('tr'); tr.className = 'border-b';
-    tr.innerHTML = `<td class="p-2"><p class="font-medium">${esc(d.nama)}</p><p class="text-xs text-slate-500">${esc(d.jk)} · ${esc(d.tempat)}, ${esc(d.tgl)}</p></td>
+    const baru = d.tanggalDaftar && d.tanggalDaftar.toMillis && d.tanggalDaftar.toMillis() > pdSeen;
+    tr.innerHTML = `<td class="p-2"><p class="font-medium">${esc(d.nama)}${baru ? ' <span class="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-600 text-white align-middle">BARU</span>' : ''}</p><p class="text-xs text-slate-500">${esc(d.jk)} · ${esc(d.tempat)}, ${esc(d.tgl)}</p></td>
       <td class="p-2">${esc(d.nisn)}</td>
       <td class="p-2">${esc(d.ortu)}<p class="text-xs text-slate-500">${esc(d.wa)}</p></td>
       <td class="p-2"><span class="text-xs px-2 py-0.5 rounded ${st[1]}">${st[0]}</span></td><td class="p-2"></td>`;
@@ -2529,7 +2577,7 @@ function renderKarya() {
     if (fit.length) h += '<ul class="text-sm text-slate-700 space-y-1.5">' + fit.map(x => '<li class="flex gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style="background:' + c + '"></span><span>' + fmt(x) + '</span></li>').join('') + '</ul>';
     h += '<div class="flex-1"></div><div class="flex flex-wrap gap-2 pt-1">';
     (k.tautan || []).forEach(l => {
-      if (l && httpsOk(l.url)) h += '<a href="' + esc(l.url) + '" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition" style="background:' + c + '">' + esc(l.label) + '</a>';
+      if (l && httpsOk(l.url)) h += '<a href="' + esc(l.url) + '" data-dl="1" data-app="' + esc(k.nama || '') + '" data-label="' + esc(l.label || '') + '" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition" style="background:' + c + '">' + esc(l.label) + '</a>';
     });
     const id = (k.youtube && ytUrlOk(k.youtube)) ? ytId(k.youtube) : '';
     if (id) h += '<button type="button" data-yt="' + esc(id) + '" class="btnTutor px-3 py-1.5 rounded-lg text-sm font-medium border" style="border-color:' + c + ';color:' + c + '">Lihat Tutorial</button>';
@@ -3424,8 +3472,55 @@ async function kjMuat() {
     msg.textContent = ada ? 'Data harian mulai tercatat sejak ' + Object.keys(map).sort()[0] + '. Kunjungan sebelumnya hanya masuk ke total.' : 'Belum ada data harian. Pastikan aturan Firestore koleksi "pengunjung" sudah diperbarui (lihat penjelasan dari Claude), lalu data akan terisi dari kunjungan berikutnya.';
   } catch (e) { msg.textContent = 'Gagal memuat. ' + (e.code === 'permission-denied' ? 'Aturan Firestore belum mengizinkan pembacaan koleksi "pengunjung".' : errInfo(e)); }
 }
-$('kjMuat').onclick = kjMuat;
-document.querySelectorAll('[data-tab="tKunjungan"]').forEach(b => b.addEventListener('click', () => kjMuat()));
+$('kjMuat').onclick = () => { kjMuat(); udMuat(); };
+$('udMuat').onclick = () => udMuat();
+document.querySelectorAll('[data-tab="tKunjungan"]').forEach(b => b.addEventListener('click', () => { kjMuat(); udMuat(); }));
+
+/* ---------- Pelacak unduhan aplikasi (koleksi unduhApp) ---------- */
+const udHash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36); };
+async function udCatat(app, label) {
+  try {
+    if (!configured || !db || !app) return;
+    if (auth && auth.currentUser) return; /* admin yang login tidak dihitung */
+    app = String(app).trim().slice(0, 80); label = String(label || 'Unduh').trim().slice(0, 60);
+    if (!app) return;
+    const slug = app.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'app';
+    const id = 'u_' + slug + '_' + udHash(app + '|' + label);
+    try { if (sessionStorage.getItem('ud_' + id)) return; sessionStorage.setItem('ud_' + id, '1'); } catch (e) {}
+    const ref = db.collection('unduhApp').doc(id), ts = firebase.firestore.FieldValue.serverTimestamp();
+    try { await ref.update({ jumlah: firebase.firestore.FieldValue.increment(1), terakhir: ts }); }
+    catch (e) { try { await ref.set({ app, label, jumlah: 1, terakhir: ts }); } catch (e2) {} }
+  } catch (e) {}
+}
+['click', 'auxclick'].forEach(ev => document.addEventListener(ev, (e) => {
+  const a = e.target.closest && e.target.closest('a[data-dl]'); if (!a) return;
+  if (ev === 'auxclick' && e.button !== 1) return;
+  udCatat(a.dataset.app, a.dataset.label);
+}));
+window.addEventListener('appinstalled', () => udCatat('Aplikasi Website Sekolah (PWA)', 'Pasang ke layar utama'));
+
+async function udMuat() {
+  const msg = $('udMsg'), body = $('udBody'); msg.textContent = 'Memuat...';
+  try {
+    const snap = await db.collection('unduhApp').orderBy('jumlah', 'desc').limit(200).get();
+    const rows = []; snap.forEach(x => rows.push(Object.assign({ id: x.id }, x.data())));
+    const total = rows.reduce((t, r) => t + (Number(r.jumlah) || 0), 0);
+    const apps = new Set(rows.map(r => r.app)).size;
+    const top = rows[0] ? rows[0].app : '-';
+    $('udKpi').innerHTML = [[total.toLocaleString('id-ID'), 'Total unduhan'], [apps, 'Aplikasi berbeda'], [esc(top), 'Paling banyak diunduh']]
+      .map(([v, l], i) => '<div class="rounded-xl border border-slate-200 p-3' + (i === 2 ? ' col-span-2 md:col-span-1' : '') + '"><p class="' + (i === 2 ? 'text-base' : 'text-2xl') + ' font-bold text-primary break-words">' + v + '</p><p class="text-xs text-slate-500 mt-1">' + l + '</p></div>').join('');
+    body.innerHTML = rows.map(r => {
+      const t = r.terakhir && r.terakhir.toDate ? r.terakhir.toDate().toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+      return '<tr class="border-t"><td class="px-2 py-1.5 font-medium">' + esc(r.app) + '</td><td class="px-2 py-1.5 text-slate-600">' + esc(r.label) + '</td><td class="px-2 py-1.5 text-right font-semibold">' + (Number(r.jumlah) || 0).toLocaleString('id-ID') + '</td><td class="px-2 py-1.5 text-xs text-slate-500 whitespace-nowrap">' + esc(t) + '</td><td class="px-2 py-1.5 text-right"><button type="button" data-udhapus="' + esc(r.id) + '" class="text-xs text-red-600 underline">Hapus</button></td></tr>';
+    }).join('');
+    msg.textContent = rows.length ? 'Menampilkan ' + rows.length + ' tautan, diurutkan dari yang paling banyak diunduh.' : 'Belum ada unduhan tercatat. Data mulai terisi setelah pengunjung menekan tautan pada menu Karya.';
+  } catch (e) { msg.textContent = 'Gagal memuat. ' + (e.code === 'permission-denied' ? 'Aturan Firestore koleksi "unduhApp" belum ditambahkan (tempel isi firestore.rules terbaru).' : errInfo(e)); }
+}
+$('udBody').addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-udhapus]'); if (!b) return;
+  if (!confirm('Hapus catatan unduhan ini? Hitungannya kembali dari nol.')) return;
+  try { await db.collection('unduhApp').doc(b.dataset.udhapus).delete(); udMuat(); } catch (er) { $('udMsg').textContent = 'Gagal menghapus. ' + errInfo(er); }
+});
 
 /* ---------- Latar website: foto penuh di belakang halaman ---------- */
 const RULE_HINT_LW = 'Aturan Firestore belum mengizinkan koleksi "latarWeb". Pasang file firestore.rules terbaru di Firebase Console (Firestore > Rules > Publish), lalu coba lagi.';
