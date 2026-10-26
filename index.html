@@ -136,8 +136,8 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 
     /* kartu guru: dua kolom, ringkas */
     #guru { padding-top:1.25rem; padding-bottom:1.5rem; padding-left:.9rem; padding-right:.9rem; }
-    #listGuru { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem !important; }
-    .gCard { width:auto; min-height:0; padding:1rem .6rem .75rem; border-radius:.8rem; }
+    #listGuru { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); justify-items:stretch; gap:.75rem !important; }
+    .gCard { width:100%; min-width:0; box-sizing:border-box; min-height:0; padding:1rem .6rem .75rem; border-radius:.8rem; }
     .gPh { width:4.75rem; height:4.75rem; margin-bottom:.55rem; border-width:2px; }
     .gIni { font-size:1.75rem; }
     .gName { font-size:.8rem; min-height:2.2rem; line-height:1.3; }
