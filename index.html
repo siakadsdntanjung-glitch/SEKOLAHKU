@@ -47,10 +47,12 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
   @media (max-width:640px) { .copyLink { bottom:1.4rem; padding:.3rem .65rem; } }
   .pageHead i { display:block; width:3rem; height:4px; border-radius:2px; background:var(--accent); margin-top:.9rem; }
   img.rounded-full, .gPh { object-position:center 10%; }
+  #listGuru { display:grid; grid-template-columns:repeat(auto-fill,12rem); justify-content:center; justify-items:start; }
   .gCard { position:relative; overflow:hidden; width:12rem; min-height:18.5rem; background:#fff; border-radius:.9rem; box-shadow:0 1px 3px rgba(15,23,42,.08),0 4px 14px rgba(15,23,42,.05); padding:1.5rem 1rem 1rem; text-align:center; display:flex; flex-direction:column; align-items:center; transition:box-shadow .2s, transform .2s; }
   .gCard::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:var(--accent); }
   .gCard:hover { box-shadow:0 8px 24px rgba(15,23,42,.12); transform:translateY(-2px); }
   .gPh { width:6rem; height:6rem; flex-shrink:0; margin-bottom:.75rem; border-radius:9999px; object-fit:cover; border:3px solid var(--soft); box-shadow:0 2px 6px rgba(15,23,42,.18); }
+  #listKarya article, #listKarya article * { text-align:left !important; text-justify:auto !important; hyphens:none !important; }
   .gIni { background:var(--primary); color:#fff; font-size:2.25rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
   .gName { font-weight:600; color:var(--primary); font-size:.875rem; line-height:1.35; min-height:2.4rem; display:flex; align-items:center; justify-content:center; }
   .gPill { margin-top:.5rem; background:var(--soft); color:var(--primary); font-size:.75rem; font-weight:500; padding:.25rem .75rem; border-radius:9999px; }
@@ -296,6 +298,11 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
     <nav class="hidden xl:flex gap-0 text-sm font-medium">
       <a href="#beranda" data-p="beranda" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg><span>Beranda</span></a>
       <a href="#profil" data-p="profil" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><span>Profil</span></a>
+    <a href="#ekskul" data-p="ekskul" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg><span>Ekstrakurikuler</span></a>
+    <a href="#fasilitas" data-p="fasilitas" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg><span>Fasilitas</span></a>
+    <a href="#jadwal" data-p="jadwal" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Jadwal Pelajaran</span></a>
+    <a href="#struktur" data-p="struktur" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-4h12v4"/></svg><span>Struktur Organisasi</span></a>
+    <a href="#alumni" data-p="alumni" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5"/></svg><span>Alumni</span></a>
     <a href="#guru" data-p="guru" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/></svg><span>Guru</span></a>
     <a href="#kelas" data-p="kelas" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Kelas Online</span></a>
     <a href="#karya" data-p="karya" class="navLink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg><span>Karya</span></a>
@@ -470,7 +477,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 <div id="p-guru" class="pnl hidden">
   <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Guru &amp; Tenaga Kependidikan</h2><p>Pendidik dan tenaga kependidikan yang melayani peserta didik kami.</p><i></i></div></div>
   <section id="guru" class="max-w-6xl mx-auto px-4 py-10">
-    <div id="listGuru" class="flex flex-wrap justify-center gap-5"></div>
+    <div id="listGuru" class="gap-5"></div>
   </section>
 </div>
 
@@ -489,7 +496,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 <div id="p-karya" class="pnl hidden">
   <div class="pageHead"><div class="max-w-6xl mx-auto px-4 py-7"><h2>Hasil Karya</h2><p>Aplikasi dan karya yang dikembangkan di sekolah kami.</p><i></i></div></div>
   <section id="karya" class="max-w-6xl mx-auto px-4 py-8">
-    <div id="listKarya" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    <div id="listKarya" class="grid sm:grid-cols-2 gap-6"></div>
     <p id="karyaKosong" class="hidden text-center text-slate-500">Belum ada hasil karya.</p>
     <div id="rekBox" class="hidden mt-10">
       <h3 class="text-lg font-bold text-primary mb-1">Informasi Pembayaran</h3>
@@ -635,18 +642,12 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
 </main>
 
 <footer class="mt-8 bg-slate-900 text-slate-300">
-  <div class="max-w-6xl mx-auto px-4 py-10 grid gap-8 md:grid-cols-3 text-sm">
+  <div class="max-w-6xl mx-auto px-4 py-6 grid gap-6 md:grid-cols-2 text-sm">
     <div>
       <p id="footBrand" class="text-white font-bold text-lg" style="font-family:var(--font-h)">[Nama Sekolah]</p>
       <span class="block w-10 h-[3px] rounded bg-accent mt-2 mb-3"></span>
       <p id="footTagline" class="text-slate-400 leading-relaxed"></p>
       <div class="mt-3"><a id="footYt" target="_blank" rel="noopener" class="hidden underline hover:text-white">Kunjungi YouTube sekolah</a></div>
-    </div>
-    <div>
-      <p class="text-white font-semibold mb-3">Tautan</p>
-      <ul class="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xs">
-        <li><a href="#profil" class="hover:text-white transition">Profil</a></li><li><a href="#ekskul" class="hover:text-white transition">Ekstrakurikuler</a></li><li><a href="#fasilitas" class="hover:text-white transition">Fasilitas</a></li><li><a href="#jadwal" class="hover:text-white transition">Jadwal Pelajaran</a></li><li><a href="#struktur" class="hover:text-white transition">Struktur Organisasi</a></li><li><a href="#alumni" class="hover:text-white transition">Alumni</a></li><li><a href="#guru" class="hover:text-white transition">Guru</a></li><li><a href="#kelas" class="hover:text-white transition">Kelas Online</a></li><li><a href="#karya" class="hover:text-white transition">Karya</a></li><li><a href="#dokumentasi" class="hover:text-white transition">Dokumentasi</a></li><li><a href="#statistik" class="hover:text-white transition">Statistik</a></li><li><a href="#berita" class="hover:text-white transition">Berita</a></li><li><a href="#ppdb" class="hover:text-white transition">PPDB</a></li><li><a href="#agenda" class="hover:text-white transition">Agenda</a></li><li><a href="#unduhan" class="hover:text-white transition">Unduhan</a></li><li><a href="#prestasi" class="hover:text-white transition">Prestasi</a></li><li><a href="#status" class="hover:text-white transition">Cek Status PPDB</a></li><li><a href="#siswa" class="hover:text-white transition">Cari Siswa</a></li><li><a href="#lisensi" class="hover:text-white transition">Bukti Lisensi</a></li><li><a href="#survei" class="hover:text-white transition">Survei Kepuasan</a></li><li><a href="#saran" class="hover:text-white transition">Saran</a></li><li><a href="#kontak" class="hover:text-white transition">Kontak</a></li>
-      </ul>
     </div>
     <div id="footKolKontak" hidden>
       <p class="text-white font-semibold mb-3">Kontak</p>
@@ -654,7 +655,7 @@ if (window.PWA_OK) document.write('<link rel="manifest" href="manifest.json"><li
     </div>
   </div>
   <div class="border-t border-white/10">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 text-center">&copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi. Pengunjung: <b id="visitCount">-</b></div>
+    <div class="max-w-6xl mx-auto px-4 py-3 text-xs text-slate-500 text-center">&copy; <span id="thn"></span> <span id="footNama">[Nama Sekolah]</span>. Hak cipta dilindungi. Pengunjung: <b id="visitCount">-</b></div>
   </div>
 </footer>
 </div>
@@ -2570,9 +2571,9 @@ function renderKarya() {
     card.className = 'bg-white rounded-xl shadow overflow-hidden flex flex-col';
     card.style.borderTop = '4px solid ' + c;
     let h = '<div class="p-5 flex flex-col gap-3 flex-1">';
-    if (k.kategori) h += '<span class="self-start rounded-full text-xs font-semibold px-3 py-1" style="background:' + c + '1f;color:' + c + '">' + esc(k.kategori) + '</span>';
+    if (k.kategori) h += '<span class="self-start rounded-full text-xs font-semibold px-3 py-1" style="max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:' + c + '1f;color:' + c + '">' + esc(k.kategori) + '</span>';
     h += '<h3 class="text-lg font-bold leading-snug" style="color:' + c + '">' + esc(k.nama) + '</h3>';
-    if (k.deskripsi) h += '<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">' + fmt(k.deskripsi) + '</p>';
+    if (k.deskripsi) h += '<div><p class="karyaDesc text-sm text-slate-700 leading-relaxed whitespace-pre-line" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + fmt(k.deskripsi) + '</p><button type="button" class="karyaMore hidden mt-1 text-xs font-semibold" style="color:' + c + '">Selengkapnya</button></div>';
     const fit = String(k.fitur || '').split('\n').map(x => x.trim()).filter(Boolean);
     if (fit.length) h += '<ul class="text-sm text-slate-700 space-y-1.5">' + fit.map(x => '<li class="flex gap-2"><span class="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style="background:' + c + '"></span><span>' + fmt(x) + '</span></li>').join('') + '</ul>';
     h += '<div class="flex-1"></div><div class="flex flex-wrap gap-2 pt-1">';
@@ -2583,9 +2584,17 @@ function renderKarya() {
     if (id) h += '<button type="button" data-yt="' + esc(id) + '" class="btnTutor px-3 py-1.5 rounded-lg text-sm font-medium border" style="border-color:' + c + ';color:' + c + '">Lihat Tutorial</button>';
     card.innerHTML = h + '</div>' + pesanHtml(k, c) + '</div>';
     box.append(card);
+    const d = card.querySelector('.karyaDesc'), m = card.querySelector('.karyaMore');
+    if (d && m) requestAnimationFrame(() => { if (d.scrollHeight > d.clientHeight + 1) m.classList.remove('hidden'); });
   });
 }
 $('listKarya').addEventListener('click', (e) => {
+  const m = e.target.closest('.karyaMore');
+  if (m) {
+    const d = m.previousElementSibling, open = d.style.webkitLineClamp === 'unset';
+    d.style.webkitLineClamp = open ? '2' : 'unset'; d.style.display = open ? '-webkit-box' : 'block';
+    m.textContent = open ? 'Selengkapnya' : 'Tutup'; return;
+  }
   const b = e.target.closest('.btnTutor'); if (!b) return;
   $('ytFrame').src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(b.dataset.yt) + '?autoplay=1';
   $('ytModal').classList.remove('hidden');
